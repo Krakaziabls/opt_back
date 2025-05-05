@@ -1,4 +1,4 @@
-package com.example.backend.conroller;
+package com.example.backend.controller;
 
 import org.springframework.web.bind.annotation.*;
 
