@@ -1,28 +1,29 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "optimized_query")
-@Getter
-@Setter
+@Table(name = "users")
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class OptimizedQuery {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "original_sql", columnDefinition = "TEXT")
-    private String originalSql;
+    @Column(nullable = false, unique = true)
+    private String username;
 
-    @Column(name = "optimized_sql", columnDefinition = "TEXT")
-    private String optimizedSql;
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

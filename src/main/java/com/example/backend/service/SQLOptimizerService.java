@@ -34,7 +34,7 @@ public class SQLOptimizerService {
         OptimizedQuery entity = OptimizedQuery.builder()
                 .originalSql(sql)
                 .optimizedSql(optimized)
-                .createdAt(Instant.now())
+                // убрали .createdAt(...)
                 .build();
         return repo.save(entity);
     }
