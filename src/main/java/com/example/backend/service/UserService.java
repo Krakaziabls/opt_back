@@ -1,6 +1,8 @@
 package com.example.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -54,5 +56,17 @@ public class UserService implements UserDetailsService {
         user.setPasswordHash(passwordEncoder.encode(password));
 
         return userRepository.save(user);
+    }
+
+    // Метод для получения текущего пользователя
+    @Transactional(readOnly = true)
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String currentUsername = authentication.getName(); // Получаем имя пользователя из аутентификации
+            return userRepository.findByUsername(currentUsername)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+        }
+        throw new RuntimeException("No authenticated user found");
     }
 }

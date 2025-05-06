@@ -20,6 +20,9 @@ public class Chat {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "name")  // новое поле для имени чата
+    private String name;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
