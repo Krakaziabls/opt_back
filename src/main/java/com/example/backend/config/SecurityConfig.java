@@ -44,16 +44,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                // Разрешаем доступ к Swagger UI и OpenAPI документации
-                .antMatchers("/api/swagger-ui/**", "/api/v3/api-docs/**", "/api/swagger-ui.html").permitAll()
-                .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                .antMatchers("/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
-                // Разрешаем доступ к эндпоинтам аутентификации
-                .antMatchers("/api/auth/**").permitAll()
-                // Все остальные запросы требуют аутентификации
-                .anyRequest().authenticated()
-                .and()
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .antMatchers("/**").permitAll(); // Временно разрешить все запросы
 
         return http.build();
     }
