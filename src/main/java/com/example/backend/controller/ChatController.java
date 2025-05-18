@@ -1,74 +1,76 @@
 package com.example.backend.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.example.backend.model.dto.ChatDto;
+import com.example.backend.model.dto.MessageDto;
+import com.example.backend.service.ChatService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.backend.dto.ChatDTO;
-import com.example.backend.entity.Chat;
-import com.example.backend.service.ChatService;
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/chats")
+@RequiredArgsConstructor
+@Tag(name = "Chats", description = "Chat management API")
+@SecurityRequirement(name = "bearerAuth")
 public class ChatController {
 
     private final ChatService chatService;
 
-    public ChatController(ChatService chatService) {
-        this.chatService = chatService;
-    }
-
     @GetMapping
-    public ResponseEntity<List<ChatDTO>> getUserChats() {
-        List<Chat> chats = chatService.getAllChatsForCurrentUser();
-        List<ChatDTO> chatDTOs = chats.stream()
-                .map(chat -> {
-                    ChatDTO dto = new ChatDTO();
-                    dto.setId(chat.getId());
-                    dto.setCreatedAt(chat.getCreatedAt());
-                    dto.setName(chat.getName());
-                    return dto;
-                })
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(chatDTOs);
+    @Operation(summary = "Get all chats for the current user")
+    public ResponseEntity<List<ChatDto>> getUserChats(@AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = getUserId(userDetails);
+        return ResponseEntity.ok(chatService.getUserChats(userId));
     }
 
     @PostMapping
-    public ResponseEntity<ChatDTO> createChat() {
-        Chat chat = chatService.createChat();
-        ChatDTO dto = new ChatDTO();
-        dto.setId(chat.getId());
-        dto.setCreatedAt(chat.getCreatedAt());
-        dto.setName(chat.getName());
-        return ResponseEntity.ok(dto);
+    @Operation(summary = "Create a new chat")
+    public ResponseEntity<ChatDto> createChat(
+            @Valid @RequestBody ChatDto chatDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = getUserId(userDetails);
+        return ResponseEntity.ok(chatService.createChat(userId, chatDto));
     }
 
     @GetMapping("/{chatId}")
-    public ResponseEntity<ChatDTO> getChat(@PathVariable Long chatId) {
-        Chat chat = chatService.getChatForCurrentUser(chatId);
-        ChatDTO dto = new ChatDTO();
-        dto.setId(chat.getId());
-        dto.setCreatedAt(chat.getCreatedAt());
-        dto.setName(chat.getName());
-        return ResponseEntity.ok(dto);
+    @Operation(summary = "Get a specific chat")
+    public ResponseEntity<ChatDto> getChat(
+            @PathVariable Long chatId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = getUserId(userDetails);
+        return ResponseEntity.ok(chatService.getChat(chatId, userId));
     }
 
-    // Новый эндпоинт для переименования чата
-    @PatchMapping("/{chatId}")
-    public ResponseEntity<ChatDTO> renameChat(@PathVariable Long chatId, @RequestParam String name) {
-        Chat updatedChat = chatService.updateChat(chatId, name);
-        ChatDTO dto = new ChatDTO();
-        dto.setId(updatedChat.getId());
-        dto.setCreatedAt(updatedChat.getCreatedAt());
-        dto.setName(updatedChat.getName());
-        return ResponseEntity.ok(dto);
+    @GetMapping("/{chatId}/messages")
+    @Operation(summary = "Get all messages in a chat")
+    public ResponseEntity<List<MessageDto>> getChatMessages(
+            @PathVariable Long chatId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = getUserId(userDetails);
+        return ResponseEntity.ok(chatService.getChatMessages(chatId, userId));
     }
 
-    @DeleteMapping("/{chatId}")
-    public ResponseEntity<Void> deleteChat(@PathVariable Long chatId) {
-        chatService.deleteChat(chatId);
+    @PostMapping("/{chatId}/archive")
+    @Operation(summary = "Archive a chat")
+    public ResponseEntity<Void> archiveChat(
+            @PathVariable Long chatId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = getUserId(userDetails);
+        chatService.archiveChat(chatId, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    private Long getUserId(UserDetails userDetails) {
+        // In a real app, you would extract the user ID from the UserDetails
+        // For simplicity, we'll assume the username is the user ID as a string
+        return Long.parseLong(userDetails.getUsername());
     }
 }
