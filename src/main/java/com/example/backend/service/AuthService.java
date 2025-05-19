@@ -49,18 +49,14 @@ public class AuthService {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-
             User user = userRepository.findByUsername(request.getUsername())
                     .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
-
             String token = jwtTokenProvider.createToken(user.getUsername());
-
             return AuthResponse.builder()
                     .token(token)
                     .username(user.getUsername())
                     .userId(user.getId())
                     .build();
-
         } catch (AuthenticationException e) {
             throw new ApiException("Invalid username/password", HttpStatus.UNAUTHORIZED);
         }

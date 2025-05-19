@@ -43,6 +43,8 @@ dependencies {
     // SQL Parser
     implementation "com.github.jsqlparser:jsqlparser:$jsqlparserVersion"
 
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
     // Swagger/OpenAPI
     implementation "org.springdoc:springdoc-openapi-ui:1.6.14"
     implementation "org.springdoc:springdoc-openapi-security:1.6.14"

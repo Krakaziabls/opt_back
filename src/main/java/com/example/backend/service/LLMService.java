@@ -76,20 +76,15 @@ public class LLMService {
     }
 
     private String extractSqlFromResponse(String response) {
-        // Simple extraction - in a real app, this would be more robust
-        // For example, looking for SQL code blocks or specific patterns
-
-        // If response contains SQL code blocks, extract them
-        if (response.contains(" sql")) {
-        int start = response.indexOf("```sql") + 6;
-        int end = response.indexOf("", start);
-        if (end > start) {
-            return response.substring(start, end).trim();
+        // Extract SQL code between ```sql and ``` markers
+        if (response.contains("```sql")) {
+            int start = response.indexOf("```sql") + 6;
+            int end = response.indexOf("```", start);
+            if (end > start) {
+                return response.substring(start, end).trim();
+            }
         }
-    }
-
-    // If no code blocks, just return the whole response
-    // In a real app, you'd want more sophisticated parsing
+        // Fallback: return the whole response if no code block is found
         return response.trim();
-}
+    }
 }

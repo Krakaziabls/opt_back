@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 import com.example.backend.model.dto.ChatDto;
 import com.example.backend.model.dto.MessageDto;
+import com.example.backend.security.CustomUserDetails;
 import com.example.backend.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -69,8 +70,9 @@ public class ChatController {
     }
 
     private Long getUserId(UserDetails userDetails) {
-        // In a real app, you would extract the user ID from the UserDetails
-        // For simplicity, we'll assume the username is the user ID as a string
-        return Long.parseLong(userDetails.getUsername());
+        if (userDetails instanceof CustomUserDetails) {
+            return ((CustomUserDetails) userDetails).getUserId();
+        }
+        throw new IllegalStateException("UserDetails is not an instance of CustomUserDetails");
     }
 }
