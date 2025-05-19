@@ -1,5 +1,16 @@
 package com.example.backend.service;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.backend.exception.ApiException;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.model.dto.MessageDto;
@@ -13,20 +24,11 @@ import com.example.backend.repository.ChatRepository;
 import com.example.backend.repository.DatabaseConnectionRepository;
 import com.example.backend.repository.MessageRepository;
 import com.example.backend.repository.SqlQueryRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,6 +59,7 @@ public class SqlOptimizationService {
                 .build();
 
         userMessage = messageRepository.save(userMessage);
+        chat.getMessages().add(userMessage);
 
         // Get database connection if provided
         DatabaseConnection dbConnection = null;
@@ -76,6 +79,7 @@ public class SqlOptimizationService {
                 .build();
 
         llmMessage = messageRepository.save(llmMessage);
+        chat.getMessages().add(llmMessage);
 
         // Create SQL query record
         SqlQuery sqlQuery = SqlQuery.builder()

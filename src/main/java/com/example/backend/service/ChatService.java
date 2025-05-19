@@ -1,5 +1,12 @@
 package com.example.backend.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.model.dto.ChatDto;
 import com.example.backend.model.dto.MessageDto;
@@ -9,12 +16,8 @@ import com.example.backend.model.entity.User;
 import com.example.backend.repository.ChatRepository;
 import com.example.backend.repository.MessageRepository;
 import com.example.backend.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +42,7 @@ public class ChatService {
         Chat chat = Chat.builder()
                 .user(user)
                 .title(chatDto.getTitle())
+                .messages(new ArrayList<>())
                 .build();
 
         Chat savedChat = chatRepository.save(chat);
