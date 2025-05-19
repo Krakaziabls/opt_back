@@ -1,6 +1,6 @@
 package com.example.backend.service;
 
-import java.util.Base64;
+import java.util.UUID;
 
 import javax.net.ssl.SSLContext;
 
@@ -70,23 +70,24 @@ public class GigaChatAuthService {
             // Подготовка запроса
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            headers.set("RqUID", UUID.randomUUID().toString());
             
-            // Декодируем API ключ из base64
-            String decodedApiKey = new String(Base64.getDecoder().decode(llmConfig.getApiKey()));
-            log.debug("Decoded API key: {}", decodedApiKey);
+            // Используем API ключ как есть, без дополнительного декодирования
+            String authHeader = "Basic " + llmConfig.getApiKey();
+            headers.set("Authorization", authHeader);
             
-            headers.setBasicAuth(decodedApiKey);
+            log.debug("Using auth header: {}", authHeader);
 
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-            body.add("grant_type", "client_credentials");
+            body.add("scope", "GIGACHAT_API_PERS");
 
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
 
             log.debug("Requesting new access token from GigaChat. URL: {}, Headers: {}", 
-                llmConfig.getApiUrl() + "/auth", headers);
+                "https://ngw.devices.sberbank.ru:9443/api/v2/oauth", headers);
 
             ResponseEntity<String> response = sslRestTemplate.exchange(
-                    llmConfig.getApiUrl() + "/auth",
+                    "https://ngw.devices.sberbank.ru:9443/api/v2/oauth",
                     HttpMethod.POST,
                     entity,
                     String.class
@@ -96,8 +97,8 @@ public class GigaChatAuthService {
                 log.debug("Received response: {}", response.getBody());
                 JsonNode rootNode = objectMapper.readTree(response.getBody());
                 accessToken = rootNode.path("access_token").asText();
-                int expiresIn = rootNode.path("expires_in").asInt();
-                tokenExpirationTime = System.currentTimeMillis() + (expiresIn - 60) * 1000L;
+                long expiresAt = rootNode.path("expires_at").asLong();
+                tokenExpirationTime = expiresAt;
                 
                 log.debug("Successfully obtained new access token");
                 return accessToken;
