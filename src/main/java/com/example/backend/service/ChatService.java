@@ -109,6 +109,30 @@ public class ChatService {
         databaseConnectionService.deactivateConnectionsForChat(chatId);
     }
 
+    @Transactional
+    public ChatDto updateChat(Long chatId, Long userId, ChatDto chatDto) {
+        Chat chat = chatRepository.findByIdAndUserId(chatId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
+
+        chat.setTitle(chatDto.getTitle());
+        chat.setUpdatedAt(LocalDateTime.now());
+        
+        Chat updatedChat = chatRepository.save(chat);
+        return mapToDto(updatedChat);
+    }
+
+    @Transactional
+    public void deleteChat(Long chatId, Long userId) {
+        Chat chat = chatRepository.findByIdAndUserId(chatId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
+
+        // Deactivate all database connections for this chat
+        databaseConnectionService.deactivateConnectionsForChat(chatId);
+        
+        // Delete the chat (this will cascade delete messages and connections)
+        chatRepository.delete(chat);
+    }
+
     private ChatDto mapToDto(Chat chat) {
         return ChatDto.builder()
                 .id(chat.getId())

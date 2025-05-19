@@ -7,9 +7,11 @@ import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -87,6 +89,26 @@ public class ChatController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{chatId}")
+    @Operation(summary = "Update chat title")
+    public ResponseEntity<ChatDto> updateChat(
+            @PathVariable Long chatId,
+            @Valid @RequestBody ChatDto chatDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = getUserId(userDetails);
+        return ResponseEntity.ok(chatService.updateChat(chatId, userId, chatDto));
+    }
+
+    @DeleteMapping("/{chatId}")
+    @Operation(summary = "Delete a chat")
+    public ResponseEntity<Void> deleteChat(
+            @PathVariable Long chatId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = getUserId(userDetails);
+        chatService.deleteChat(chatId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
     private Long getUserId(UserDetails userDetails) {
         if (userDetails instanceof CustomUserDetails) {
             return ((CustomUserDetails) userDetails).getUserId();
@@ -94,3 +116,5 @@ public class ChatController {
         throw new IllegalStateException("UserDetails is not an instance of CustomUserDetails");
     }
 }
+
+   
