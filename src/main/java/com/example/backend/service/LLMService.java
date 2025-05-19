@@ -1,19 +1,26 @@
 package com.example.backend.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.example.backend.config.LLMConfig;
-import com.example.backend.exception.ApiException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.*;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.backend.config.LLMConfig;
+import com.example.backend.exception.ApiException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +29,7 @@ public class LLMService {
 
     private final RestTemplate restTemplate;
     private final LLMConfig llmConfig;
+    private final GigaChatAuthService gigaChatAuthService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public String optimizeSqlQuery(String sqlQuery) {
@@ -41,9 +49,14 @@ public class LLMService {
             // Set headers
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setBearerAuth(llmConfig.getApiKey());
+            headers.setBearerAuth(gigaChatAuthService.getAccessToken());
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+            log.debug("Making request to LLM API: URL={}, Headers={}, Body={}", 
+                llmConfig.getApiUrl() + "/chat/completions",
+                headers,
+                requestBody);
 
             // Make API call
             ResponseEntity<String> response = restTemplate.exchange(
@@ -52,6 +65,10 @@ public class LLMService {
                     entity,
                     String.class
             );
+
+            log.debug("Received response from LLM API: Status={}, Body={}", 
+                response.getStatusCode(),
+                response.getBody());
 
             // Parse response
             if (response.getStatusCode() == HttpStatus.OK) {
@@ -70,7 +87,7 @@ public class LLMService {
 
             throw new ApiException("Failed to get response from LLM", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            log.error("Error calling LLM API: {}", e.getMessage());
+            log.error("Error calling LLM API: {}", e.getMessage(), e);
             throw new ApiException("Error optimizing SQL query: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

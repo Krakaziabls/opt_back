@@ -1,7 +1,6 @@
 package com.example.backend.config;
 
-import javax.net.ssl.SSLContext;
-
+import lombok.Data;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -13,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import lombok.Data;
+import javax.net.ssl.SSLContext;
 
 @Configuration
 @ConfigurationProperties(prefix = "llm")
@@ -33,16 +32,12 @@ public class LLMConfig {
                 .loadTrustMaterial(null, (chain, authType) -> true)
                 .build();
 
-        SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, 
-                new NoopHostnameVerifier());
-
+        SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier());
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setSSLSocketFactory(csf)
                 .build();
 
-        HttpComponentsClientHttpRequestFactory requestFactory = 
-                new HttpComponentsClientHttpRequestFactory();
-
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setHttpClient(httpClient);
         return new RestTemplate(requestFactory);
     }
