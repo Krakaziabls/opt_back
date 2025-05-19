@@ -21,6 +21,7 @@ ext {
     springdocVersion = '1.6.14'
     jjwtVersion = '0.11.5'
     jsqlparserVersion = '4.5'
+    httpclientVersion = '4.5.13'
 }
 
 dependencies {
@@ -50,6 +51,12 @@ dependencies {
     implementation "org.springdoc:springdoc-openapi-security:1.6.14"
     implementation "org.springdoc:springdoc-openapi-webmvc-core:1.6.14"
 
+    // Apache HttpClient
+    implementation "org.apache.httpcomponents:httpclient:$httpclientVersion"
+    implementation "org.apache.httpcomponents:httpcore:4.4.15"
+    implementation "org.apache.httpcomponents:httpmime:$httpclientVersion"
+    implementation "org.apache.httpcomponents:httpclient-osgi:$httpclientVersion"
+    implementation "org.apache.httpcomponents:httpcore-osgi:4.4.15"
 
     // Utilities
     compileOnly 'org.projectlombok:lombok'
@@ -65,7 +72,7 @@ dependencies {
 tasks.named('bootJar') {
     archiveFileName = 'backend.jar'
     manifest {
-        attributes 'Main-Class': 'com.example.backend.BackendApplication' // Adjust if your main class is different
+        attributes 'Main-Class': 'com.example.backend.BackendApplication'
     }
 }
 
