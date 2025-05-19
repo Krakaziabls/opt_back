@@ -1,13 +1,14 @@
 package com.example.backend.model.dto;
 
+import java.time.LocalDateTime;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -23,6 +24,8 @@ public class MessageDto {
     @NotBlank(message = "Content is required")
     private String content;
 
-    private boolean fromUser;
+    @NotNull(message = "From user flag is required")
+    private Boolean fromUser;
+
     private LocalDateTime createdAt;
 }

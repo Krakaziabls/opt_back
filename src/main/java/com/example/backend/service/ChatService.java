@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,6 +66,35 @@ public class ChatService {
         return messages.stream()
                 .map(this::mapToMessageDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public MessageDto sendMessage(Long chatId, Long userId, MessageDto messageDto) {
+        // Verify chat belongs to user
+        Chat chat = chatRepository.findByIdAndUserId(chatId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
+
+        // Create and save message
+        Message message = Message.builder()
+                .chat(chat)
+                .content(messageDto.getContent())
+                .fromUser(messageDto.getFromUser())
+                .build();
+
+        message = messageRepository.save(message);
+        
+        // Update chat's updatedAt timestamp
+        chat.setUpdatedAt(LocalDateTime.now());
+        chatRepository.save(chat);
+
+        // Return message DTO
+        return MessageDto.builder()
+                .id(message.getId())
+                .chatId(chat.getId())
+                .content(message.getContent())
+                .fromUser(message.isFromUser())
+                .createdAt(message.getCreatedAt())
+                .build();
     }
 
     @Transactional

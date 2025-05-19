@@ -64,7 +64,7 @@ public class SqlOptimizationService {
         // Get database connection if provided
         DatabaseConnection dbConnection = null;
         if (request.getDatabaseConnectionId() != null) {
-            dbConnection = databaseConnectionRepository.findById(request.getDatabaseConnectionId())
+            dbConnection = databaseConnectionRepository.findById(Long.parseLong(request.getDatabaseConnectionId()))
                     .orElseThrow(() -> new ResourceNotFoundException("Database connection not found"));
         }
 

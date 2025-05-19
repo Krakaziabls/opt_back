@@ -1,12 +1,12 @@
 package com.example.backend.model.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
@@ -17,8 +17,10 @@ public class SqlQueryRequest {
     @NotNull(message = "Chat ID is required")
     private Long chatId;
 
-    @NotBlank(message = "SQL query is required")
+    @NotBlank(message = "Query is required")
     private String query;
 
-    private Long databaseConnectionId;
+    private String databaseConnectionId;
+    
+    private String llm;
 }

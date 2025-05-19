@@ -1,20 +1,28 @@
 package com.example.backend.controller;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.backend.model.dto.ChatDto;
 import com.example.backend.model.dto.MessageDto;
 import com.example.backend.security.CustomUserDetails;
 import com.example.backend.service.ChatService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/chats")
@@ -57,6 +65,16 @@ public class ChatController {
             @AuthenticationPrincipal UserDetails userDetails) {
         Long userId = getUserId(userDetails);
         return ResponseEntity.ok(chatService.getChatMessages(chatId, userId));
+    }
+
+    @PostMapping("/{chatId}/messages")
+    @Operation(summary = "Send a message to a chat")
+    public ResponseEntity<MessageDto> sendMessage(
+            @PathVariable Long chatId,
+            @Valid @RequestBody MessageDto messageDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = getUserId(userDetails);
+        return ResponseEntity.ok(chatService.sendMessage(chatId, userId, messageDto));
     }
 
     @PostMapping("/{chatId}/archive")
