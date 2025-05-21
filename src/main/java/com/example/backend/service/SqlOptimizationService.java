@@ -41,68 +41,68 @@ public class SqlOptimizationService {
     private final DatabaseConnectionRepository databaseConnectionRepository;
     private final LLMService llmService;
     private final DatabaseConnectionService databaseConnectionService;
+    private final ChatService chatService;
 
     @Transactional
     public SqlQueryResponse optimizeQuery(Long userId, SqlQueryRequest request) {
-        // Validate chat belongs to user
-        Chat chat = chatRepository.findByIdAndUserId(request.getChatId(), userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
+        log.debug("Optimizing query for chatId={}, userId={}, query={}",
+                request.getChatId(), userId, request.getQuery());
 
-        // Validate SQL query
+        Chat chat = chatRepository.findByIdAndUserId(request.getChatId(), userId)
+                .orElseThrow(() -> {
+                    log.error("Chat not found: chatId={}, userId={}", request.getChatId(), userId);
+                    return new ResourceNotFoundException("Chat not found");
+                });
+
         validateSqlQuery(request.getQuery());
 
-        // Save user message
-        Message userMessage = Message.builder()
-                .chat(chat)
+        // Сохраняем пользовательское сообщение через ChatService
+        MessageDto userMessageDto = MessageDto.builder()
                 .content(request.getQuery())
                 .fromUser(true)
                 .build();
+        MessageDto savedUserMessageDto = chatService.sendMessage(request.getChatId(), userId, userMessageDto);
 
-        userMessage = messageRepository.save(userMessage);
-        chat.getMessages().add(userMessage);
-
-        // Get database connection if provided
         DatabaseConnection dbConnection = null;
         if (request.getDatabaseConnectionId() != null) {
             dbConnection = databaseConnectionRepository.findById(Long.parseLong(request.getDatabaseConnectionId()))
-                    .orElseThrow(() -> new ResourceNotFoundException("Database connection not found"));
+                    .orElseThrow(() -> {
+                        log.error("Database connection not found: id={}", request.getDatabaseConnectionId());
+                        return new ResourceNotFoundException("Database connection not found");
+                    });
         }
 
-        // Optimize query using LLM
         String optimizedQuery = llmService.optimizeSqlQuery(request.getQuery());
 
-        // Save LLM response message
-        Message llmMessage = Message.builder()
-                .chat(chat)
+        // Сохраняем системное сообщение через ChatService
+        MessageDto llmMessageDto = MessageDto.builder()
                 .content(optimizedQuery)
                 .fromUser(false)
                 .build();
+        MessageDto savedLlmMessageDto = chatService.sendMessage(request.getChatId(), userId, llmMessageDto);
 
-        llmMessage = messageRepository.save(llmMessage);
-        chat.getMessages().add(llmMessage);
-
-        // Create SQL query record
         SqlQuery sqlQuery = SqlQuery.builder()
-                .message(userMessage)
+                .message(messageRepository.findById(savedUserMessageDto.getId())
+                        .orElseThrow(() -> {
+                            log.error("User message not found: id={}", savedUserMessageDto.getId());
+                            return new ResourceNotFoundException("User message not found");
+                        }))
                 .originalQuery(request.getQuery())
                 .optimizedQuery(optimizedQuery)
                 .databaseConnection(dbConnection)
                 .build();
 
-        // If database connection is provided, execute the query to measure performance
         if (dbConnection != null) {
             try {
                 long executionTime = measureQueryExecutionTime(dbConnection.getId(), optimizedQuery);
                 sqlQuery.setExecutionTimeMs(executionTime);
             } catch (Exception e) {
                 log.error("Error executing optimized query: {}", e.getMessage());
-                // Continue without execution time
             }
         }
 
         SqlQuery savedQuery = sqlQueryRepository.save(sqlQuery);
 
-        // Update chat's updatedAt timestamp
         chat.setUpdatedAt(LocalDateTime.now());
         chatRepository.save(chat);
 
@@ -112,14 +112,17 @@ public class SqlOptimizationService {
                 .optimizedQuery(savedQuery.getOptimizedQuery())
                 .executionTimeMs(savedQuery.getExecutionTimeMs())
                 .createdAt(savedQuery.getCreatedAt())
-                .message(mapToMessageDto(llmMessage))
+                .message(savedLlmMessageDto)
                 .build();
     }
 
     public List<SqlQueryResponse> getQueryHistory(Long chatId, Long userId) {
-        // Validate chat belongs to user
+        log.debug("Fetching query history for chatId={}, userId={}", chatId, userId);
         chatRepository.findByIdAndUserId(chatId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
+                .orElseThrow(() -> {
+                    log.error("Chat not found: chatId={}, userId={}", chatId, userId);
+                    return new ResourceNotFoundException("Chat not found");
+                });
 
         List<SqlQuery> queries = sqlQueryRepository.findByMessageChatIdOrderByCreatedAtDesc(chatId);
 
@@ -130,9 +133,9 @@ public class SqlOptimizationService {
 
     private void validateSqlQuery(String query) {
         try {
-            // Parse the SQL query to validate syntax
             CCJSqlParserUtil.parse(query);
         } catch (JSQLParserException e) {
+            log.error("Invalid SQL query: {}", e.getMessage());
             throw new ApiException("Invalid SQL query: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -142,7 +145,6 @@ public class SqlOptimizationService {
         try {
             connection = databaseConnectionService.getConnection(connectionId);
 
-            // Add EXPLAIN ANALYZE to get execution plan and timing
             String explainQuery = "EXPLAIN ANALYZE " + query;
 
             long startTime = System.currentTimeMillis();
@@ -154,7 +156,7 @@ public class SqlOptimizationService {
             long endTime = System.currentTimeMillis();
             return endTime - startTime;
         } finally {
-            // Don't close the connection here, as it's managed by the DatabaseConnectionService
+            // Connection managed by DatabaseConnectionService
         }
     }
 
@@ -165,16 +167,6 @@ public class SqlOptimizationService {
                 .optimizedQuery(sqlQuery.getOptimizedQuery())
                 .executionTimeMs(sqlQuery.getExecutionTimeMs())
                 .createdAt(sqlQuery.getCreatedAt())
-                .build();
-    }
-
-    private MessageDto mapToMessageDto(Message message) {
-        return MessageDto.builder()
-                .id(message.getId())
-                .chatId(message.getChat().getId())
-                .content(message.getContent())
-                .fromUser(message.isFromUser())
-                .createdAt(message.getCreatedAt())
                 .build();
     }
 }

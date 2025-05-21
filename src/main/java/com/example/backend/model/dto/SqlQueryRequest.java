@@ -1,8 +1,7 @@
 package com.example.backend.model.dto;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +20,6 @@ public class SqlQueryRequest {
     private String query;
 
     private String databaseConnectionId;
-    
+
     private String llm;
 }

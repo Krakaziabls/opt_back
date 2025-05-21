@@ -1,27 +1,28 @@
 package com.example.backend.model.entity;
 
+import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "sql_queries")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class SqlQuery {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "message_id", nullable = false)
     private Message message;
 
@@ -31,7 +32,7 @@ public class SqlQuery {
     @Column(name = "optimized_query", columnDefinition = "TEXT")
     private String optimizedQuery;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "database_connection_id")
     private DatabaseConnection databaseConnection;
 

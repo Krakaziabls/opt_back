@@ -12,14 +12,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic"); // Префикс для отправки сообщений клиентам
-        config.setApplicationDestinationPrefixes("/app"); // Префикс для отправки сообщений серверу
+        config.enableSimpleBroker("/topic");
+        config.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws")
+        registry
+                .addEndpoint("/ws")
                 .setAllowedOrigins("http://localhost:3000")
-                .withSockJS(); // Эндпоинт для подключения
+                .withSockJS();
     }
 }

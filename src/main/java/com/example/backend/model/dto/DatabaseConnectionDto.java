@@ -1,15 +1,16 @@
 package com.example.backend.model.dto;
 
+import java.time.LocalDateTime;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -32,8 +33,8 @@ public class DatabaseConnectionDto {
     private String host;
 
     @NotNull(message = "Port is required")
-    @Min(value = 1, message = "Port must be greater than 0")
-    @Max(value = 65535, message = "Port must be less than 65536")
+    @Min(value = 1, message = "Port must be between 1 and 65535")
+    @Max(value = 65535, message = "Port must be between 1 and 65535")
     private Integer port;
 
     @NotBlank(message = "Database name is required")

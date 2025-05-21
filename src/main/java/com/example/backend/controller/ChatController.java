@@ -2,8 +2,6 @@ package com.example.backend.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,16 +9,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import jakarta.validation.Valid;
 import com.example.backend.model.dto.ChatDto;
 import com.example.backend.model.dto.MessageDto;
-import com.example.backend.security.CustomUserDetails;
 import com.example.backend.service.ChatService;
-
+import com.example.backend.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -60,23 +56,24 @@ public class ChatController {
         return ResponseEntity.ok(chatService.getChat(chatId, userId));
     }
 
-    @GetMapping("/{chatId}/messages")
-    @Operation(summary = "Get all messages in a chat")
-    public ResponseEntity<List<MessageDto>> getChatMessages(
+    @PostMapping("/{chatId}")
+    public ResponseEntity<ChatDto> updateChat(
             @PathVariable Long chatId,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @RequestBody ChatDto chatDto,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
         Long userId = getUserId(userDetails);
-        return ResponseEntity.ok(chatService.getChatMessages(chatId, userId));
+        return ResponseEntity.ok(chatService.updateChat(chatId, userId, chatDto));
     }
 
-    @PostMapping("/{chatId}/messages")
-    @Operation(summary = "Send a message to a chat")
-    public ResponseEntity<MessageDto> sendMessage(
+    @DeleteMapping("/{chatId}")
+    public ResponseEntity<Void> deleteChat(
             @PathVariable Long chatId,
-            @Valid @RequestBody MessageDto messageDto,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
         Long userId = getUserId(userDetails);
-        return ResponseEntity.ok(chatService.sendMessage(chatId, userId, messageDto));
+        chatService.deleteChat(chatId, userId);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{chatId}/archive")
@@ -89,24 +86,23 @@ public class ChatController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{chatId}")
-    @Operation(summary = "Update chat title")
-    public ResponseEntity<ChatDto> updateChat(
+    @GetMapping("/{chatId}/messages")
+    @Operation(summary = "Get all messages in a chat")
+    public ResponseEntity<List<MessageDto>> getChatMessages(
             @PathVariable Long chatId,
-            @Valid @RequestBody ChatDto chatDto,
             @AuthenticationPrincipal UserDetails userDetails) {
         Long userId = getUserId(userDetails);
-        return ResponseEntity.ok(chatService.updateChat(chatId, userId, chatDto));
+        return ResponseEntity.ok(chatService.getChatMessages(chatId, userId));
     }
 
-    @DeleteMapping("/{chatId}")
-    @Operation(summary = "Delete a chat")
-    public ResponseEntity<Void> deleteChat(
+    @PostMapping("/{chatId}/messages")
+    public ResponseEntity<MessageDto> sendMessage(
             @PathVariable Long chatId,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @RequestBody MessageDto messageDto,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
         Long userId = getUserId(userDetails);
-        chatService.deleteChat(chatId, userId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(chatService.sendMessage(chatId, userId, messageDto));
     }
 
     private Long getUserId(UserDetails userDetails) {
@@ -116,5 +112,3 @@ public class ChatController {
         throw new IllegalStateException("UserDetails is not an instance of CustomUserDetails");
     }
 }
-
-   

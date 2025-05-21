@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,17 +20,21 @@ import com.example.backend.repository.MessageRepository;
 import com.example.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChatService {
 
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
     private final DatabaseConnectionService databaseConnectionService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public List<ChatDto> getUserChats(Long userId) {
+        log.debug("Fetching chats for userId={}", userId);
         List<Chat> chats = chatRepository.findByUserIdOrderByUpdatedAtDesc(userId);
         return chats.stream()
                 .map(this::mapToDto)
@@ -37,8 +42,12 @@ public class ChatService {
     }
 
     public ChatDto createChat(Long userId, ChatDto chatDto) {
+        log.debug("Creating chat for userId={}, title={}", userId, chatDto.getTitle());
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    log.error("User not found: userId={}", userId);
+                    return new ResourceNotFoundException("User not found");
+                });
 
         Chat chat = Chat.builder()
                 .user(user)
@@ -47,20 +56,28 @@ public class ChatService {
                 .build();
 
         Chat savedChat = chatRepository.save(chat);
+        log.info("Created chat: id={}, title={}", savedChat.getId(), savedChat.getTitle());
         return mapToDto(savedChat);
     }
 
     public ChatDto getChat(Long chatId, Long userId) {
+        log.debug("Fetching chat: chatId={}, userId={}", chatId, userId);
         Chat chat = chatRepository.findByIdAndUserId(chatId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
+                .orElseThrow(() -> {
+                    log.error("Chat not found: chatId={}, userId={}", chatId, userId);
+                    return new ResourceNotFoundException("Chat not found");
+                });
 
         return mapToDto(chat);
     }
 
     public List<MessageDto> getChatMessages(Long chatId, Long userId) {
-        // Verify chat belongs to user
+        log.debug("Fetching messages for chatId={}, userId={}", chatId, userId);
         chatRepository.findByIdAndUserId(chatId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
+                .orElseThrow(() -> {
+                    log.error("Chat not found: chatId={}, userId={}", chatId, userId);
+                    return new ResourceNotFoundException("Chat not found");
+                });
 
         List<Message> messages = messageRepository.findByChatIdOrderByCreatedAtAsc(chatId);
         return messages.stream()
@@ -70,11 +87,22 @@ public class ChatService {
 
     @Transactional
     public MessageDto sendMessage(Long chatId, Long userId, MessageDto messageDto) {
-        // Verify chat belongs to user
-        Chat chat = chatRepository.findByIdAndUserId(chatId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
+        log.info("Processing sendMessage: chatId={}, userId={}, content={}", chatId, userId, messageDto.getContent());
+        if (messageDto.getContent() == null || messageDto.getContent().isBlank()) {
+            log.error("Message content is null or empty");
+            throw new IllegalArgumentException("Message content cannot be empty");
+        }
+        if (messageDto.getFromUser() == null) {
+            log.error("FromUser flag is null");
+            throw new IllegalArgumentException("FromUser flag is required");
+        }
 
-        // Create and save message
+        Chat chat = chatRepository.findByIdAndUserId(chatId, userId)
+                .orElseThrow(() -> {
+                    log.error("Chat not found: chatId={}, userId={}", chatId, userId);
+                    return new ResourceNotFoundException("Chat not found");
+                });
+
         Message message = Message.builder()
                 .chat(chat)
                 .content(messageDto.getContent())
@@ -82,55 +110,62 @@ public class ChatService {
                 .build();
 
         message = messageRepository.save(message);
-        
-        // Update chat's updatedAt timestamp
+
         chat.setUpdatedAt(LocalDateTime.now());
         chatRepository.save(chat);
 
-        // Return message DTO
-        return MessageDto.builder()
-                .id(message.getId())
-                .chatId(chat.getId())
-                .content(message.getContent())
-                .fromUser(message.isFromUser())
-                .createdAt(message.getCreatedAt())
-                .build();
+        MessageDto messageDtoResponse = mapToMessageDto(message);
+        messagingTemplate.convertAndSend("/topic/chat/" + chatId, messageDtoResponse);
+        log.info("Sent message to /topic/chat/{}: id={}", chatId, messageDtoResponse.getId());
+
+        return messageDtoResponse;
     }
 
     @Transactional
     public void archiveChat(Long chatId, Long userId) {
+        log.debug("Archiving chat: chatId={}, userId={}", chatId, userId);
         Chat chat = chatRepository.findByIdAndUserId(chatId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
+                .orElseThrow(() -> {
+                    log.error("Chat not found: chatId={}, userId={}", chatId, userId);
+                    return new ResourceNotFoundException("Chat not found");
+                });
 
         chat.setArchived(true);
         chatRepository.save(chat);
 
-        // Deactivate all database connections for this chat
         databaseConnectionService.deactivateConnectionsForChat(chatId);
+        log.info("Archived chat: chatId={}", chatId);
     }
 
     @Transactional
     public ChatDto updateChat(Long chatId, Long userId, ChatDto chatDto) {
+        log.debug("Updating chat: chatId={}, userId={}, newTitle={}", chatId, userId, chatDto.getTitle());
         Chat chat = chatRepository.findByIdAndUserId(chatId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
+                .orElseThrow(() -> {
+                    log.error("Chat not found: chatId={}, userId={}", chatId, userId);
+                    return new ResourceNotFoundException("Chat not found");
+                });
 
         chat.setTitle(chatDto.getTitle());
         chat.setUpdatedAt(LocalDateTime.now());
-        
+
         Chat updatedChat = chatRepository.save(chat);
+        log.info("Updated chat: chatId={}, title={}", chatId, updatedChat.getTitle());
         return mapToDto(updatedChat);
     }
 
     @Transactional
     public void deleteChat(Long chatId, Long userId) {
+        log.debug("Deleting chat: chatId={}, userId={}", chatId, userId);
         Chat chat = chatRepository.findByIdAndUserId(chatId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
+                .orElseThrow(() -> {
+                    log.error("Chat not found: chatId={}, userId={}", chatId, userId);
+                    return new ResourceNotFoundException("Chat not found");
+                });
 
-        // Deactivate all database connections for this chat
         databaseConnectionService.deactivateConnectionsForChat(chatId);
-        
-        // Delete the chat (this will cascade delete messages and connections)
         chatRepository.delete(chat);
+        log.info("Deleted chat: chatId={}", chatId);
     }
 
     private ChatDto mapToDto(Chat chat) {
@@ -146,7 +181,6 @@ public class ChatService {
     private MessageDto mapToMessageDto(Message message) {
         return MessageDto.builder()
                 .id(message.getId())
-                .chatId(message.getChat().getId())
                 .content(message.getContent())
                 .fromUser(message.isFromUser())
                 .createdAt(message.getCreatedAt())
