@@ -1,26 +1,26 @@
 package com.example.backend.service;
 
-import java.time.LocalDateTime;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
-
-import javax.net.ssl.SSLException;
 
 @Slf4j
 @Service
@@ -35,74 +35,122 @@ public class GigaChatAuthService {
     @Value("${gigachat.auth-url}")
     private String authUrl;
 
-    private String accessToken;
-    private LocalDateTime tokenExpiration;
+    @Value("${llm.api-url}")
+    private String apiUrl;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final WebClient webClient;
+    private final AtomicReference<String> tokenRef = new AtomicReference<>();
+    private final AtomicReference<Instant> tokenExpiryRef = new AtomicReference<>();
 
-    public GigaChatAuthService() throws SSLException {
-        SslContext sslContext = SslContextBuilder
-                .forClient()
-                .trustManager(InsecureTrustManagerFactory.INSTANCE)
-                .build();
+    private WebClient authWebClient;
+    private WebClient.Builder apiWebClientBuilder;
 
+    @PostConstruct
+    public void init() throws Exception {
+        if (authUrl == null || authUrl.isBlank()) {
+            throw new IllegalStateException("GigaChat authUrl is not configured");
+        }
+        if (apiUrl == null || apiUrl.isBlank()) {
+            throw new IllegalStateException("GigaChat apiUrl is not configured");
+        }
+
+        log.info("Initializing GigaChat auth client with URL: {}", authUrl);
+        log.info("Initializing GigaChat API client with URL: {}", apiUrl);
+
+        // Настройка безопасного SSL для production
+        SslContext sslContext = SslContextBuilder.forClient().build();
         HttpClient httpClient = HttpClient.create()
-                .secure(t -> t.sslContext(sslContext));
+                .secure(t -> t.sslContext(sslContext))
+                .keepAlive(true);
 
-        this.webClient = WebClient.builder()
+        this.authWebClient = WebClient.builder()
                 .baseUrl(authUrl)
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .defaultHeader("Content-Type", "application/x-www-form-urlencoded")
+                .defaultHeader("Accept", "application/json")
                 .defaultHeader("RqUID", UUID.randomUUID().toString())
                 .build();
+
+        this.apiWebClientBuilder = WebClient.builder()
+                .baseUrl(apiUrl)
+                .clientConnector(new ReactorClientHttpConnector(httpClient));
     }
 
-    public String getAccessToken() {
-        if (accessToken == null || isTokenExpired()) {
-            refreshToken();
+    public Mono<String> getToken() {
+        String currentToken = tokenRef.get();
+        if (currentToken == null || isTokenExpired()) {
+            return refreshToken().doOnNext(token -> tokenRef.set(token));
         }
-        return accessToken;
+        return Mono.just(currentToken);
     }
 
     private boolean isTokenExpired() {
-        return tokenExpiration == null || LocalDateTime.now().isAfter(tokenExpiration);
+        Instant expiry = tokenExpiryRef.get();
+        return expiry == null || Instant.now().isAfter(expiry.minusSeconds(300)); // Обновление за 5 минут до истечения
     }
 
-    private void refreshToken() {
+    private Mono<String> refreshToken() {
+        if (authUrl == null || authUrl.isBlank()) {
+            log.error("authUrl is empty or null");
+            return Mono.error(new IllegalStateException("GigaChat authUrl is not configured"));
+        }
         try {
-            String credentials = clientId + ":" + clientSecret;
-            String encodedCredentials = Base64.getEncoder().encodeToString(credentials.getBytes());
+            if (clientId == null || clientSecret == null) {
+                return Mono.error(new IllegalStateException("GigaChat credentials are not configured"));
+            }
 
-            JsonNode response = webClient.post()
-                    .header("Authorization", "Basic " + encodedCredentials)
+            String credentials = clientId.trim() + ":" + clientSecret.trim();
+            String encodedCredentials = Base64.getEncoder()
+                    .encodeToString(credentials.getBytes(StandardCharsets.UTF_8))
+                    .replaceAll("\\s+", "");
+
+            log.info("Attempting to authenticate with GigaChat API");
+            log.debug("Auth URL: {}", authUrl);
+
+            String authHeader = "Basic " + encodedCredentials.trim();
+
+            return authWebClient.post()
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .body(BodyInserters.fromFormData("scope", "GIGACHAT_API_PERS"))
+                    .header("Authorization", authHeader)
+                    .body(BodyInserters.fromFormData("grant_type", "client_credentials")
+                            .with("scope", "GIGACHAT_API_PERS"))
                     .retrieve()
                     .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
                             clientResponse -> clientResponse.bodyToMono(String.class)
                                     .flatMap(errorBody -> {
-                                        log.error("GigaChat auth error: {}", errorBody);
-                                        return Mono.error(new RuntimeException("Failed to authenticate with GigaChat: " + errorBody));
+                                        log.error("GigaChat auth error: status={}, body={}, headers={}",
+                                                clientResponse.statusCode(),
+                                                errorBody,
+                                                clientResponse.headers().asHttpHeaders());
+                                        return Mono.error(new RuntimeException(
+                                                String.format("Failed to authenticate with GigaChat: status=%d, body=%s",
+                                                        clientResponse.statusCode().value(), errorBody)));
                                     }))
                     .bodyToMono(JsonNode.class)
-                    .block();
-
-            if (response != null && response.has("access_token")) {
-                accessToken = response.get("access_token").asText();
-                int expiresIn = response.get("expires_in").asInt();
-                tokenExpiration = LocalDateTime.now().plusSeconds(expiresIn);
-                log.info("Successfully refreshed GigaChat token");
-            } else {
-                log.error("Invalid response from GigaChat auth: {}", response);
-                throw new RuntimeException("Invalid response from GigaChat auth service");
-            }
+                    .flatMap(response -> {
+                        if (response.has("access_token")) {
+                            String token = response.get("access_token").asText();
+                            int expiresIn = response.get("expires_in").asInt();
+                            Instant expiry = Instant.now().plusSeconds(expiresIn);
+                            tokenExpiryRef.set(expiry);
+                            log.info("Successfully refreshed GigaChat token, expires in {} seconds", expiresIn);
+                            return Mono.just(token);
+                        } else {
+                            log.error("Invalid response from GigaChat auth: {}", response);
+                            return Mono.error(new RuntimeException("Invalid response from GigaChat auth service"));
+                        }
+                    })
+                    .doOnError(e -> log.error("Error during token refresh: {}", e.getMessage(), e));
         } catch (Exception e) {
             log.error("Failed to refresh GigaChat token: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to refresh GigaChat token: " + e.getMessage(), e);
+            return Mono.error(new RuntimeException("Failed to refresh GigaChat token: " + e.getMessage(), e));
         }
     }
 
-    public WebClient getWebClient() {
-        return webClient;
+    public Mono<WebClient> getWebClient() {
+        return getToken().map(token -> apiWebClientBuilder
+                .build()
+                .mutate()
+                .defaultHeader("Authorization", "Bearer " + token)
+                .build());
     }
-} 
+}

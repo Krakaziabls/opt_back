@@ -5,14 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import com.example.backend.config.LLMConfig;
 import com.example.backend.exception.ApiException;
@@ -21,19 +16,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class LLMService {
 
-    private final RestTemplate restTemplate;
     private final LLMConfig llmConfig;
     private final GigaChatAuthService gigaChatAuthService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public String optimizeSqlQuery(String sqlQuery) {
-        try {
+    public Mono<String> optimizeSqlQuery(String sqlQuery) {
+        return Mono.defer(() -> {
             // Prepare request body for GigaChat API
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("model", llmConfig.getModel());
@@ -46,49 +41,60 @@ public class LLMService {
             requestBody.put("temperature", llmConfig.getTemperature());
             requestBody.put("max_tokens", llmConfig.getMaxTokens());
 
-            // Set headers
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setBearerAuth(gigaChatAuthService.getAccessToken());
-
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-
-            log.debug("Making request to LLM API: URL={}, Headers={}, Body={}", 
-                llmConfig.getApiUrl() + "/chat/completions",
-                headers,
-                requestBody);
-
-            // Make API call
-            ResponseEntity<String> response = restTemplate.exchange(
+            log.debug("Making request to LLM API: URL={}, Body={}",
                     llmConfig.getApiUrl() + "/chat/completions",
-                    HttpMethod.POST,
-                    entity,
-                    String.class
-            );
+                    requestBody);
 
-            log.debug("Received response from LLM API: Status={}, Body={}", 
-                response.getStatusCode(),
-                response.getBody());
+            return gigaChatAuthService.getWebClient()
+                    .flatMap(webClient -> webClient.post()
+                            .uri("/chat/completions")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(requestBody)
+                            .retrieve()
+                            .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                                    clientResponse -> clientResponse.bodyToMono(String.class)
+                                            .flatMap(errorBody -> {
+                                                log.error("LLM API error: status={}, body={}",
+                                                        clientResponse.statusCode(), errorBody);
+                                                return Mono.error(new RuntimeException(
+                                                        "Failed to call LLM API: " + errorBody));
+                                            }))
+                            .bodyToMono(String.class))
+                    .flatMap(response -> {
+                        log.debug("Received response from LLM API: Body={}", response);
+                        return parseResponse(response);
+                    })
+                    .onErrorMap(e -> {
+                        log.error("Error calling LLM API: {}", e.getMessage(), e);
+                        return new ApiException("Error optimizing SQL query: " + e.getMessage(),
+                                HttpStatus.INTERNAL_SERVER_ERROR);
+                    });
+        });
+    }
 
-            // Parse response
-            if (response.getStatusCode() == HttpStatus.OK) {
-                JsonNode rootNode = objectMapper.readTree(response.getBody());
-                JsonNode choicesNode = rootNode.path("choices");
+    private Mono<String> parseResponse(String response) {
+        if (response == null) {
+            return Mono.error(new ApiException("Empty response from LLM", HttpStatus.INTERNAL_SERVER_ERROR));
+        }
 
-                if (choicesNode.isArray() && choicesNode.size() > 0) {
-                    JsonNode firstChoice = choicesNode.get(0);
-                    JsonNode messageNode = firstChoice.path("message");
-                    String content = messageNode.path("content").asText();
+        try {
+            JsonNode rootNode = objectMapper.readTree(response);
+            JsonNode choicesNode = rootNode.path("choices");
 
-                    // Extract SQL code from response
-                    return extractSqlFromResponse(content);
-                }
+            if (choicesNode.isArray() && choicesNode.size() > 0) {
+                JsonNode firstChoice = choicesNode.get(0);
+                JsonNode messageNode = firstChoice.path("message");
+                String content = messageNode.path("content").asText();
+                return Mono.just(extractSqlFromResponse(content));
+            } else {
+                log.error("Invalid response format: no choices array or empty choices");
+                return Mono.error(new ApiException("Invalid response format from LLM",
+                        HttpStatus.INTERNAL_SERVER_ERROR));
             }
-
-            throw new ApiException("Failed to get response from LLM", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            log.error("Error calling LLM API: {}", e.getMessage(), e);
-            throw new ApiException("Error optimizing SQL query: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("Failed to parse LLM response: {}", e.getMessage(), e);
+            return Mono.error(new ApiException("Failed to parse LLM response: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
 

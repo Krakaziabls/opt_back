@@ -63,6 +63,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'com.h2database:h2'
+
+    // Netty DNS
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.107.Final:osx-x86_64'
 }
 
 tasks.named('bootJar') {

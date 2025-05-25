@@ -18,7 +18,6 @@ import com.example.backend.model.dto.SqlQueryRequest;
 import com.example.backend.model.dto.SqlQueryResponse;
 import com.example.backend.model.entity.Chat;
 import com.example.backend.model.entity.DatabaseConnection;
-import com.example.backend.model.entity.Message;
 import com.example.backend.model.entity.SqlQuery;
 import com.example.backend.repository.ChatRepository;
 import com.example.backend.repository.DatabaseConnectionRepository;
@@ -29,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -44,86 +44,112 @@ public class SqlOptimizationService {
     private final ChatService chatService;
 
     @Transactional
-    public SqlQueryResponse optimizeQuery(Long userId, SqlQueryRequest request) {
+    public Mono<SqlQueryResponse> optimizeQuery(Long userId, SqlQueryRequest request) {
         log.debug("Optimizing query for chatId={}, userId={}, query={}",
                 request.getChatId(), userId, request.getQuery());
 
-        Chat chat = chatRepository.findByIdAndUserId(request.getChatId(), userId)
-                .orElseThrow(() -> {
-                    log.error("Chat not found: chatId={}, userId={}", request.getChatId(), userId);
-                    return new ResourceNotFoundException("Chat not found");
+        return Mono.just(request)
+                .flatMap(req -> {
+                    // Проверка существования чата
+                    Chat chat = chatRepository.findByIdAndUserId(req.getChatId(), userId)
+                            .orElseThrow(() -> {
+                                log.error("Chat not found: chatId={}, userId={}", req.getChatId(), userId);
+                                return new ResourceNotFoundException("Chat not found");
+                            });
+
+                    // Валидация SQL-запроса
+                    validateSqlQuery(req.getQuery());
+
+                    // Сохранение сообщения пользователя через ChatService
+                    MessageDto userMessageDto = MessageDto.builder()
+                            .content(req.getQuery())
+                            .fromUser(true)
+                            .build();
+                    return Mono.just(chatService.sendMessage(req.getChatId(), userId, userMessageDto));
+                })
+                .flatMap(savedUserMessageDto -> {
+                    // Проверка подключения к базе данных, если указано
+                    DatabaseConnection dbConnection;
+                    if (request.getDatabaseConnectionId() != null) {
+                        dbConnection = databaseConnectionRepository.findById(Long.parseLong(request.getDatabaseConnectionId()))
+                                .orElseThrow(() -> {
+                                    log.error("Database connection not found: id={}", request.getDatabaseConnectionId());
+                                    return new ResourceNotFoundException("Database connection not found");
+                                });
+                    } else {
+                        dbConnection = null;
+                    }
+
+                    // Оптимизация запроса через LLMService
+                    return llmService.optimizeSqlQuery(request.getQuery())
+                            .flatMap(optimizedQuery -> {
+                                // Сохранение ответа системы через ChatService
+                                MessageDto llmMessageDto = MessageDto.builder()
+                                        .content(optimizedQuery)
+                                        .fromUser(false)
+                                        .build();
+                                return Mono.just(chatService.sendMessage(request.getChatId(), userId, llmMessageDto))
+                                        .map(savedLlmMessageDto -> {
+                                            // Создание сущности SQL-запроса
+                                            SqlQuery sqlQuery = SqlQuery.builder()
+                                                    .message(messageRepository.findById(savedUserMessageDto.getId())
+                                                            .orElseThrow(() -> {
+                                                                log.error("User message not found: id={}", savedUserMessageDto.getId());
+                                                                return new ResourceNotFoundException("User message not found");
+                                                            }))
+                                                    .originalQuery(request.getQuery())
+                                                    .optimizedQuery(optimizedQuery)
+                                                    .databaseConnection(dbConnection)
+                                                    .build();
+
+                                            // Измерение времени выполнения, если есть подключение к базе данных
+                                            if (dbConnection != null) {
+                                                try {
+                                                    long executionTime = measureQueryExecutionTime(dbConnection.getId(), optimizedQuery);
+                                                    sqlQuery.setExecutionTimeMs(executionTime);
+                                                } catch (Exception e) {
+                                                    log.error("Error executing optimized query: {}", e.getMessage());
+                                                }
+                                            }
+
+                                            // Сохранение запроса в базе данных
+                                            SqlQuery savedQuery = sqlQueryRepository.save(sqlQuery);
+
+                                            // Обновление времени чата
+                                            Chat chat = chatRepository.findById(request.getChatId())
+                                                    .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
+                                            chat.setUpdatedAt(LocalDateTime.now());
+                                            chatRepository.save(chat);
+
+                                            // Формирование ответа
+                                            return SqlQueryResponse.builder()
+                                                    .id(savedQuery.getId())
+                                                    .originalQuery(savedQuery.getOriginalQuery())
+                                                    .optimizedQuery(savedQuery.getOptimizedQuery())
+                                                    .executionTimeMs(savedQuery.getExecutionTimeMs())
+                                                    .createdAt(savedQuery.getCreatedAt())
+                                                    .message(savedLlmMessageDto)
+                                                    .build();
+                                        });
+                            });
+                })
+                .onErrorMap(e -> {
+                    log.error("Error optimizing query: {}", e.getMessage(), e);
+                    return new ApiException("Error optimizing query: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
                 });
-
-        validateSqlQuery(request.getQuery());
-
-        // Сохраняем пользовательское сообщение через ChatService
-        MessageDto userMessageDto = MessageDto.builder()
-                .content(request.getQuery())
-                .fromUser(true)
-                .build();
-        MessageDto savedUserMessageDto = chatService.sendMessage(request.getChatId(), userId, userMessageDto);
-
-        DatabaseConnection dbConnection = null;
-        if (request.getDatabaseConnectionId() != null) {
-            dbConnection = databaseConnectionRepository.findById(Long.parseLong(request.getDatabaseConnectionId()))
-                    .orElseThrow(() -> {
-                        log.error("Database connection not found: id={}", request.getDatabaseConnectionId());
-                        return new ResourceNotFoundException("Database connection not found");
-                    });
-        }
-
-        String optimizedQuery = llmService.optimizeSqlQuery(request.getQuery());
-
-        // Сохраняем системное сообщение через ChatService
-        MessageDto llmMessageDto = MessageDto.builder()
-                .content(optimizedQuery)
-                .fromUser(false)
-                .build();
-        MessageDto savedLlmMessageDto = chatService.sendMessage(request.getChatId(), userId, llmMessageDto);
-
-        SqlQuery sqlQuery = SqlQuery.builder()
-                .message(messageRepository.findById(savedUserMessageDto.getId())
-                        .orElseThrow(() -> {
-                            log.error("User message not found: id={}", savedUserMessageDto.getId());
-                            return new ResourceNotFoundException("User message not found");
-                        }))
-                .originalQuery(request.getQuery())
-                .optimizedQuery(optimizedQuery)
-                .databaseConnection(dbConnection)
-                .build();
-
-        if (dbConnection != null) {
-            try {
-                long executionTime = measureQueryExecutionTime(dbConnection.getId(), optimizedQuery);
-                sqlQuery.setExecutionTimeMs(executionTime);
-            } catch (Exception e) {
-                log.error("Error executing optimized query: {}", e.getMessage());
-            }
-        }
-
-        SqlQuery savedQuery = sqlQueryRepository.save(sqlQuery);
-
-        chat.setUpdatedAt(LocalDateTime.now());
-        chatRepository.save(chat);
-
-        return SqlQueryResponse.builder()
-                .id(savedQuery.getId())
-                .originalQuery(savedQuery.getOriginalQuery())
-                .optimizedQuery(savedQuery.getOptimizedQuery())
-                .executionTimeMs(savedQuery.getExecutionTimeMs())
-                .createdAt(savedQuery.getCreatedAt())
-                .message(savedLlmMessageDto)
-                .build();
     }
 
     public List<SqlQueryResponse> getQueryHistory(Long chatId, Long userId) {
         log.debug("Fetching query history for chatId={}, userId={}", chatId, userId);
+
+        // Проверка существования чата
         chatRepository.findByIdAndUserId(chatId, userId)
                 .orElseThrow(() -> {
                     log.error("Chat not found: chatId={}, userId={}", chatId, userId);
                     return new ResourceNotFoundException("Chat not found");
                 });
 
+        // Получение истории запросов
         List<SqlQuery> queries = sqlQueryRepository.findByMessageChatIdOrderByCreatedAtDesc(chatId);
 
         return queries.stream()
@@ -156,7 +182,7 @@ public class SqlOptimizationService {
             long endTime = System.currentTimeMillis();
             return endTime - startTime;
         } finally {
-            // Connection managed by DatabaseConnectionService
+            // Подключение управляется DatabaseConnectionService
         }
     }
 
