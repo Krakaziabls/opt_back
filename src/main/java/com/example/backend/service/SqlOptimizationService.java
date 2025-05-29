@@ -1,16 +1,5 @@
 package com.example.backend.service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.example.backend.exception.ApiException;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.model.dto.MessageDto;
@@ -23,12 +12,24 @@ import com.example.backend.repository.ChatRepository;
 import com.example.backend.repository.DatabaseConnectionRepository;
 import com.example.backend.repository.MessageRepository;
 import com.example.backend.repository.SqlQueryRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,89 +40,78 @@ public class SqlOptimizationService {
     private final MessageRepository messageRepository;
     private final ChatRepository chatRepository;
     private final DatabaseConnectionRepository databaseConnectionRepository;
-    private final LLMService llmService;
+    private final LLMService llmService; // Assumed service for query optimization
     private final DatabaseConnectionService databaseConnectionService;
-    private final ChatService chatService;
+    private final ChatService chatService; // Assumed service for chat operations
 
     @Transactional
     public Mono<SqlQueryResponse> optimizeQuery(Long userId, SqlQueryRequest request) {
-        log.debug("Optimizing query for chatId={}, userId={}, query={}",
-                request.getChatId(), userId, request.getQuery());
+        log.info("Starting query optimization for userId={}, chatId={}", userId, request.getChatId());
 
-        return Mono.just(request)
-                .flatMap(req -> {
-                    // Проверка существования чата
-                    Chat chat = chatRepository.findByIdAndUserId(req.getChatId(), userId)
-                            .orElseThrow(() -> {
-                                log.error("Chat not found: chatId={}, userId={}", req.getChatId(), userId);
-                                return new ResourceNotFoundException("Chat not found");
-                            });
+        return Mono.fromCallable(() -> {
+                    // Validate chat existence and ownership
+                    Chat chat = chatRepository.findById(request.getChatId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Chat not found with ID: " + request.getChatId()));
 
-                    // Валидация SQL-запроса
-                    validateSqlQuery(req.getQuery());
+                    // Validate SQL query syntax
+                    validateSqlQuery(request.getQuery());
 
-                    // Сохранение сообщения пользователя через ChatService
+                    // Save user's query as a message
                     MessageDto userMessageDto = MessageDto.builder()
-                            .content(req.getQuery())
+                            .content(request.getQuery())
                             .fromUser(true)
                             .build();
-                    return Mono.just(chatService.sendMessage(req.getChatId(), userId, userMessageDto));
+                    return chatService.sendMessage(request.getChatId(), userId, userMessageDto);
                 })
                 .flatMap(savedUserMessageDto -> {
-                    // Проверка подключения к базе данных, если указано
-                    DatabaseConnection dbConnection;
-                    if (request.getDatabaseConnectionId() != null) {
-                        dbConnection = databaseConnectionRepository.findById(Long.parseLong(request.getDatabaseConnectionId()))
-                                .orElseThrow(() -> {
-                                    log.error("Database connection not found: id={}", request.getDatabaseConnectionId());
-                                    return new ResourceNotFoundException("Database connection not found");
-                                });
-                    } else {
-                        dbConnection = null;
+                    // Handle database connection if provided
+                    DatabaseConnection dbConnection = null;
+                    if (request.getDatabaseConnectionId() != null && !request.getDatabaseConnectionId().isBlank()) {
+                        try {
+                            Long dbConnectionId = Long.parseLong(request.getDatabaseConnectionId());
+                            dbConnection = databaseConnectionRepository.findByIdAndChatId(dbConnectionId, request.getChatId())
+                                    .orElseThrow(() -> new ResourceNotFoundException(
+                                            "Database connection not found or not linked to chat: " + dbConnectionId));
+                        } catch (NumberFormatException e) {
+                            throw new ApiException("Invalid database connection ID: " + request.getDatabaseConnectionId(),
+                                    HttpStatus.BAD_REQUEST);
+                        }
                     }
 
-                    // Оптимизация запроса через LLMService
+                    // Optimize query using LLM
+                    DatabaseConnection finalDbConnection = dbConnection;
                     return llmService.optimizeSqlQuery(request.getQuery())
                             .flatMap(optimizedQuery -> {
-                                // Сохранение ответа системы через ChatService
+                                // Save optimized query as a system message
                                 MessageDto llmMessageDto = MessageDto.builder()
                                         .content(optimizedQuery)
                                         .fromUser(false)
                                         .build();
-                                return Mono.just(chatService.sendMessage(request.getChatId(), userId, llmMessageDto))
+                                return Mono.fromCallable(() -> chatService.sendMessage(request.getChatId(), userId, llmMessageDto))
                                         .map(savedLlmMessageDto -> {
-                                            // Создание сущности SQL-запроса
+                                            // Build and save SqlQuery entity
                                             SqlQuery sqlQuery = SqlQuery.builder()
                                                     .message(messageRepository.findById(savedUserMessageDto.getId())
-                                                            .orElseThrow(() -> {
-                                                                log.error("User message not found: id={}", savedUserMessageDto.getId());
-                                                                return new ResourceNotFoundException("User message not found");
-                                                            }))
+                                                            .orElseThrow(() -> new ResourceNotFoundException(
+                                                                    "User message not found: " + savedUserMessageDto.getId())))
                                                     .originalQuery(request.getQuery())
                                                     .optimizedQuery(optimizedQuery)
-                                                    .databaseConnection(dbConnection)
+                                                    .databaseConnection(finalDbConnection)
+                                                    .createdAt(LocalDateTime.now())
                                                     .build();
 
-                                            // Измерение времени выполнения, если есть подключение к базе данных
-                                            if (dbConnection != null) {
+                                            // Measure execution time if connection exists
+                                            if (finalDbConnection != null) {
                                                 try {
-                                                    long executionTime = measureQueryExecutionTime(dbConnection.getId(), optimizedQuery);
+                                                    long executionTime = measureQueryExecutionTime(finalDbConnection.getId(), optimizedQuery);
                                                     sqlQuery.setExecutionTimeMs(executionTime);
-                                                } catch (Exception e) {
-                                                    log.error("Error executing optimized query: {}", e.getMessage());
+                                                } catch (SQLException e) {
+                                                    log.warn("Failed to measure execution time for query: {}", e.getMessage());
                                                 }
                                             }
 
-                                            // Сохранение запроса в базе данных
                                             SqlQuery savedQuery = sqlQueryRepository.save(sqlQuery);
 
-                                            // Обновление времени чата
-                                            Chat chat = chatRepository.findById(request.getChatId())
-                                                    .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
-                                            chat.setUpdatedAt(LocalDateTime.now());
-                                            chatRepository.save(chat);
-
-                                            // Формирование ответа
                                             return SqlQueryResponse.builder()
                                                     .id(savedQuery.getId())
                                                     .originalQuery(savedQuery.getOriginalQuery())
@@ -134,24 +124,22 @@ public class SqlOptimizationService {
                             });
                 })
                 .onErrorMap(e -> {
-                    log.error("Error optimizing query: {}", e.getMessage(), e);
-                    return new ApiException("Error optimizing query: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                    if (!(e instanceof ResourceNotFoundException) && !(e instanceof ApiException)) {
+                        log.error("Unexpected error during query optimization: {}", e.getMessage(), e);
+                        return new ApiException("Internal error during query optimization", HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                    return e;
                 });
     }
 
     public List<SqlQueryResponse> getQueryHistory(Long chatId, Long userId) {
-        log.debug("Fetching query history for chatId={}, userId={}", chatId, userId);
+        log.info("Fetching query history for userId={}, chatId={}", userId, chatId);
 
-        // Проверка существования чата
-        chatRepository.findByIdAndUserId(chatId, userId)
-                .orElseThrow(() -> {
-                    log.error("Chat not found: chatId={}, userId={}", chatId, userId);
-                    return new ResourceNotFoundException("Chat not found");
-                });
+        // Validate chat existence
+        chatRepository.findById(chatId)
+                .orElseThrow(() -> new ResourceNotFoundException("Chat not found with ID: " + chatId));
 
-        // Получение истории запросов
         List<SqlQuery> queries = sqlQueryRepository.findByMessageChatIdOrderByCreatedAtDesc(chatId);
-
         return queries.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
@@ -161,38 +149,54 @@ public class SqlOptimizationService {
         try {
             CCJSqlParserUtil.parse(query);
         } catch (JSQLParserException e) {
-            log.error("Invalid SQL query: {}", e.getMessage());
+            log.error("Invalid SQL query syntax: {}", e.getMessage());
             throw new ApiException("Invalid SQL query: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     private long measureQueryExecutionTime(Long connectionId, String query) throws SQLException {
-        Connection connection = null;
-        try {
-            connection = databaseConnectionService.getConnection(connectionId);
+        if (!query.trim().toUpperCase().startsWith("SELECT")) {
+            log.info("Skipping execution time measurement for non-SELECT query: {}", query);
+            return Long.parseLong(null); // Use null to indicate no measurement for non-SELECT queries
+        }
 
-            String explainQuery = "EXPLAIN ANALYZE " + query;
+        Connection connection = databaseConnectionService.getConnection(connectionId);
+        String explainQuery = "EXPLAIN ANALYZE " + query;
 
-            long startTime = System.currentTimeMillis();
-
-            try (Statement stmt = connection.createStatement()) {
-                stmt.execute(explainQuery);
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(explainQuery)) {
+            StringBuilder output = new StringBuilder();
+            while (rs.next()) {
+                output.append(rs.getString(1)).append("\n");
             }
 
-            long endTime = System.currentTimeMillis();
-            return endTime - startTime;
-        } finally {
-            // Подключение управляется DatabaseConnectionService
+            Pattern pattern = Pattern.compile("Execution Time: (\\d+\\.\\d+) ms");
+            Matcher matcher = pattern.matcher(output.toString());
+            if (matcher.find()) {
+                return (long) Double.parseDouble(matcher.group(1));
+            } else {
+                log.warn("Execution time not found in EXPLAIN ANALYZE output");
+                return Long.parseLong(null);
+            }
+        } catch (SQLException e) {
+            log.error("SQLException during execution time measurement: {}", e.getMessage());
+            throw e;
         }
     }
 
     private SqlQueryResponse mapToResponse(SqlQuery sqlQuery) {
+        MessageDto messageDto = MessageDto.builder()
+                .content(sqlQuery.getOriginalQuery())
+                .fromUser(true)
+                .build(); // Simplified for this example; adjust based on your MessageDto needs
+
         return SqlQueryResponse.builder()
                 .id(sqlQuery.getId())
                 .originalQuery(sqlQuery.getOriginalQuery())
                 .optimizedQuery(sqlQuery.getOptimizedQuery())
                 .executionTimeMs(sqlQuery.getExecutionTimeMs())
                 .createdAt(sqlQuery.getCreatedAt())
+                .message(messageDto)
                 .build();
     }
 }

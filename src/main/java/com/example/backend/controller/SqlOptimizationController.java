@@ -1,5 +1,7 @@
 package com.example.backend.controller;
 
+import com.example.backend.exception.ApiException;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.model.dto.SqlQueryRequest;
 import com.example.backend.model.dto.SqlQueryResponse;
 import com.example.backend.security.CustomUserDetails;
@@ -21,25 +23,34 @@ import java.util.List;
 @RestController
 @RequestMapping("/sql")
 @RequiredArgsConstructor
-@Tag(name = "SQL Optimization", description = "SQL query optimization API")
+@Tag(name = "Оптимизация SQL", description = "API для оптимизации SQL-запросов")
 @SecurityRequirement(name = "bearerAuth")
 public class SqlOptimizationController {
 
     private final SqlOptimizationService sqlOptimizationService;
 
     @PostMapping("/optimize")
-    @Operation(summary = "Optimize an SQL query")
+    @Operation(summary = "Оптимизировать SQL-запрос")
     public Mono<ResponseEntity<SqlQueryResponse>> optimizeQuery(
             @Valid @RequestBody SqlQueryRequest request,
             @AuthenticationPrincipal UserDetails userDetails) {
         Long userId = getUserId(userDetails);
         return sqlOptimizationService.optimizeQuery(userId, request)
                 .map(ResponseEntity::ok)
-                .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()));
+                .onErrorResume(e -> {
+                    if (e instanceof ResourceNotFoundException) {
+                        return Mono.just(ResponseEntity.notFound().build());
+                    } else if (e instanceof ApiException) {
+                        ApiException apiEx = (ApiException) e;
+                        return Mono.just(ResponseEntity.status(apiEx.getStatus()).body(null));
+                    } else {
+                        return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+                    }
+                });
     }
 
     @GetMapping("/history/{chatId}")
-    @Operation(summary = "Get SQL query history for a chat")
+    @Operation(summary = "Получить историю SQL-запросов для чата")
     public ResponseEntity<List<SqlQueryResponse>> getQueryHistory(
             @PathVariable Long chatId,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -47,10 +58,10 @@ public class SqlOptimizationController {
         return ResponseEntity.ok(sqlOptimizationService.getQueryHistory(chatId, userId));
     }
 
-    private Long getUserId(UserDetails userDetails) throws IllegalStateException {
+    private Long getUserId(UserDetails userDetails) {
         if (userDetails instanceof CustomUserDetails) {
             return ((CustomUserDetails) userDetails).getUserId();
         }
-        throw new IllegalStateException("UserDetails is not an instance of CustomUserDetails");
+        throw new IllegalStateException("UserDetails не является экземпляром CustomUserDetails");
     }
 }
