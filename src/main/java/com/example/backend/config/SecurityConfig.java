@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/ws/**").permitAll()
+                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/ws/**", "/sql/optimize").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
