@@ -115,8 +115,16 @@ public class ChatService {
         chatRepository.save(chat);
 
         MessageDto messageDtoResponse = mapToMessageDto(message);
-        messagingTemplate.convertAndSend("/topic/chat/" + chatId, messageDtoResponse);
-        log.info("Sent message to /topic/chat/{}: id={}", chatId, messageDtoResponse.getId());
+        
+        try {
+            String destination = "/topic/chat/" + chatId;
+            log.debug("Sending message to destination: {}", destination);
+            messagingTemplate.convertAndSend(destination, messageDtoResponse);
+            log.info("Successfully sent message to {}: id={}", destination, messageDtoResponse.getId());
+        } catch (Exception e) {
+            log.error("Failed to send message via WebSocket: {}", e.getMessage(), e);
+            // Не выбрасываем исключение, так как сообщение уже сохранено в базе данных
+        }
 
         return messageDtoResponse;
     }
