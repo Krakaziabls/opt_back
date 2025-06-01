@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .requestMatchers("/sockjs-node/**").permitAll()
                 .requestMatchers("/websocket/**").permitAll()
                 .requestMatchers("/error").permitAll()
+                .requestMatchers("/sql/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
