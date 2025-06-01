@@ -19,23 +19,22 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.backend.config.TestConfig;
-import com.example.backend.config.TestJwtConfig;
 import com.example.backend.config.TestSecurityConfig;
 import com.example.backend.model.dto.ChatDto;
 import com.example.backend.model.dto.MessageDto;
 import com.example.backend.repository.ChatRepository;
 import com.example.backend.repository.MessageRepository;
 import com.example.backend.repository.UserRepository;
+import com.example.backend.security.WithTestUser;
 import com.example.backend.service.ChatService;
 import com.example.backend.service.DatabaseConnectionService;
 
 @WebMvcTest(ChatController.class)
-@Import({TestConfig.class, TestSecurityConfig.class, TestJwtConfig.class})
+@Import({TestConfig.class, TestSecurityConfig.class})
 @ActiveProfiles("test")
 public class ChatControllerTest {
 
@@ -61,14 +60,14 @@ public class ChatControllerTest {
     private SimpMessagingTemplate messagingTemplate;
 
     @Test
-    @WithMockUser(username = "testuser")
+    @WithTestUser
     public void getUserChats_ReturnsOk() throws Exception {
         List<ChatDto> chats = Arrays.asList(
             ChatDto.builder().id(1L).title("Chat 1").build(),
             ChatDto.builder().id(2L).title("Chat 2").build()
         );
 
-        when(chatService.getUserChats(any(Long.class))).thenReturn(chats);
+        when(chatService.getUserChats(eq(1L))).thenReturn(chats);
 
         mockMvc.perform(get("/chats"))
                 .andExpect(status().isOk())
@@ -79,14 +78,14 @@ public class ChatControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "testuser")
+    @WithTestUser
     public void createChat_ValidRequest_ReturnsOk() throws Exception {
         ChatDto chatDto = ChatDto.builder()
                 .id(1L)
                 .title("New Chat")
                 .build();
 
-        when(chatService.createChat(any(Long.class), any(ChatDto.class))).thenReturn(chatDto);
+        when(chatService.createChat(eq(1L), any(ChatDto.class))).thenReturn(chatDto);
 
         mockMvc.perform(post("/chats")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -97,14 +96,14 @@ public class ChatControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "testuser")
+    @WithTestUser
     public void getChat_ValidId_ReturnsOk() throws Exception {
         ChatDto chatDto = ChatDto.builder()
                 .id(1L)
                 .title("Test Chat")
                 .build();
 
-        when(chatService.getChat(eq(1L), any(Long.class))).thenReturn(chatDto);
+        when(chatService.getChat(eq(1L), eq(1L))).thenReturn(chatDto);
 
         mockMvc.perform(get("/chats/1"))
                 .andExpect(status().isOk())
@@ -113,14 +112,14 @@ public class ChatControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "testuser")
+    @WithTestUser
     public void updateChat_ValidRequest_ReturnsOk() throws Exception {
         ChatDto chatDto = ChatDto.builder()
                 .id(1L)
                 .title("Updated Chat")
                 .build();
 
-        when(chatService.updateChat(eq(1L), any(Long.class), any(ChatDto.class))).thenReturn(chatDto);
+        when(chatService.updateChat(eq(1L), eq(1L), any(ChatDto.class))).thenReturn(chatDto);
 
         mockMvc.perform(post("/chats/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -131,28 +130,28 @@ public class ChatControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "testuser")
+    @WithTestUser
     public void deleteChat_ValidId_ReturnsOk() throws Exception {
         mockMvc.perform(delete("/chats/1"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(username = "testuser")
+    @WithTestUser
     public void archiveChat_ValidId_ReturnsNoContent() throws Exception {
         mockMvc.perform(post("/chats/1/archive"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    @WithMockUser(username = "testuser")
+    @WithTestUser
     public void getChatMessages_ValidId_ReturnsOk() throws Exception {
         List<MessageDto> messages = Arrays.asList(
             MessageDto.builder().id(1L).content("Message 1").build(),
             MessageDto.builder().id(2L).content("Message 2").build()
         );
 
-        when(chatService.getChatMessages(eq(1L), any(Long.class))).thenReturn(messages);
+        when(chatService.getChatMessages(eq(1L), eq(1L))).thenReturn(messages);
 
         mockMvc.perform(get("/chats/1/messages"))
                 .andExpect(status().isOk())
@@ -163,14 +162,14 @@ public class ChatControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "testuser")
+    @WithTestUser
     public void sendMessage_ValidRequest_ReturnsOk() throws Exception {
         MessageDto messageDto = MessageDto.builder()
                 .id(1L)
                 .content("New Message")
                 .build();
 
-        when(chatService.sendMessage(eq(1L), any(Long.class), any(MessageDto.class))).thenReturn(messageDto);
+        when(chatService.sendMessage(eq(1L), eq(1L), any(MessageDto.class))).thenReturn(messageDto);
 
         mockMvc.perform(post("/chats/1/messages")
                 .contentType(MediaType.APPLICATION_JSON)

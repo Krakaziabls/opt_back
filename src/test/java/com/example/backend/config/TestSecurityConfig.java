@@ -13,8 +13,9 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import com.example.backend.model.entity.User;
-import com.example.backend.security.CustomUserDetails;
+import com.example.backend.security.JwtTokenFilter;
+import com.example.backend.security.JwtTokenProvider;
+import com.example.backend.security.TestUserDetails;
 
 @TestConfiguration
 @EnableWebSecurity
@@ -34,14 +35,7 @@ public class TestSecurityConfig {
     @Bean
     @Primary
     public UserDetailsService userDetailsService() {
-        User testUser = User.builder()
-                .id(1L)
-                .username("testuser")
-                .password("password")
-                .email("test@example.com")
-                .build();
-
-        UserDetails userDetails = new CustomUserDetails(testUser);
+        UserDetails userDetails = new TestUserDetails(1L, "testuser");
         return new InMemoryUserDetailsManager(userDetails);
     }
 
@@ -49,5 +43,17 @@ public class TestSecurityConfig {
     @Primary
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    @Primary
+    public JwtTokenProvider jwtTokenProvider(UserDetailsService userDetailsService) {
+        return new JwtTokenProvider(userDetailsService);
+    }
+
+    @Bean
+    @Primary
+    public JwtTokenFilter jwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
+        return new JwtTokenFilter(jwtTokenProvider);
     }
 } 
