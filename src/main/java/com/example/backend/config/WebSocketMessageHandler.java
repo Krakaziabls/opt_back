@@ -1,5 +1,6 @@
 package com.example.backend.config;
 
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -9,6 +10,8 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.messaging.SessionConnectedEvent;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import com.example.backend.security.JwtTokenProvider;
 
@@ -21,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WebSocketMessageHandler implements ChannelInterceptor {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final WebSocketSessionManager sessionManager;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -65,6 +69,21 @@ public class WebSocketMessageHandler implements ChannelInterceptor {
         }
 
         return message;
+    }
+
+    @EventListener
+    public void handleWebSocketConnectListener(SessionConnectedEvent event) {
+        StompHeaderAccessor headers = StompHeaderAccessor.wrap(event.getMessage());
+        String username = headers.getUser().getName();
+        log.info("User Connected: {}", username);
+    }
+
+    @EventListener
+    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+        StompHeaderAccessor headers = StompHeaderAccessor.wrap(event.getMessage());
+        String username = headers.getUser().getName();
+        log.info("User Disconnected: {}", username);
+        sessionManager.removeSession(username);
     }
 
     @Override

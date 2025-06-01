@@ -45,9 +45,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws")
                 .setAllowedOrigins("http://localhost:3000")
                 .withSockJS()
-                .setDisconnectDelay(30 * 1000) // 30 секунд задержки перед закрытием
-                .setHeartbeatTime(25 * 1000) // 25 секунд между heartbeat
-                .setSessionCookieNeeded(false); // Отключаем куки для сессии
+                .setDisconnectDelay(30 * 1000)
+                .setHeartbeatTime(25 * 1000)
+                .setSessionCookieNeeded(false)
+                .setWebSocketEnabled(true)
+                .setStreamBytesLimit(512 * 1024)
+                .setHttpMessageCacheSize(1000);
     }
 
     @Override
