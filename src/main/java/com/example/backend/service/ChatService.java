@@ -14,9 +14,11 @@ import com.example.backend.model.dto.ChatDto;
 import com.example.backend.model.dto.MessageDto;
 import com.example.backend.model.entity.Chat;
 import com.example.backend.model.entity.Message;
+import com.example.backend.model.entity.SqlQuery;
 import com.example.backend.model.entity.User;
 import com.example.backend.repository.ChatRepository;
 import com.example.backend.repository.MessageRepository;
+import com.example.backend.repository.SqlQueryRepository;
 import com.example.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,8 @@ public class ChatService {
     private final UserRepository userRepository;
     private final DatabaseConnectionService databaseConnectionService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final SqlQueryRepository sqlQueryRepository;
+    private final LLMService llmService;
 
     public List<ChatDto> getUserChats(Long userId) {
         log.debug("Fetching chats for userId={}", userId);
@@ -88,45 +92,62 @@ public class ChatService {
     @Transactional
     public MessageDto sendMessage(Long chatId, Long userId, MessageDto messageDto) {
         log.info("Processing sendMessage: chatId={}, userId={}, content={}", chatId, userId, messageDto.getContent());
-        if (messageDto.getContent() == null || messageDto.getContent().isBlank()) {
-            log.error("Message content is null or empty");
-            throw new IllegalArgumentException("Message content cannot be empty");
-        }
-        if (messageDto.getFromUser() == null) {
-            log.error("FromUser flag is null");
-            throw new IllegalArgumentException("FromUser flag is required");
-        }
-
+        
         Chat chat = chatRepository.findByIdAndUserId(chatId, userId)
-                .orElseThrow(() -> {
-                    log.error("Chat not found: chatId={}, userId={}", chatId, userId);
-                    return new ResourceNotFoundException("Chat not found");
-                });
+                .orElseThrow(() -> new RuntimeException("Chat not found or access denied"));
 
-        Message message = Message.builder()
-                .chat(chat)
-                .content(messageDto.getContent())
-                .fromUser(messageDto.getFromUser())
-                .build();
-
+        Message message = new Message();
+        message.setChat(chat);
+        message.setContent(messageDto.getContent());
+        message.setFromUser(messageDto.getFromUser());
+        message.setCreatedAt(LocalDateTime.now());
         message = messageRepository.save(message);
 
+        // Отправляем сообщение через WebSocket
+        String destination = "/topic/chat/" + chatId;
+        log.debug("Sending message to destination: {}", destination);
+        messagingTemplate.convertAndSend(destination, message);
+        log.info("Successfully sent message to {}: id={}", destination, message.getId());
+
+        // Обновляем время последнего обновления чата
         chat.setUpdatedAt(LocalDateTime.now());
         chatRepository.save(chat);
 
-        MessageDto messageDtoResponse = mapToMessageDto(message);
-        
+        // Получаем оптимизированный SQL через LLM
         try {
-            String destination = "/topic/chat/" + chatId;
-            log.debug("Sending message to destination: {}", destination);
-            messagingTemplate.convertAndSend(destination, messageDtoResponse);
-            log.info("Successfully sent message to {}: id={}", destination, messageDtoResponse.getId());
+            String optimizedSql = llmService.optimizeSqlQuery(messageDto.getContent()).block();
+            if (optimizedSql != null && !optimizedSql.trim().isEmpty()) {
+                Message llmResponse = new Message();
+                llmResponse.setChat(chat);
+                llmResponse.setContent(optimizedSql);
+                llmResponse.setFromUser(false);
+                llmResponse.setCreatedAt(LocalDateTime.now());
+                llmResponse = messageRepository.save(llmResponse);
+
+                // Сохраняем информацию о SQL запросе
+                SqlQuery sqlQuery = new SqlQuery();
+                sqlQuery.setMessage(llmResponse);
+                sqlQuery.setOriginalQuery(messageDto.getContent());
+                sqlQuery.setOptimizedQuery(optimizedSql);
+                sqlQuery.setCreatedAt(LocalDateTime.now());
+                sqlQueryRepository.save(sqlQuery);
+
+                // Отправляем ответ LLM через WebSocket
+                messagingTemplate.convertAndSend(destination, llmResponse);
+                log.info("Successfully sent LLM response to {}: id={}", destination, llmResponse.getId());
+            }
         } catch (Exception e) {
-            log.error("Failed to send message via WebSocket: {}", e.getMessage(), e);
-            // Не выбрасываем исключение, так как сообщение уже сохранено в базе данных
+            log.error("Error processing LLM response: {}", e.getMessage(), e);
+            Message errorMessage = new Message();
+            errorMessage.setChat(chat);
+            errorMessage.setContent("Sorry, I couldn't process your SQL query. Please try again.");
+            errorMessage.setFromUser(false);
+            errorMessage.setCreatedAt(LocalDateTime.now());
+            errorMessage = messageRepository.save(errorMessage);
+            messagingTemplate.convertAndSend(destination, errorMessage);
         }
 
-        return messageDtoResponse;
+        return mapToMessageDto(message);
     }
 
     @Transactional

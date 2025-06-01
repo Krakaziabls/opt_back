@@ -41,6 +41,9 @@ public class GigaChatAuthService {
     @Value("${gigachat.auth-url}")
     private String authUrl;
 
+    @Value("${gigachat.scope}")
+    private String scope;
+
     @Value("${llm.api-url}")
     private String apiUrl;
 
@@ -72,6 +75,9 @@ public class GigaChatAuthService {
         }
         if (clientSecret == null || clientSecret.isBlank()) {
             throw new IllegalStateException("GigaChat clientSecret is not configured");
+        }
+        if (scope == null || scope.isBlank()) {
+            throw new IllegalStateException("GigaChat scope is not configured");
         }
     }
 
@@ -142,7 +148,7 @@ public class GigaChatAuthService {
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .header("Authorization", authHeader)
                     .body(BodyInserters.fromFormData("grant_type", "client_credentials")
-                            .with("scope", "GIGACHAT_API_PERS"))
+                            .with("scope", scope))
                     .retrieve()
                     .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
                             clientResponse -> clientResponse.bodyToMono(String.class)
@@ -157,17 +163,25 @@ public class GigaChatAuthService {
                                     }))
                     .bodyToMono(JsonNode.class)
                     .flatMap(response -> {
-                        if (response.has("access_token")) {
-                            String token = response.get("access_token").asText();
-                            int expiresIn = response.get("expires_in").asInt();
-                            Instant expiry = Instant.now().plusSeconds(expiresIn);
-                            tokenExpiryRef.set(expiry);
-                            log.info("Successfully refreshed GigaChat token, expires in {} seconds", expiresIn);
-                            return Mono.just(token);
-                        } else {
-                            log.error("Invalid response from GigaChat auth: {}", response);
-                            return Mono.error(new RuntimeException("Invalid response from GigaChat auth service"));
+                        log.debug("Received response from GigaChat auth: {}", response);
+                        
+                        if (!response.has("access_token")) {
+                            log.error("No access_token in response: {}", response);
+                            return Mono.error(new RuntimeException("No access_token in response from GigaChat auth service"));
                         }
+
+                        String token = response.get("access_token").asText();
+                        
+                        // Устанавливаем время истечения токена (по умолчанию 1 час, если не указано в ответе)
+                        int expiresIn = 3600; // 1 час по умолчанию
+                        if (response.has("expires_in") && !response.get("expires_in").isNull()) {
+                            expiresIn = response.get("expires_in").asInt();
+                        }
+                        
+                        Instant expiry = Instant.now().plusSeconds(expiresIn);
+                        tokenExpiryRef.set(expiry);
+                        log.info("Successfully refreshed GigaChat token, expires in {} seconds", expiresIn);
+                        return Mono.just(token);
                     })
                     .doOnError(e -> log.error("Error during token refresh: {}", e.getMessage(), e));
         } catch (Exception e) {
@@ -181,6 +195,7 @@ public class GigaChatAuthService {
                 .build()
                 .mutate()
                 .defaultHeader("Authorization", "Bearer " + token)
+                .defaultHeader("Accept", "application/json")
                 .build());
     }
 }
