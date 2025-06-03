@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.backend.config.LLMConfig;
 import com.example.backend.exception.ApiException;
@@ -31,15 +33,78 @@ public class LLMService {
     private final LLMConfig llmConfig;
     private final GigaChatAuthService gigaChatAuthService;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final RestTemplate restTemplate;
+    private final RestTemplate localRestTemplate;
 
-    public Mono<String> optimizeSqlQuery(String sqlQuery) {
-        if (!StringUtils.hasText(sqlQuery)) {
+    public Mono<String> optimizeSqlQuery(String query, String llmProvider) {
+        log.debug("Optimizing SQL query with provider: {}", llmProvider);
+        if ("Local".equals(llmProvider)) {
+            return optimizeWithLocalLLM(query);
+        } else {
+            return optimizeWithCloudLLM(query);
+        }
+    }
+
+    private Mono<String> optimizeWithLocalLLM(String query) {
+        log.debug("Attempting to optimize with local LLM. Local LLM enabled: {}", llmConfig.isLocalEnabled());
+        if (!llmConfig.isLocalEnabled()) {
+            log.error("Local LLM is not enabled");
+            return Mono.error(new ApiException("Local LLM is not enabled", HttpStatus.SERVICE_UNAVAILABLE));
+        }
+
+        try {
+            Map<String, Object> requestBody = prepareRequestBody(query);
+            log.debug("Prepared request body for local LLM: {}", requestBody);
+            
+            return Mono.fromCallable(() -> {
+                try {
+                    log.debug("Sending request to local LLM at URL: {}", llmConfig.getLocalApiUrl());
+                    String response = localRestTemplate.postForObject(
+                        llmConfig.getLocalApiUrl() + "/v1/chat/completions",
+                        requestBody,
+                        String.class
+                    );
+                    
+                    if (response == null) {
+                        log.error("Empty response from local LLM");
+                        throw new ApiException("Empty response from local LLM", HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+
+                    log.debug("Received response from local LLM: {}", response);
+                    JsonNode rootNode = objectMapper.readTree(response);
+                    JsonNode choicesNode = rootNode.path("choices");
+                    
+                    if (choicesNode.isArray() && choicesNode.size() > 0) {
+                        JsonNode firstChoice = choicesNode.get(0);
+                        JsonNode messageNode = firstChoice.path("message");
+                        String content = messageNode.path("content").asText();
+                        return extractSqlFromResponse(content);
+                    }
+                    
+                    log.error("Invalid response format from local LLM: {}", response);
+                    throw new ApiException("Invalid response format from local LLM", HttpStatus.INTERNAL_SERVER_ERROR);
+                } catch (Exception e) {
+                    log.error("Error calling local LLM: {}", e.getMessage(), e);
+                    throw new ApiException("Error calling local LLM: " + e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+                }
+            }).retryWhen(Retry.backoff(MAX_RETRY_ATTEMPTS, Duration.ofMillis(RETRY_DELAY_MS))
+                .filter(e -> e instanceof ApiException && 
+                    ((ApiException) e).getStatus() == HttpStatus.SERVICE_UNAVAILABLE));
+        } catch (Exception e) {
+            log.error("Failed to prepare request for local LLM: {}", e.getMessage(), e);
+            return Mono.error(new ApiException("Failed to prepare request for local LLM: " + e.getMessage(), 
+                HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    private Mono<String> optimizeWithCloudLLM(String query) {
+        if (!StringUtils.hasText(query)) {
             return Mono.error(new ApiException("SQL query cannot be empty", HttpStatus.BAD_REQUEST));
         }
 
         return Mono.defer(() -> {
             validateConfiguration();
-            Map<String, Object> requestBody = prepareRequestBody(sqlQuery);
+            Map<String, Object> requestBody = prepareRequestBody(query);
 
             log.debug("Making request to LLM API: URL={}, Body={}",
                     llmConfig.getApiUrl() + "/chat/completions",
@@ -88,13 +153,13 @@ public class LLMService {
         }
     }
 
-    private Map<String, Object> prepareRequestBody(String sqlQuery) {
+    private Map<String, Object> prepareRequestBody(String query) {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("model", llmConfig.getModel());
 
         List<Map<String, String>> messages = new ArrayList<>();
         messages.add(Map.of("role", "system", "content", llmConfig.getSystemPrompt()));
-        messages.add(Map.of("role", "user", "content", "Optimize this SQL query for PostgreSQL: " + sqlQuery));
+        messages.add(Map.of("role", "user", "content", "Optimize this SQL query for PostgreSQL: " + query));
 
         requestBody.put("messages", messages);
         requestBody.put("temperature", llmConfig.getTemperature());

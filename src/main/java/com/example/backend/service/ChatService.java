@@ -137,7 +137,9 @@ public class ChatService {
             if (messageDto.getFromUser() && isSQLQuery(messageDto.getContent())) {
                 log.debug("Processing SQL query: {}", messageDto.getContent());
                 try {
-                    String optimizedSql = llmService.optimizeSqlQuery(messageDto.getContent()).block();
+                    String llmProvider = messageDto.getLlmProvider() != null ? messageDto.getLlmProvider() : "GigaChat";
+                    log.debug("Using LLM provider: {}", llmProvider);
+                    String optimizedSql = llmService.optimizeSqlQuery(messageDto.getContent(), llmProvider).block();
                     if (optimizedSql != null && !optimizedSql.trim().isEmpty()) {
                         log.debug("Received optimized SQL: {}", optimizedSql);
                         

@@ -31,6 +31,7 @@ public class WebSocketController {
         MessageDto messageDto = MessageDto.builder()
                 .content(chatMessage.getContent())
                 .fromUser(true)
+                .llmProvider(chatMessage.getLlmProvider())
                 .build();
         
         chatService.sendMessage(chatMessage.getChatId(), Long.parseLong(username), messageDto);

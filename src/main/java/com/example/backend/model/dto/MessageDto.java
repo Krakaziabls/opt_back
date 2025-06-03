@@ -24,4 +24,6 @@ public class MessageDto {
     private Boolean fromUser;
 
     private LocalDateTime createdAt;
+
+    private String llmProvider;
 }

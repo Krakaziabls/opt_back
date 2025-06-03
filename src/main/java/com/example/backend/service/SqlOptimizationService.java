@@ -96,7 +96,7 @@ public class SqlOptimizationService {
                     // Optimize query using LLM
                     DatabaseConnection finalDbConnection = dbConnection;
                     log.debug("Calling LLM service for query optimization");
-                    return llmService.optimizeSqlQuery(request.getQuery())
+                    return llmService.optimizeSqlQuery(request.getQuery(), request.getLlm())
                             .doOnSuccess(optimizedQuery -> log.debug("LLM optimization successful: {}", optimizedQuery))
                             .doOnError(error -> log.error("LLM optimization failed: {}", error.getMessage(), error))
                             .flatMap(optimizedQuery -> {
