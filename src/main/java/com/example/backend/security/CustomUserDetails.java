@@ -1,9 +1,11 @@
 package com.example.backend.security;
 
 import com.example.backend.model.entity.User;
+import lombok.Getter;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collections;
 
+@Getter
 public class CustomUserDetails extends org.springframework.security.core.userdetails.User implements UserDetails {
     private final Long userId;
 
@@ -12,7 +14,4 @@ public class CustomUserDetails extends org.springframework.security.core.userdet
         this.userId = user.getId();
     }
 
-    public Long getUserId() {
-        return userId;
-    }
 }

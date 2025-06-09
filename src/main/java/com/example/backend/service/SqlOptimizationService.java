@@ -1,13 +1,18 @@
 package com.example.backend.service;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -42,90 +48,143 @@ public class SqlOptimizationService {
     private final LLMService llmService;
     private final DatabaseConnectionService databaseConnectionService;
     private final ChatService chatService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Transactional
-    public SqlQueryResponse optimizeQuery(Long userId, SqlQueryRequest request) {
-        log.debug("Optimizing query for chatId={}, userId={}, query={}",
-                request.getChatId(), userId, request.getQuery());
+    public Mono<SqlQueryResponse> optimizeQuery(Long userId, SqlQueryRequest request) {
+        log.info("Starting query optimization for userId={}, chatId={}, query={}, llm={}, isMPP={}",
+                userId, request.getChatId(), request.getQuery(), request.getLlm(), request.isMPP());
 
-        Chat chat = chatRepository.findByIdAndUserId(request.getChatId(), userId)
-                .orElseThrow(() -> {
-                    log.error("Chat not found: chatId={}, userId={}", request.getChatId(), userId);
-                    return new ResourceNotFoundException("Chat not found");
+        // Создаем сообщение для исходного запроса пользователя
+        AtomicReference<Message> userMessageRef = new AtomicReference<>(new Message());
+        Message initialMessage = userMessageRef.get();
+        initialMessage.setContent(request.getQuery());
+        initialMessage.setFromUser(true);
+        initialMessage.setCreatedAt(LocalDateTime.now());
+
+        return Mono.fromCallable(() -> {
+            log.debug("Validating chat existence and ownership");
+            // Validate chat existence and ownership
+            Chat chat = chatRepository.findById(request.getChatId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Chat not found with ID: " + request.getChatId()));
+            log.debug("Chat found: id={}, title={}", chat.getId(), chat.getTitle());
+
+            log.debug("Validating SQL query syntax");
+            // Validate SQL query syntax
+            validateSqlQuery(request.getQuery());
+            log.debug("SQL query syntax is valid");
+
+            // Устанавливаем чат для сообщения и сохраняем его
+            initialMessage.setChat(chat);
+            Message savedMessage = messageRepository.save(initialMessage);
+            userMessageRef.set(savedMessage);
+            log.debug("Saved user message: id={}", savedMessage.getId());
+
+            return chat;
+        })
+                .flatMap(chat -> {
+                    // Handle database connection if provided
+                    DatabaseConnection dbConnection = null;
+                    if (request.getDatabaseConnectionId() != null && !request.getDatabaseConnectionId().isEmpty()) {
+                        log.debug("Looking up database connection: id={}", request.getDatabaseConnectionId());
+                        try {
+                            Long dbConnectionId = Long.parseLong(request.getDatabaseConnectionId());
+                            dbConnection = databaseConnectionRepository.findById(dbConnectionId)
+                                    .orElseThrow(() -> new ResourceNotFoundException(
+                                            "Database connection not found with ID: "
+                                                    + request.getDatabaseConnectionId()));
+                            log.debug("Found database connection: id={}, name={}", dbConnection.getId(),
+                                    dbConnection.getName());
+                        } catch (NumberFormatException e) {
+                            log.warn("Invalid database connection ID format: {}", request.getDatabaseConnectionId());
+                            // Продолжаем выполнение без подключения к БД
+                        }
+                    } else {
+                        log.debug("No database connection provided, proceeding without database connection");
+                    }
+                    final DatabaseConnection finalDbConnection = dbConnection;
+
+                    // Формируем промпт с учетом MPP и наличия соединения
+                    String promptTemplate = request.getPromptTemplate();
+                    if (promptTemplate == null || promptTemplate.isEmpty()) {
+                        promptTemplate = getDefaultPromptTemplate(request.isMPP(), finalDbConnection != null);
+                    }
+
+                    return llmService
+                            .optimizeSqlQuery(request.getQuery(), request.getLlm(), promptTemplate)
+                            .doOnSuccess(optimizedQuery -> log.debug("LLM optimization successful: {}", optimizedQuery))
+                            .doOnError(error -> log.error("LLM optimization failed: {}", error.getMessage(), error))
+                            .flatMap(optimizedQuery -> {
+                                log.debug("Saving optimized query");
+
+                                // Создаем сообщение для оптимизированного запроса
+                                Message message = new Message();
+                                message.setChat(chat);
+                                message.setContent(optimizedQuery);
+                                message.setFromUser(false);
+                                message.setCreatedAt(LocalDateTime.now());
+                                message = messageRepository.save(message);
+                                log.debug("Saved message for optimized query: id={}", message.getId());
+
+                                // Build and save SqlQuery entity
+                                SqlQuery sqlQuery = SqlQuery.builder()
+                                        .message(userMessageRef.get())
+                                        .originalQuery(request.getQuery())
+                                        .optimizedQuery(optimizedQuery)
+                                        .databaseConnection(finalDbConnection)
+                                        .createdAt(LocalDateTime.now())
+                                        .build();
+
+                                // Measure execution time if connection exists
+                                if (finalDbConnection != null) {
+                                    log.debug("Measuring query execution time");
+                                    try {
+                                        long executionTime = measureQueryExecutionTime(finalDbConnection.getId(),
+                                                optimizedQuery);
+                                        sqlQuery.setExecutionTimeMs(executionTime);
+                                        log.debug("Execution time measured: {}ms", executionTime);
+                                    } catch (SQLException e) {
+                                        log.warn("Failed to measure execution time for query: {}", e.getMessage());
+                                    }
+                                }
+
+                                log.debug("Saving SqlQuery entity");
+                                SqlQuery savedQuery = sqlQueryRepository.save(sqlQuery);
+                                log.info("SQL query saved: id={}", savedQuery.getId());
+
+                                // Отправляем сообщение через WebSocket
+                                String destination = "/topic/chat/" + request.getChatId();
+                                messagingTemplate.convertAndSend(destination, mapToMessageDto(message));
+                                log.info("Successfully sent message to {}: id={}", destination, message.getId());
+
+                                return Mono.just(SqlQueryResponse.builder()
+                                        .id(savedQuery.getId())
+                                        .originalQuery(savedQuery.getOriginalQuery())
+                                        .optimizedQuery(savedQuery.getOptimizedQuery())
+                                        .executionTimeMs(savedQuery.getExecutionTimeMs())
+                                        .createdAt(savedQuery.getCreatedAt())
+                                        .message(mapToMessageDto(message))
+                                        .build());
+                            });
+                })
+                .onErrorMap(e -> {
+                    if (!(e instanceof ResourceNotFoundException) && !(e instanceof ApiException)) {
+                        log.error("Unexpected error during query optimization: {}", e.getMessage(), e);
+                        return new ApiException("Internal error during query optimization",
+                                HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                    return e;
                 });
-
-        validateSqlQuery(request.getQuery());
-
-        // Сохраняем пользовательское сообщение через ChatService
-        MessageDto userMessageDto = MessageDto.builder()
-                .content(request.getQuery())
-                .fromUser(true)
-                .build();
-        MessageDto savedUserMessageDto = chatService.sendMessage(request.getChatId(), userId, userMessageDto);
-
-        DatabaseConnection dbConnection = null;
-        if (request.getDatabaseConnectionId() != null) {
-            dbConnection = databaseConnectionRepository.findById(Long.parseLong(request.getDatabaseConnectionId()))
-                    .orElseThrow(() -> {
-                        log.error("Database connection not found: id={}", request.getDatabaseConnectionId());
-                        return new ResourceNotFoundException("Database connection not found");
-                    });
-        }
-
-        String optimizedQuery = llmService.optimizeSqlQuery(request.getQuery());
-
-        // Сохраняем системное сообщение через ChatService
-        MessageDto llmMessageDto = MessageDto.builder()
-                .content(optimizedQuery)
-                .fromUser(false)
-                .build();
-        MessageDto savedLlmMessageDto = chatService.sendMessage(request.getChatId(), userId, llmMessageDto);
-
-        SqlQuery sqlQuery = SqlQuery.builder()
-                .message(messageRepository.findById(savedUserMessageDto.getId())
-                        .orElseThrow(() -> {
-                            log.error("User message not found: id={}", savedUserMessageDto.getId());
-                            return new ResourceNotFoundException("User message not found");
-                        }))
-                .originalQuery(request.getQuery())
-                .optimizedQuery(optimizedQuery)
-                .databaseConnection(dbConnection)
-                .build();
-
-        if (dbConnection != null) {
-            try {
-                long executionTime = measureQueryExecutionTime(dbConnection.getId(), optimizedQuery);
-                sqlQuery.setExecutionTimeMs(executionTime);
-            } catch (Exception e) {
-                log.error("Error executing optimized query: {}", e.getMessage());
-            }
-        }
-
-        SqlQuery savedQuery = sqlQueryRepository.save(sqlQuery);
-
-        chat.setUpdatedAt(LocalDateTime.now());
-        chatRepository.save(chat);
-
-        return SqlQueryResponse.builder()
-                .id(savedQuery.getId())
-                .originalQuery(savedQuery.getOriginalQuery())
-                .optimizedQuery(savedQuery.getOptimizedQuery())
-                .executionTimeMs(savedQuery.getExecutionTimeMs())
-                .createdAt(savedQuery.getCreatedAt())
-                .message(savedLlmMessageDto)
-                .build();
     }
 
     public List<SqlQueryResponse> getQueryHistory(Long chatId, Long userId) {
-        log.debug("Fetching query history for chatId={}, userId={}", chatId, userId);
-        chatRepository.findByIdAndUserId(chatId, userId)
-                .orElseThrow(() -> {
-                    log.error("Chat not found: chatId={}, userId={}", chatId, userId);
-                    return new ResourceNotFoundException("Chat not found");
-                });
+        log.info("Fetching query history for userId={}, chatId={}", userId, chatId);
+
+        // Validate chat existence
+        chatRepository.findById(chatId)
+                .orElseThrow(() -> new ResourceNotFoundException("Chat not found with ID: " + chatId));
 
         List<SqlQuery> queries = sqlQueryRepository.findByMessageChatIdOrderByCreatedAtDesc(chatId);
-
         return queries.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
@@ -135,38 +194,136 @@ public class SqlOptimizationService {
         try {
             CCJSqlParserUtil.parse(query);
         } catch (JSQLParserException e) {
-            log.error("Invalid SQL query: {}", e.getMessage());
+            log.error("Invalid SQL query syntax: {}", e.getMessage());
             throw new ApiException("Invalid SQL query: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     private long measureQueryExecutionTime(Long connectionId, String query) throws SQLException {
-        Connection connection = null;
-        try {
-            connection = databaseConnectionService.getConnection(connectionId);
+        if (!query.trim().toUpperCase().startsWith("SELECT")) {
+            log.info("Skipping execution time measurement for non-SELECT query: {}", query);
+            return -1; // Use -1 to indicate no measurement for non-SELECT queries
+        }
 
-            String explainQuery = "EXPLAIN ANALYZE " + query;
+        Connection connection = databaseConnectionService.getConnection(connectionId);
+        String explainQuery = "EXPLAIN ANALYZE " + query;
 
-            long startTime = System.currentTimeMillis();
-
-            try (Statement stmt = connection.createStatement()) {
-                stmt.execute(explainQuery);
+        try (Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(explainQuery)) {
+            StringBuilder output = new StringBuilder();
+            while (rs.next()) {
+                output.append(rs.getString(1)).append("\n");
             }
 
-            long endTime = System.currentTimeMillis();
-            return endTime - startTime;
-        } finally {
-            // Connection managed by DatabaseConnectionService
+            Pattern pattern = Pattern.compile("Execution Time: (\\d+\\.\\d+) ms");
+            Matcher matcher = pattern.matcher(output.toString());
+            if (matcher.find()) {
+                return (long) Double.parseDouble(matcher.group(1));
+            } else {
+                log.warn("Execution time not found in EXPLAIN ANALYZE output");
+                return -1;
+            }
+        } catch (SQLException e) {
+            log.error("SQLException during execution time measurement: {}", e.getMessage());
+            throw e;
         }
     }
 
     private SqlQueryResponse mapToResponse(SqlQuery sqlQuery) {
+        MessageDto messageDto = MessageDto.builder()
+                .content(sqlQuery.getOriginalQuery())
+                .fromUser(true)
+                .build();
+
         return SqlQueryResponse.builder()
                 .id(sqlQuery.getId())
                 .originalQuery(sqlQuery.getOriginalQuery())
                 .optimizedQuery(sqlQuery.getOptimizedQuery())
                 .executionTimeMs(sqlQuery.getExecutionTimeMs())
                 .createdAt(sqlQuery.getCreatedAt())
+                .message(messageDto)
                 .build();
+    }
+
+    private MessageDto mapToMessageDto(Message message) {
+        return MessageDto.builder()
+                .id(message.getId())
+                .chatId(message.getChat().getId())
+                .content(message.getContent())
+                .fromUser(message.isFromUser())
+                .createdAt(message.getCreatedAt())
+                .build();
+    }
+
+    private String getDefaultPromptTemplate(boolean isMPP, boolean hasConnection) {
+        if (isMPP && hasConnection) {
+            return """
+                    Ты — специалист по оптимизации SQL-запросов в MPP-системах, включая Greenplum. Твоя цель — переписать SQL-запрос так, чтобы он выполнялся быстрее и использовал меньше ресурсов, без изменения логики и без вмешательства в СУБД.
+
+                    Входные данные SQL-запрос:
+                    {query_text}
+                    План выполнения (EXPLAIN): {query_plan}
+                    Метаданные таблиц: {tables_meta}
+
+                    Выходные данные
+                    Оптимизированный SQL-запрос:
+                    {optimized_query}
+                    Обоснование изменений:
+                    Кратко опиши, какие узкие места были найдены в плане запроса, и какие методы оптимизации применены.
+                    Оценка улучшения:
+                    Примерное снижение времени выполнения или факторы, которые повлияют на производительность.
+                    Потенциальные риски:
+                    Возможные побочные эффекты изменений, если таковые имеются.""";
+        } else if (isMPP && !hasConnection) {
+            return """
+                    Ты — специалист по оптимизации SQL-запросов в MPP-системах, включая Greenplum. Твоя цель — переписать SQL-запрос так, чтобы он выполнялся быстрее и использовал меньше ресурсов, без изменения логики и без вмешательства в СУБД.
+
+                    Входные данные SQL-запрос:
+                    {query_text}
+
+                    Выходные данные
+                    Оптимизированный SQL-запрос:
+                    {optimized_query}
+                    Обоснование изменений:
+                    Кратко опиши, какие методы оптимизации применены и почему.
+                    Оценка улучшения:
+                    Примерное снижение времени выполнения или факторы, которые повлияют на производительность.
+                    Потенциальные риски:
+                    Возможные побочные эффекты изменений, если таковые имеются.""";
+        } else if (!isMPP && hasConnection) {
+            return """
+                    Ты — специалист по оптимизации SQL-запросов в PostgreSQL. Твоя цель — переписать SQL-запрос так, чтобы он выполнялся быстрее и использовал меньше ресурсов, без изменения логики и без вмешательства в СУБД.
+
+                    Входные данные SQL-запрос:
+                    {query_text}
+                    План выполнения (EXPLAIN): {query_plan}
+                    Метаданные таблиц: {tables_meta}
+
+                    Выходные данные
+                    Оптимизированный SQL-запрос:
+                    {optimized_query}
+                    Обоснование изменений:
+                    Кратко опиши, какие узкие места были найдены в плане запроса, и какие методы оптимизации применены.
+                    Оценка улучшения:
+                    Примерное снижение времени выполнения или факторы, которые повлияют на производительность.
+                    Потенциальные риски:
+                    Возможные побочные эффекты изменений, если таковые имеются.""";
+        } else {
+            return """
+                    Ты — специалист по оптимизации SQL-запросов в PostgreSQL. Твоя цель — переписать SQL-запрос так, чтобы он выполнялся быстрее и использовал меньше ресурсов, без изменения логики и без вмешательства в СУБД.
+
+                    Входные данные SQL-запрос:
+                    {query_text}
+
+                    Выходные данные
+                    Оптимизированный SQL-запрос:
+                    {optimized_query}
+                    Обоснование изменений:
+                    Кратко опиши, какие методы оптимизации применены и почему.
+                    Оценка улучшения:
+                    Примерное снижение времени выполнения или факторы, которые повлияют на производительность.
+                    Потенциальные риски:
+                    Возможные побочные эффекты изменений, если таковые имеются.""";
+        }
     }
 }

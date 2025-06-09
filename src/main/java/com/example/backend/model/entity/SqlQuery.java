@@ -1,15 +1,13 @@
 package com.example.backend.model.entity;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.*;
-
-import org.hibernate.annotations.CreationTimestamp;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "sql_queries")
@@ -22,7 +20,7 @@ public class SqlQuery {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "message_id", nullable = false)
     private Message message;
 

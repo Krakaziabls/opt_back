@@ -88,37 +88,53 @@ public class ChatService {
     @Transactional
     public MessageDto sendMessage(Long chatId, Long userId, MessageDto messageDto) {
         log.info("Processing sendMessage: chatId={}, userId={}, content={}", chatId, userId, messageDto.getContent());
-        if (messageDto.getContent() == null || messageDto.getContent().isBlank()) {
-            log.error("Message content is null or empty");
-            throw new IllegalArgumentException("Message content cannot be empty");
-        }
-        if (messageDto.getFromUser() == null) {
-            log.error("FromUser flag is null");
-            throw new IllegalArgumentException("FromUser flag is required");
-        }
 
-        Chat chat = chatRepository.findByIdAndUserId(chatId, userId)
-                .orElseThrow(() -> {
-                    log.error("Chat not found: chatId={}, userId={}", chatId, userId);
-                    return new ResourceNotFoundException("Chat not found");
-                });
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new ResourceNotFoundException("Chat not found with id: " + chatId));
 
-        Message message = Message.builder()
-                .chat(chat)
-                .content(messageDto.getContent())
-                .fromUser(messageDto.getFromUser())
-                .build();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
+        log.debug("Found chat: id={}, title={}", chat.getId(), chat.getTitle());
+
+        Message message = new Message();
+        message.setChat(chat);
+        message.setContent(messageDto.getContent());
+        message.setFromUser(messageDto.getFromUser());
+        message.setCreatedAt(LocalDateTime.now());
+
+        log.debug("Saving message: content={}, fromUser={}", message.getContent(), message.isFromUser());
         message = messageRepository.save(message);
+        log.info("Message saved successfully: id={}", message.getId());
 
+        // Отправляем сообщение через WebSocket только если это не SQL-запрос
+        if (!isSQLQuery(messageDto.getContent())) {
+            String destination = "/topic/chat/" + chatId;
+            log.debug("Sending message to destination: {}", destination);
+            messagingTemplate.convertAndSend(destination, mapToMessageDto(message));
+            log.info("Successfully sent message to {}: id={}", destination, message.getId());
+        }
+
+        // Обновляем время последнего обновления чата
         chat.setUpdatedAt(LocalDateTime.now());
         chatRepository.save(chat);
+        log.debug("Updated chat timestamp: id={}", chat.getId());
 
-        MessageDto messageDtoResponse = mapToMessageDto(message);
-        messagingTemplate.convertAndSend("/topic/chat/" + chatId, messageDtoResponse);
-        log.info("Sent message to /topic/chat/{}: id={}", chatId, messageDtoResponse.getId());
+        return mapToMessageDto(message);
+    }
 
-        return messageDtoResponse;
+    private boolean isSQLQuery(String content) {
+        if (content == null || content.trim().isEmpty()) {
+            return false;
+        }
+        String upperContent = content.toUpperCase().trim();
+        return upperContent.startsWith("SELECT") ||
+                upperContent.startsWith("INSERT") ||
+                upperContent.startsWith("UPDATE") ||
+                upperContent.startsWith("DELETE") ||
+                upperContent.startsWith("CREATE") ||
+                upperContent.startsWith("ALTER") ||
+                upperContent.startsWith("DROP");
     }
 
     @Transactional

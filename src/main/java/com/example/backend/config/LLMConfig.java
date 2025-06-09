@@ -1,45 +1,46 @@
 package com.example.backend.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
 @Configuration
+@ConfigurationProperties(prefix = "llm")
+@Data
 public class LLMConfig {
-
-    @Value("${llm.api-url}")
+    private String provider;
     private String apiUrl;
-
-    @Value("${llm.api-key}")
     private String apiKey;
-
-    @Value("${llm.model}")
     private String model;
-
-    @Value("${llm.system-prompt}")
-    private String systemPrompt;
-
-    @Value("${llm.temperature}")
-    private double temperature;
-
-    @Value("${llm.max-tokens}")
     private int maxTokens;
+    private double temperature;
+    private String systemPrompt;
+    private int connectTimeout = 5000;
+    private int readTimeout = 30000;
+    
+    // LM Studio configuration
+    private String localApiUrl = "http://localhost:1234";
+    private boolean localEnabled = false;
+    private int localConnectTimeout = 10000;
+    private int localReadTimeout = 60000;
 
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(connectTimeout);
+        factory.setReadTimeout(readTimeout);
+        return new RestTemplate(factory);
     }
 
     @Bean
-    public WebClient webClient() {
-        return WebClient.builder()
-                .baseUrl(apiUrl)
-                .build();
+    public RestTemplate localRestTemplate() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(localConnectTimeout);
+        factory.setReadTimeout(localReadTimeout);
+        return new RestTemplate(factory);
     }
-
 }
