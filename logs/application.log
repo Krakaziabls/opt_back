@@ -162,3 +162,771 @@ FROM my_db;
 2025-06-09 20:33:49 [http-nio-8080-exec-8] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
 2025-06-09 20:33:49 [http-nio-8080-exec-1] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
 2025-06-09 20:33:50 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:35:56 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:35:56 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:35:56 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:35:56 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:35:56 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-09 20:35:56 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@87dc829]]
+2025-06-09 20:35:56 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-09 20:36:01 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-09 20:36:01 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-09 20:36:01 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-09 20:36:03 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 69540 (/Users/andreyshelyagin/sql-opt/backend/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/sql-opt/backend)
+2025-06-09 20:36:03 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-09 20:36:03 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-09 20:36:03 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 79 ms. Found 5 JPA repository interfaces.
+2025-06-09 20:36:04 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-09 20:36:04 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-09 20:36:04 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-09 20:36:04 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-09 20:36:04 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 781 ms
+2025-06-09 20:36:04 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-09 20:36:04 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3181d4de
+2025-06-09 20:36:04 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-09 20:36:04 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-09 20:36:04 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-09 20:36:04 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-09 20:36:04 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-09 20:36:04 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-09 20:36:04 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 3 migrations (execution time 00:00.019s)
+2025-06-09 20:36:04 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 3
+2025-06-09 20:36:04 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-09 20:36:04 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-09 20:36:04 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-09 20:36:04 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-09 20:36:04 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-09 20:36:04 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-09 20:36:05 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-09 20:36:05 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-09 20:36:05 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-09 20:36:06 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-09 20:36:06 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-09 20:36:06 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-09 20:36:06 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-09 20:36:06 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-09 20:36:06 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@781f8d26]]
+2025-06-09 20:36:06 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-09 20:36:06 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 3.265 seconds (process running for 3.752)
+2025-06-09 20:36:06 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-09 20:36:06 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-09 20:36:06 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2025-06-09 20:36:07 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:36:11 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:36:25 [http-nio-8080-exec-9] INFO  c.e.b.controller.AuthController - User logged in successfully: username=andrey
+2025-06-09 20:36:25 [http-nio-8080-exec-1] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-09 20:36:25 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:36:26 [http-nio-8080-exec-1] INFO  c.e.backend.service.ChatService - Created chat: id=12, title=Chat 12
+2025-06-09 20:36:27 [http-nio-8080-exec-6] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:36:27 [http-nio-8080-exec-6] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:36:27 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:36:36 [http-nio-8080-exec-5] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=12, query=select * from my_db, llm=Local
+2025-06-09 20:36:36 [http-nio-8080-exec-5] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-09 20:36:36 [http-nio-8080-exec-5] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=12, query=select * from my_db, llm=Local
+2025-06-09 20:36:48 [http-nio-8080-exec-5] WARN  o.h.e.jdbc.spi.SqlExceptionHelper - SQL Error: 0, SQLState: 23502
+2025-06-09 20:36:48 [http-nio-8080-exec-5] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - ERROR: null value in column "message_id" of relation "sql_queries" violates not-null constraint
+  Подробности: Failing row contains (32, 2025-06-09 20:36:48.298551, null, **Explanation**
+
+The original query `SELECT * FROM my_db` is a s..., select * from my_db, null, null).
+2025-06-09 20:36:48 [http-nio-8080-exec-5] ERROR c.e.b.service.SqlOptimizationService - Unexpected error during query optimization: could not execute statement [ERROR: null value in column "message_id" of relation "sql_queries" violates not-null constraint
+  Подробности: Failing row contains (32, 2025-06-09 20:36:48.298551, null, **Explanation**
+
+The original query `SELECT * FROM my_db` is a s..., select * from my_db, null, null).] [insert into sql_queries (created_at,database_connection_id,execution_time_ms,message_id,optimized_query,original_query) values (?,?,?,?,?,?)]; SQL [insert into sql_queries (created_at,database_connection_id,execution_time_ms,message_id,optimized_query,original_query) values (?,?,?,?,?,?)]; constraint [message_id" of relation "sql_queries]
+org.springframework.dao.DataIntegrityViolationException: could not execute statement [ERROR: null value in column "message_id" of relation "sql_queries" violates not-null constraint
+  Подробности: Failing row contains (32, 2025-06-09 20:36:48.298551, null, **Explanation**
+
+The original query `SELECT * FROM my_db` is a s..., select * from my_db, null, null).] [insert into sql_queries (created_at,database_connection_id,execution_time_ms,message_id,optimized_query,original_query) values (?,?,?,?,?,?)]; SQL [insert into sql_queries (created_at,database_connection_id,execution_time_ms,message_id,optimized_query,original_query) values (?,?,?,?,?,?)]; constraint [message_id" of relation "sql_queries]
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:290)
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:241)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.translateExceptionIfPossible(AbstractEntityManagerFactoryBean.java:550)
+	at org.springframework.dao.support.ChainedPersistenceExceptionTranslator.translateExceptionIfPossible(ChainedPersistenceExceptionTranslator.java:61)
+	at org.springframework.dao.support.DataAccessUtils.translateIfNecessary(DataAccessUtils.java:335)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:152)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:164)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220)
+	at jdk.proxy2/jdk.proxy2.$Proxy157.save(Unknown Source)
+	at com.example.backend.service.SqlOptimizationService.lambda$optimizeQuery$5(SqlOptimizationService.java:121)
+	at reactor.core.publisher.MonoFlatMap$FlatMapMain.onNext(MonoFlatMap.java:132)
+	at reactor.core.publisher.MonoPeekTerminal$MonoTerminalPeekSubscriber.onNext(MonoPeekTerminal.java:180)
+	at reactor.core.publisher.MonoPeekTerminal$MonoTerminalPeekSubscriber.onNext(MonoPeekTerminal.java:180)
+	at reactor.core.publisher.SerializedSubscriber.onNext(SerializedSubscriber.java:99)
+	at reactor.core.publisher.FluxRetryWhen$RetryWhenMainSubscriber.onNext(FluxRetryWhen.java:178)
+	at reactor.core.publisher.MonoCallable$MonoCallableSubscription.request(MonoCallable.java:156)
+	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.set(Operators.java:2367)
+	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.onSubscribe(Operators.java:2241)
+	at reactor.core.publisher.MonoCallable.subscribe(MonoCallable.java:48)
+	at reactor.core.publisher.FluxRetryWhen.subscribe(FluxRetryWhen.java:81)
+	at reactor.core.publisher.MonoRetryWhen.subscribeOrReturn(MonoRetryWhen.java:46)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4547)
+	at reactor.core.publisher.FluxFlatMap.trySubscribeScalarMap(FluxFlatMap.java:202)
+	at reactor.core.publisher.MonoFlatMap.subscribeOrReturn(MonoFlatMap.java:53)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4547)
+	at org.springframework.web.servlet.mvc.method.annotation.ReactiveTypeHandler$DeferredResultSubscriber.connect(ReactiveTypeHandler.java:465)
+	at org.springframework.web.servlet.mvc.method.annotation.ReactiveTypeHandler.handleValue(ReactiveTypeHandler.java:163)
+	at org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitterReturnValueHandler.handleReturnValue(ResponseBodyEmitterReturnValueHandler.java:154)
+	at org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite.handleReturnValue(HandlerMethodReturnValueHandlerComposite.java:78)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:136)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:920)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:830)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:547)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:614)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at com.example.backend.security.JwtTokenFilter.doFilterInternal(JwtTokenFilter.java:34)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:195)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:230)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1744)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: org.hibernate.exception.ConstraintViolationException: could not execute statement [ERROR: null value in column "message_id" of relation "sql_queries" violates not-null constraint
+  Подробности: Failing row contains (32, 2025-06-09 20:36:48.298551, null, **Explanation**
+
+The original query `SELECT * FROM my_db` is a s..., select * from my_db, null, null).] [insert into sql_queries (created_at,database_connection_id,execution_time_ms,message_id,optimized_query,original_query) values (?,?,?,?,?,?)]
+	at org.hibernate.exception.internal.SQLStateConversionDelegate.convert(SQLStateConversionDelegate.java:97)
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:58)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108)
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:197)
+	at org.hibernate.id.insert.GetGeneratedKeysDelegate.performInsert(GetGeneratedKeysDelegate.java:107)
+	at org.hibernate.engine.jdbc.mutation.internal.MutationExecutorPostInsertSingleTable.execute(MutationExecutorPostInsertSingleTable.java:100)
+	at org.hibernate.persister.entity.mutation.InsertCoordinator.doStaticInserts(InsertCoordinator.java:175)
+	at org.hibernate.persister.entity.mutation.InsertCoordinator.coordinateInsert(InsertCoordinator.java:113)
+	at org.hibernate.persister.entity.AbstractEntityPersister.insert(AbstractEntityPersister.java:2868)
+	at org.hibernate.action.internal.EntityIdentityInsertAction.execute(EntityIdentityInsertAction.java:81)
+	at org.hibernate.engine.spi.ActionQueue.execute(ActionQueue.java:670)
+	at org.hibernate.engine.spi.ActionQueue.addResolvedEntityInsertAction(ActionQueue.java:291)
+	at org.hibernate.engine.spi.ActionQueue.addInsertAction(ActionQueue.java:272)
+	at org.hibernate.engine.spi.ActionQueue.addAction(ActionQueue.java:322)
+	at org.hibernate.event.internal.AbstractSaveEventListener.addInsertAction(AbstractSaveEventListener.java:386)
+	at org.hibernate.event.internal.AbstractSaveEventListener.performSaveOrReplicate(AbstractSaveEventListener.java:300)
+	at org.hibernate.event.internal.AbstractSaveEventListener.performSave(AbstractSaveEventListener.java:219)
+	at org.hibernate.event.internal.AbstractSaveEventListener.saveWithGeneratedId(AbstractSaveEventListener.java:134)
+	at org.hibernate.event.internal.DefaultPersistEventListener.entityIsTransient(DefaultPersistEventListener.java:175)
+	at org.hibernate.event.internal.DefaultPersistEventListener.persist(DefaultPersistEventListener.java:93)
+	at org.hibernate.event.internal.DefaultPersistEventListener.onPersist(DefaultPersistEventListener.java:77)
+	at org.hibernate.event.internal.DefaultPersistEventListener.onPersist(DefaultPersistEventListener.java:54)
+	at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127)
+	at org.hibernate.internal.SessionImpl.firePersist(SessionImpl.java:754)
+	at org.hibernate.internal.SessionImpl.persist(SessionImpl.java:738)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.orm.jpa.ExtendedEntityManagerCreator$ExtendedEntityManagerInvocationHandler.invoke(ExtendedEntityManagerCreator.java:364)
+	at jdk.proxy2/jdk.proxy2.$Proxy140.persist(Unknown Source)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:319)
+	at jdk.proxy2/jdk.proxy2.$Proxy140.persist(Unknown Source)
+	at org.springframework.data.jpa.repository.support.SimpleJpaRepository.save(SimpleJpaRepository.java:618)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:351)
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker$RepositoryFragmentMethodInvoker.lambda$new$0(RepositoryMethodInvoker.java:277)
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:170)
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:158)
+	at org.springframework.data.repository.core.support.RepositoryComposition$RepositoryFragments.invoke(RepositoryComposition.java:516)
+	at org.springframework.data.repository.core.support.RepositoryComposition.invoke(RepositoryComposition.java:285)
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor.invoke(RepositoryFactorySupport.java:628)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:168)
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:143)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.projection.DefaultMethodInvokingMethodInterceptor.invoke(DefaultMethodInvokingMethodInterceptor.java:70)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:385)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137)
+	... 124 common frames omitted
+Caused by: org.postgresql.util.PSQLException: ERROR: null value in column "message_id" of relation "sql_queries" violates not-null constraint
+  Подробности: Failing row contains (32, 2025-06-09 20:36:48.298551, null, **Explanation**
+
+The original query `SELECT * FROM my_db` is a s..., select * from my_db, null, null).
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2713)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2401)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:368)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:498)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:415)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:190)
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:152)
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61)
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java)
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:194)
+	... 174 common frames omitted
+2025-06-09 20:36:48 [http-nio-8080-exec-5] ERROR c.e.b.c.SqlOptimizationController - SQL optimization failed: Internal error during query optimization
+com.example.backend.exception.ApiException: Internal error during query optimization
+	at com.example.backend.service.SqlOptimizationService.lambda$optimizeQuery$7(SqlOptimizationService.java:136)
+	at reactor.core.publisher.Mono.lambda$onErrorMap$28(Mono.java:3850)
+	at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:94)
+	at reactor.core.publisher.MonoFlatMap$FlatMapMain.onNext(MonoFlatMap.java:136)
+	at reactor.core.publisher.MonoPeekTerminal$MonoTerminalPeekSubscriber.onNext(MonoPeekTerminal.java:180)
+	at reactor.core.publisher.MonoPeekTerminal$MonoTerminalPeekSubscriber.onNext(MonoPeekTerminal.java:180)
+	at reactor.core.publisher.SerializedSubscriber.onNext(SerializedSubscriber.java:99)
+	at reactor.core.publisher.FluxRetryWhen$RetryWhenMainSubscriber.onNext(FluxRetryWhen.java:178)
+	at reactor.core.publisher.MonoCallable$MonoCallableSubscription.request(MonoCallable.java:156)
+	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.set(Operators.java:2367)
+	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.onSubscribe(Operators.java:2241)
+	at reactor.core.publisher.MonoCallable.subscribe(MonoCallable.java:48)
+	at reactor.core.publisher.FluxRetryWhen.subscribe(FluxRetryWhen.java:81)
+	at reactor.core.publisher.MonoRetryWhen.subscribeOrReturn(MonoRetryWhen.java:46)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4547)
+	at reactor.core.publisher.FluxFlatMap.trySubscribeScalarMap(FluxFlatMap.java:202)
+	at reactor.core.publisher.MonoFlatMap.subscribeOrReturn(MonoFlatMap.java:53)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4547)
+	at org.springframework.web.servlet.mvc.method.annotation.ReactiveTypeHandler$DeferredResultSubscriber.connect(ReactiveTypeHandler.java:465)
+	at org.springframework.web.servlet.mvc.method.annotation.ReactiveTypeHandler.handleValue(ReactiveTypeHandler.java:163)
+	at org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitterReturnValueHandler.handleReturnValue(ResponseBodyEmitterReturnValueHandler.java:154)
+	at org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite.handleReturnValue(HandlerMethodReturnValueHandlerComposite.java:78)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:136)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:920)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:830)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:547)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:614)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at com.example.backend.security.JwtTokenFilter.doFilterInternal(JwtTokenFilter.java:34)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:195)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:230)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1744)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2025-06-09 20:36:48 [http-nio-8080-exec-5] ERROR c.e.b.c.SqlOptimizationController - API error: status=500 INTERNAL_SERVER_ERROR, message=Internal error during query optimization
+2025-06-09 20:37:06 [MessageBroker-3] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[3 current WS(3)-HttpStream(0)-HttpPoll(0), 4 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(4)-CONNECTED(4)-DISCONNECT(1)], stompBrokerRelay[null], inboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 48], outboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 9], sockJsScheduler[pool size = 8, active threads = 1, queued tasks = 1, completed tasks = 2]
+2025-06-09 20:38:05 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:38:05 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:38:05 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:38:05 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:38:05 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:38:05 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:38:05 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-09 20:38:05 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@781f8d26]]
+2025-06-09 20:38:05 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-09 20:38:11 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-09 20:38:11 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-09 20:38:11 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-09 20:41:34 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 70625 (/Users/andreyshelyagin/sql-opt/backend/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/sql-opt/backend)
+2025-06-09 20:41:34 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-09 20:41:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-09 20:41:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 83 ms. Found 5 JPA repository interfaces.
+2025-06-09 20:41:35 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-09 20:41:35 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-09 20:41:35 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-09 20:41:35 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-09 20:41:35 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 894 ms
+2025-06-09 20:41:35 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-09 20:41:35 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@539fc5d1
+2025-06-09 20:41:35 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-09 20:41:35 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-09 20:41:35 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-09 20:41:35 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-09 20:41:35 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-09 20:41:35 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-09 20:41:35 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 3 migrations (execution time 00:00.014s)
+2025-06-09 20:41:35 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 3
+2025-06-09 20:41:35 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-09 20:41:35 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-09 20:41:35 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-09 20:41:35 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-09 20:41:36 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-09 20:41:36 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-09 20:41:36 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-09 20:41:37 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-09 20:41:37 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-09 20:41:37 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-09 20:41:37 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-09 20:41:37 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-09 20:41:38 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-09 20:41:38 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-09 20:41:38 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@3e095ba6]]
+2025-06-09 20:41:38 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-09 20:41:38 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 3.581 seconds (process running for 3.901)
+2025-06-09 20:41:40 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-09 20:41:40 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-09 20:41:40 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-06-09 20:41:41 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:41:41 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:41:41 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:41:52 [http-nio-8080-exec-2] INFO  c.e.b.controller.AuthController - User logged in successfully: username=andrey
+2025-06-09 20:41:52 [http-nio-8080-exec-4] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-09 20:41:52 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:41:55 [http-nio-8080-exec-3] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:41:55 [http-nio-8080-exec-3] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:41:55 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:41:58 [http-nio-8080-exec-1] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:41:58 [http-nio-8080-exec-1] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:41:58 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:41:59 [http-nio-8080-exec-2] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=12, query=select * from my_db, llm=Local
+2025-06-09 20:41:59 [http-nio-8080-exec-2] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-09 20:41:59 [http-nio-8080-exec-2] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=12, query=select * from my_db, llm=Local
+2025-06-09 20:42:10 [http-nio-8080-exec-2] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=33
+2025-06-09 20:42:10 [http-nio-8080-exec-2] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/12: id=64
+2025-06-09 20:42:10 [http-nio-8080-exec-2] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=33
+2025-06-09 20:42:38 [MessageBroker-3] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[4 current WS(4)-HttpStream(0)-HttpPoll(0), 6 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(6)-CONNECTED(6)-DISCONNECT(2)], stompBrokerRelay[null], inboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 75], outboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 14], sockJsScheduler[pool size = 8, active threads = 1, queued tasks = 1, completed tasks = 2]
+2025-06-09 20:42:56 [http-nio-8080-exec-1] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:42:56 [http-nio-8080-exec-1] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:42:56 [http-nio-8080-exec-3] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-09 20:42:56 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:42:59 [http-nio-8080-exec-10] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:42:59 [http-nio-8080-exec-10] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:42:59 [http-nio-8080-exec-3] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-09 20:42:59 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:43:46 [http-nio-8080-exec-4] INFO  c.e.backend.service.ChatService - Created chat: id=13, title=Chat 13
+2025-06-09 20:43:46 [http-nio-8080-exec-9] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:43:46 [http-nio-8080-exec-9] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:43:46 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:43:50 [http-nio-8080-exec-8] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=13, query=select * from my_db, llm=GigaChat
+2025-06-09 20:43:50 [http-nio-8080-exec-8] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-09 20:43:50 [http-nio-8080-exec-8] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=13, query=select * from my_db, llm=GigaChat
+2025-06-09 20:43:50 [http-nio-8080-exec-8] INFO  c.e.b.service.GigaChatAuthService - Attempting to authenticate with GigaChat API
+2025-06-09 20:43:53 [reactor-http-nio-2] INFO  c.e.b.service.GigaChatAuthService - Successfully refreshed GigaChat token, expires in 3600 seconds
+2025-06-09 20:43:55 [reactor-http-nio-2] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=34
+2025-06-09 20:43:55 [reactor-http-nio-2] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/13: id=65
+2025-06-09 20:43:55 [reactor-http-nio-2] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=34
+2025-06-09 20:44:13 [http-nio-8080-exec-4] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:44:13 [http-nio-8080-exec-4] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:44:14 [http-nio-8080-exec-7] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-09 20:44:14 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:44:26 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:44:26 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:44:26 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:44:26 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:44:26 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:44:26 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:44:26 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:44:26 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:44:26 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-09 20:44:26 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@3e095ba6]]
+2025-06-09 20:44:26 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-09 20:44:33 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-09 20:44:33 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-09 20:44:33 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-09 20:47:39 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 71791 (/Users/andreyshelyagin/sql-opt/backend/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/sql-opt/backend)
+2025-06-09 20:47:39 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-09 20:47:39 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-09 20:47:39 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 76 ms. Found 5 JPA repository interfaces.
+2025-06-09 20:47:40 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-09 20:47:40 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-09 20:47:40 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-09 20:47:40 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-09 20:47:40 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 855 ms
+2025-06-09 20:47:40 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-09 20:47:40 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@539fc5d1
+2025-06-09 20:47:40 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-09 20:47:40 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-09 20:47:40 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-09 20:47:40 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-09 20:47:40 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-09 20:47:40 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-09 20:47:40 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 3 migrations (execution time 00:00.015s)
+2025-06-09 20:47:40 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 3
+2025-06-09 20:47:40 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-09 20:47:40 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-09 20:47:40 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-09 20:47:40 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-09 20:47:40 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-09 20:47:40 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-09 20:47:41 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-09 20:47:41 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-09 20:47:41 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-09 20:47:41 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-09 20:47:41 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-09 20:47:41 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-09 20:47:42 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-09 20:47:42 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-09 20:47:42 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@3e095ba6]]
+2025-06-09 20:47:42 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-09 20:47:42 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 3.365 seconds (process running for 3.821)
+2025-06-09 20:47:45 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-09 20:47:45 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-09 20:47:45 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-06-09 20:47:45 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:47:45 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:47:45 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:47:47 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:48:04 [http-nio-8080-exec-9] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:48:04 [http-nio-8080-exec-9] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:48:05 [http-nio-8080-exec-7] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:48:05 [http-nio-8080-exec-7] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:48:05 [http-nio-8080-exec-8] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:48:05 [http-nio-8080-exec-8] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:48:08 [http-nio-8080-exec-10] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:48:08 [http-nio-8080-exec-10] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:48:14 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-09 20:48:14 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@3e095ba6]]
+2025-06-09 20:48:14 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-09 20:48:26 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-09 20:48:26 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-09 20:48:26 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-09 20:48:28 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 71976 (/Users/andreyshelyagin/sql-opt/backend/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/sql-opt/backend)
+2025-06-09 20:48:28 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-09 20:48:28 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-09 20:48:28 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 93 ms. Found 5 JPA repository interfaces.
+2025-06-09 20:48:29 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-09 20:48:29 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-09 20:48:29 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-09 20:48:29 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-09 20:48:29 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1071 ms
+2025-06-09 20:48:29 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-09 20:48:29 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@44dd0d38
+2025-06-09 20:48:29 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-09 20:48:29 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-09 20:48:29 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-09 20:48:29 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-09 20:48:29 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-09 20:48:29 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-09 20:48:29 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 3 migrations (execution time 00:00.018s)
+2025-06-09 20:48:29 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 3
+2025-06-09 20:48:29 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-09 20:48:29 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-09 20:48:29 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-09 20:48:29 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-09 20:48:29 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-09 20:48:29 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-09 20:48:30 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-09 20:48:30 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-09 20:48:30 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-09 20:48:31 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-09 20:48:31 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-09 20:48:31 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-09 20:48:31 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-09 20:48:31 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-09 20:48:31 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@87dc829]]
+2025-06-09 20:48:31 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-09 20:48:31 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 4.043 seconds (process running for 4.424)
+2025-06-09 20:48:55 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-09 20:48:55 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-09 20:48:55 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-06-09 20:48:55 [http-nio-8080-exec-2] INFO  c.e.b.controller.AuthController - User logged in successfully: username=andrey
+2025-06-09 20:48:55 [http-nio-8080-exec-4] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-09 20:48:55 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:48:57 [http-nio-8080-exec-8] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:48:57 [http-nio-8080-exec-8] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:48:57 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:48:58 [http-nio-8080-exec-9] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:48:58 [http-nio-8080-exec-9] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:48:58 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:49:01 [http-nio-8080-exec-3] INFO  c.e.backend.service.ChatService - Created chat: id=14, title=Chat 14
+2025-06-09 20:49:01 [http-nio-8080-exec-6] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:49:01 [http-nio-8080-exec-6] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:49:01 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:49:03 [http-nio-8080-exec-9] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=14, query=select * from my_db, llm=Local
+2025-06-09 20:49:03 [http-nio-8080-exec-9] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-09 20:49:03 [http-nio-8080-exec-9] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=14, query=select * from my_db, llm=Local
+2025-06-09 20:49:03 [http-nio-8080-exec-9] INFO  c.e.b.service.SqlOptimizationService - Successfully sent user message to /topic/chat/14: id=66
+2025-06-09 20:49:14 [http-nio-8080-exec-9] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=35
+2025-06-09 20:49:14 [http-nio-8080-exec-9] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/14: id=67
+2025-06-09 20:49:14 [http-nio-8080-exec-9] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=35
+2025-06-09 20:49:16 [http-nio-8080-exec-6] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:49:16 [http-nio-8080-exec-6] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:49:17 [http-nio-8080-exec-5] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-09 20:49:17 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:49:18 [http-nio-8080-exec-9] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:49:18 [http-nio-8080-exec-9] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:49:19 [http-nio-8080-exec-6] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-09 20:49:19 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:49:27 [http-nio-8080-exec-4] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=14, query=select * from my_db, llm=GigaChat
+2025-06-09 20:49:27 [http-nio-8080-exec-4] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-09 20:49:27 [http-nio-8080-exec-4] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=14, query=select * from my_db, llm=GigaChat
+2025-06-09 20:49:27 [http-nio-8080-exec-4] INFO  c.e.b.service.SqlOptimizationService - Successfully sent user message to /topic/chat/14: id=68
+2025-06-09 20:49:27 [http-nio-8080-exec-4] INFO  c.e.b.service.GigaChatAuthService - Attempting to authenticate with GigaChat API
+2025-06-09 20:49:31 [MessageBroker-4] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[1 current WS(1)-HttpStream(0)-HttpPoll(0), 6 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(6)-CONNECTED(6)-DISCONNECT(3)], stompBrokerRelay[null], inboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 69], outboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 17], sockJsScheduler[pool size = 8, active threads = 1, queued tasks = 1, completed tasks = 2]
+2025-06-09 20:49:33 [reactor-http-nio-1] ERROR c.e.b.service.GigaChatAuthService - Error during token refresh: Failed to resolve 'ngw.devices.sberbank.ru' [A(1), AAAA(28)] and search domain query for configured domains failed as well: [lan]
+org.springframework.web.reactive.function.client.WebClientRequestException: Failed to resolve 'ngw.devices.sberbank.ru' [A(1), AAAA(28)] and search domain query for configured domains failed as well: [lan]
+	at org.springframework.web.reactive.function.client.ExchangeFunctions$DefaultExchangeFunction.lambda$wrapException$9(ExchangeFunctions.java:136)
+	Suppressed: reactor.core.publisher.FluxOnAssembly$OnAssemblyException: 
+Error has been observed at the following site(s):
+	*__checkpoint ⇢ Request to POST https://ngw.devices.sberbank.ru:9443/api/v2/oauth [DefaultWebClient]
+Original Stack Trace:
+		at org.springframework.web.reactive.function.client.ExchangeFunctions$DefaultExchangeFunction.lambda$wrapException$9(ExchangeFunctions.java:136)
+		at reactor.core.publisher.MonoErrorSupplied.subscribe(MonoErrorSupplied.java:55)
+		at reactor.core.publisher.Mono.subscribe(Mono.java:4563)
+		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:103)
+		at reactor.core.publisher.FluxPeek$PeekSubscriber.onError(FluxPeek.java:222)
+		at reactor.core.publisher.FluxPeek$PeekSubscriber.onError(FluxPeek.java:222)
+		at reactor.core.publisher.FluxPeek$PeekSubscriber.onError(FluxPeek.java:222)
+		at reactor.core.publisher.MonoNext$NextSubscriber.onError(MonoNext.java:93)
+		at reactor.core.publisher.MonoFlatMapMany$FlatMapManyMain.onError(MonoFlatMapMany.java:205)
+		at reactor.core.publisher.SerializedSubscriber.onError(SerializedSubscriber.java:124)
+		at reactor.core.publisher.FluxRetryWhen$RetryWhenMainSubscriber.whenError(FluxRetryWhen.java:229)
+		at reactor.core.publisher.FluxRetryWhen$RetryWhenOtherSubscriber.onError(FluxRetryWhen.java:279)
+		at reactor.core.publisher.FluxContextWrite$ContextWriteSubscriber.onError(FluxContextWrite.java:121)
+		at reactor.core.publisher.FluxConcatMapNoPrefetch$FluxConcatMapNoPrefetchSubscriber.maybeOnError(FluxConcatMapNoPrefetch.java:327)
+		at reactor.core.publisher.FluxConcatMapNoPrefetch$FluxConcatMapNoPrefetchSubscriber.onNext(FluxConcatMapNoPrefetch.java:212)
+		at reactor.core.publisher.FluxContextWrite$ContextWriteSubscriber.onNext(FluxContextWrite.java:107)
+		at reactor.core.publisher.SinkManyEmitterProcessor.drain(SinkManyEmitterProcessor.java:476)
+		at reactor.core.publisher.SinkManyEmitterProcessor$EmitterInner.drainParent(SinkManyEmitterProcessor.java:620)
+		at reactor.core.publisher.FluxPublish$PubSubInner.request(FluxPublish.java:874)
+		at reactor.core.publisher.FluxContextWrite$ContextWriteSubscriber.request(FluxContextWrite.java:136)
+		at reactor.core.publisher.FluxConcatMapNoPrefetch$FluxConcatMapNoPrefetchSubscriber.request(FluxConcatMapNoPrefetch.java:337)
+		at reactor.core.publisher.FluxContextWrite$ContextWriteSubscriber.request(FluxContextWrite.java:136)
+		at reactor.core.publisher.Operators$DeferredSubscription.request(Operators.java:1743)
+		at reactor.core.publisher.FluxRetryWhen$RetryWhenMainSubscriber.onError(FluxRetryWhen.java:196)
+		at reactor.core.publisher.MonoCreate$DefaultMonoSink.error(MonoCreate.java:205)
+		at reactor.netty.http.client.HttpClientConnect$MonoHttpConnect$ClientTransportSubscriber.onError(HttpClientConnect.java:311)
+		at reactor.core.publisher.MonoCreate$DefaultMonoSink.error(MonoCreate.java:205)
+		at reactor.netty.resources.DefaultPooledConnectionProvider$DisposableAcquire.onError(DefaultPooledConnectionProvider.java:172)
+		at reactor.netty.internal.shaded.reactor.pool.AbstractPool$Borrower.fail(AbstractPool.java:488)
+		at reactor.netty.internal.shaded.reactor.pool.SimpleDequePool.lambda$drainLoop$9(SimpleDequePool.java:436)
+		at reactor.core.publisher.FluxDoOnEach$DoOnEachSubscriber.onError(FluxDoOnEach.java:186)
+		at reactor.core.publisher.MonoCreate$DefaultMonoSink.error(MonoCreate.java:205)
+		at reactor.netty.resources.DefaultPooledConnectionProvider$PooledConnectionAllocator$PooledConnectionInitializer.onError(DefaultPooledConnectionProvider.java:583)
+		at reactor.core.publisher.MonoFlatMap$FlatMapMain.secondError(MonoFlatMap.java:241)
+		at reactor.core.publisher.MonoFlatMap$FlatMapInner.onError(MonoFlatMap.java:315)
+		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:106)
+		at reactor.core.publisher.Operators.error(Operators.java:198)
+		at reactor.core.publisher.MonoError.subscribe(MonoError.java:53)
+		at reactor.core.publisher.Mono.subscribe(Mono.java:4563)
+		at reactor.core.publisher.FluxOnErrorResume$ResumeSubscriber.onError(FluxOnErrorResume.java:103)
+		at reactor.netty.transport.TransportConnector$MonoChannelPromise.tryFailure(TransportConnector.java:576)
+		at reactor.netty.transport.TransportConnector.lambda$doResolveAndConnect$11(TransportConnector.java:375)
+		at io.netty.util.concurrent.DefaultPromise.notifyListener0(DefaultPromise.java:590)
+		at io.netty.util.concurrent.DefaultPromise.notifyListenersNow(DefaultPromise.java:557)
+		at io.netty.util.concurrent.DefaultPromise.notifyListeners(DefaultPromise.java:492)
+		at io.netty.util.concurrent.DefaultPromise.setValue0(DefaultPromise.java:636)
+		at io.netty.util.concurrent.DefaultPromise.setFailure0(DefaultPromise.java:629)
+		at io.netty.util.concurrent.DefaultPromise.setFailure(DefaultPromise.java:110)
+		at io.netty.resolver.InetSocketAddressResolver$2.operationComplete(InetSocketAddressResolver.java:86)
+		at io.netty.util.concurrent.DefaultPromise.notifyListener0(DefaultPromise.java:590)
+		at io.netty.util.concurrent.DefaultPromise.notifyListeners0(DefaultPromise.java:583)
+		at io.netty.util.concurrent.DefaultPromise.notifyListenersNow(DefaultPromise.java:559)
+		at io.netty.util.concurrent.DefaultPromise.notifyListeners(DefaultPromise.java:492)
+		at io.netty.util.concurrent.DefaultPromise.setValue0(DefaultPromise.java:636)
+		at io.netty.util.concurrent.DefaultPromise.setFailure0(DefaultPromise.java:629)
+		at io.netty.util.concurrent.DefaultPromise.tryFailure(DefaultPromise.java:118)
+		at io.netty.resolver.dns.DnsResolveContext$1.operationComplete(DnsResolveContext.java:257)
+		at io.netty.util.concurrent.DefaultPromise.notifyListener0(DefaultPromise.java:590)
+		at io.netty.util.concurrent.DefaultPromise.notifyListenersNow(DefaultPromise.java:557)
+		at io.netty.util.concurrent.DefaultPromise.notifyListeners(DefaultPromise.java:492)
+		at io.netty.util.concurrent.DefaultPromise.setValue0(DefaultPromise.java:636)
+		at io.netty.util.concurrent.DefaultPromise.setFailure0(DefaultPromise.java:629)
+		at io.netty.util.concurrent.DefaultPromise.tryFailure(DefaultPromise.java:118)
+		at io.netty.resolver.dns.DnsResolveContext.finishResolve(DnsResolveContext.java:1133)
+		at io.netty.resolver.dns.DnsResolveContext.tryToFinishResolve(DnsResolveContext.java:1072)
+		at io.netty.resolver.dns.DnsResolveContext.query(DnsResolveContext.java:444)
+		at io.netty.resolver.dns.DnsResolveContext.access$700(DnsResolveContext.java:68)
+		at io.netty.resolver.dns.DnsResolveContext$2.operationComplete(DnsResolveContext.java:513)
+		at io.netty.util.concurrent.DefaultPromise.notifyListener0(DefaultPromise.java:590)
+		at io.netty.util.concurrent.DefaultPromise.notifyListeners0(DefaultPromise.java:583)
+		at io.netty.util.concurrent.DefaultPromise.notifyListenersNow(DefaultPromise.java:559)
+		at io.netty.util.concurrent.DefaultPromise.notifyListeners(DefaultPromise.java:492)
+		at io.netty.util.concurrent.DefaultPromise.setValue0(DefaultPromise.java:636)
+		at io.netty.util.concurrent.DefaultPromise.setFailure0(DefaultPromise.java:629)
+		at io.netty.util.concurrent.DefaultPromise.tryFailure(DefaultPromise.java:118)
+		at io.netty.resolver.dns.DnsQueryContext.finishFailure(DnsQueryContext.java:380)
+		at io.netty.resolver.dns.DnsQueryContext$5.run(DnsQueryContext.java:315)
+		at io.netty.util.concurrent.PromiseTask.runTask(PromiseTask.java:98)
+		at io.netty.util.concurrent.ScheduledFutureTask.run(ScheduledFutureTask.java:153)
+		at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:173)
+		at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:166)
+		at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470)
+		at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:569)
+		at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+		at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+		at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+		at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: io.netty.resolver.dns.DnsResolveContext$SearchDomainUnknownHostException: Failed to resolve 'ngw.devices.sberbank.ru' [A(1), AAAA(28)] and search domain query for configured domains failed as well: [lan]
+	at io.netty.resolver.dns.DnsResolveContext.finishResolve(DnsResolveContext.java:1125)
+	at io.netty.resolver.dns.DnsResolveContext.tryToFinishResolve(DnsResolveContext.java:1072)
+	at io.netty.resolver.dns.DnsResolveContext.query(DnsResolveContext.java:444)
+	at io.netty.resolver.dns.DnsResolveContext.access$700(DnsResolveContext.java:68)
+	at io.netty.resolver.dns.DnsResolveContext$2.operationComplete(DnsResolveContext.java:513)
+	at io.netty.util.concurrent.DefaultPromise.notifyListener0(DefaultPromise.java:590)
+	at io.netty.util.concurrent.DefaultPromise.notifyListeners0(DefaultPromise.java:583)
+	at io.netty.util.concurrent.DefaultPromise.notifyListenersNow(DefaultPromise.java:559)
+	at io.netty.util.concurrent.DefaultPromise.notifyListeners(DefaultPromise.java:492)
+	at io.netty.util.concurrent.DefaultPromise.setValue0(DefaultPromise.java:636)
+	at io.netty.util.concurrent.DefaultPromise.setFailure0(DefaultPromise.java:629)
+	at io.netty.util.concurrent.DefaultPromise.tryFailure(DefaultPromise.java:118)
+	at io.netty.resolver.dns.DnsQueryContext.finishFailure(DnsQueryContext.java:380)
+	at io.netty.resolver.dns.DnsQueryContext$5.run(DnsQueryContext.java:315)
+	at io.netty.util.concurrent.PromiseTask.runTask(PromiseTask.java:98)
+	at io.netty.util.concurrent.ScheduledFutureTask.run(ScheduledFutureTask.java:153)
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:173)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:166)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:569)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: io.netty.resolver.dns.DnsNameResolverTimeoutException: [6941: /8.8.8.8:53] DefaultDnsQuestion(ngw.devices.sberbank.ru. IN A) query '6941' via UDP timed out after 5000 milliseconds (no stack trace available)
+2025-06-09 20:49:33 [reactor-http-nio-1] WARN  c.e.b.service.GigaChatAuthService - Retrying token refresh, attempt: 1
+2025-06-09 20:49:35 [reactor-http-nio-3] INFO  c.e.b.service.GigaChatAuthService - Successfully refreshed GigaChat token, expires in 3600 seconds
+2025-06-09 20:49:37 [reactor-http-nio-3] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=36
+2025-06-09 20:49:37 [reactor-http-nio-3] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/14: id=69
+2025-06-09 20:49:37 [reactor-http-nio-3] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=36
+2025-06-09 20:49:41 [http-nio-8080-exec-6] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:49:41 [http-nio-8080-exec-6] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:49:41 [http-nio-8080-exec-5] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-09 20:49:41 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey

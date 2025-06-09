@@ -6,11 +6,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ import com.example.backend.model.dto.SqlQueryRequest;
 import com.example.backend.model.dto.SqlQueryResponse;
 import com.example.backend.model.entity.Chat;
 import com.example.backend.model.entity.DatabaseConnection;
+import com.example.backend.model.entity.Message;
 import com.example.backend.model.entity.SqlQuery;
 import com.example.backend.repository.ChatRepository;
 import com.example.backend.repository.DatabaseConnectionRepository;
@@ -45,113 +48,128 @@ public class SqlOptimizationService {
     private final LLMService llmService; // Assumed service for query optimization
     private final DatabaseConnectionService databaseConnectionService;
     private final ChatService chatService; // Assumed service for chat operations
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Transactional
     public Mono<SqlQueryResponse> optimizeQuery(Long userId, SqlQueryRequest request) {
         log.info("Starting query optimization for userId={}, chatId={}, query={}, llm={}",
                 userId, request.getChatId(), request.getQuery(), request.getLlm());
 
+        // Создаем сообщение для исходного запроса пользователя
+        AtomicReference<Message> userMessageRef = new AtomicReference<>(new Message());
+        Message initialMessage = userMessageRef.get();
+        initialMessage.setContent(request.getQuery());
+        initialMessage.setFromUser(true);
+        initialMessage.setCreatedAt(LocalDateTime.now());
+
         return Mono.fromCallable(() -> {
-                    log.debug("Validating chat existence and ownership");
-                    // Validate chat existence and ownership
-                    Chat chat = chatRepository.findById(request.getChatId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Chat not found with ID: " + request.getChatId()));
-                    log.debug("Chat found: id={}, title={}", chat.getId(), chat.getTitle());
+            log.debug("Validating chat existence and ownership");
+            // Validate chat existence and ownership
+            Chat chat = chatRepository.findById(request.getChatId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Chat not found with ID: " + request.getChatId()));
+            log.debug("Chat found: id={}, title={}", chat.getId(), chat.getTitle());
 
-                    log.debug("Validating SQL query syntax");
-                    // Validate SQL query syntax
-                    validateSqlQuery(request.getQuery());
-                    log.debug("SQL query syntax is valid");
+            log.debug("Validating SQL query syntax");
+            // Validate SQL query syntax
+            validateSqlQuery(request.getQuery());
+            log.debug("SQL query syntax is valid");
 
-                    log.debug("Saving user's query as a message");
-                    // Save user's query as a message
-                    MessageDto userMessageDto = MessageDto.builder()
-                            .content(request.getQuery())
-                            .fromUser(true)
-                            .build();
-                    return chatService.sendMessage(request.getChatId(), userId, userMessageDto);
-                })
-                .flatMap(savedUserMessageDto -> {
-                    log.debug("User message saved: id={}", savedUserMessageDto.getId());
-                    
+            // Устанавливаем чат для сообщения и сохраняем его
+            initialMessage.setChat(chat);
+            Message savedMessage = messageRepository.save(initialMessage);
+            userMessageRef.set(savedMessage);
+            log.debug("Saved user message: id={}", savedMessage.getId());
+
+            // Отправляем сообщение пользователя через WebSocket
+            String destination = "/topic/chat/" + request.getChatId();
+            messagingTemplate.convertAndSend(destination, mapToMessageDto(savedMessage));
+            log.info("Successfully sent user message to {}: id={}", destination, savedMessage.getId());
+
+            return chat;
+        })
+                .flatMap(chat -> {
                     // Handle database connection if provided
                     DatabaseConnection dbConnection = null;
-                    if (request.getDatabaseConnectionId() != null && !request.getDatabaseConnectionId().isBlank()) {
-                        log.debug("Processing database connection: id={}", request.getDatabaseConnectionId());
+                    if (request.getDatabaseConnectionId() != null && !request.getDatabaseConnectionId().isEmpty()) {
+                        log.debug("Looking up database connection: id={}", request.getDatabaseConnectionId());
                         try {
                             Long dbConnectionId = Long.parseLong(request.getDatabaseConnectionId());
-                            dbConnection = databaseConnectionRepository.findByIdAndChatId(dbConnectionId, request.getChatId())
+                            dbConnection = databaseConnectionRepository.findById(dbConnectionId)
                                     .orElseThrow(() -> new ResourceNotFoundException(
-                                            "Database connection not found or not linked to chat: " + dbConnectionId));
-                            log.debug("Database connection found: id={}, name={}", dbConnection.getId(), dbConnection.getName());
+                                            "Database connection not found with ID: "
+                                                    + request.getDatabaseConnectionId()));
+                            log.debug("Found database connection: id={}, name={}", dbConnection.getId(),
+                                    dbConnection.getName());
                         } catch (NumberFormatException e) {
-                            log.error("Invalid database connection ID: {}", request.getDatabaseConnectionId());
-                            throw new ApiException("Invalid database connection ID: " + request.getDatabaseConnectionId(),
-                                    HttpStatus.BAD_REQUEST);
+                            log.warn("Invalid database connection ID format: {}", request.getDatabaseConnectionId());
+                            // Продолжаем выполнение без подключения к БД
                         }
                     } else {
-                        log.debug("No database connection provided");
+                        log.debug("No database connection provided, proceeding without database connection");
                     }
+                    final DatabaseConnection finalDbConnection = dbConnection;
 
-                    // Optimize query using LLM
-                    DatabaseConnection finalDbConnection = dbConnection;
-                    log.debug("Calling LLM service for query optimization");
                     return llmService.optimizeSqlQuery(request.getQuery(), request.getLlm())
                             .doOnSuccess(optimizedQuery -> log.debug("LLM optimization successful: {}", optimizedQuery))
                             .doOnError(error -> log.error("LLM optimization failed: {}", error.getMessage(), error))
                             .flatMap(optimizedQuery -> {
-                                log.debug("Saving optimized query as a system message");
-                                // Save optimized query as a system message
-                                MessageDto llmMessageDto = MessageDto.builder()
-                                        .content(optimizedQuery)
-                                        .fromUser(false)
+                                log.debug("Saving optimized query");
+
+                                // Создаем сообщение для оптимизированного запроса
+                                Message message = new Message();
+                                message.setChat(chat);
+                                message.setContent(optimizedQuery);
+                                message.setFromUser(false);
+                                message.setCreatedAt(LocalDateTime.now());
+                                message = messageRepository.save(message);
+                                log.debug("Saved message for optimized query: id={}", message.getId());
+
+                                // Build and save SqlQuery entity
+                                SqlQuery sqlQuery = SqlQuery.builder()
+                                        .message(userMessageRef.get())
+                                        .originalQuery(request.getQuery())
+                                        .optimizedQuery(optimizedQuery)
+                                        .databaseConnection(finalDbConnection)
+                                        .createdAt(LocalDateTime.now())
                                         .build();
-                                return Mono.fromCallable(() -> chatService.sendMessage(request.getChatId(), userId, llmMessageDto))
-                                        .doOnSuccess(savedLlmMessageDto -> log.debug("System message saved: id={}", savedLlmMessageDto.getId()))
-                                        .map(savedLlmMessageDto -> {
-                                            log.debug("Building SqlQuery entity");
-                                            // Build and save SqlQuery entity
-                                            SqlQuery sqlQuery = SqlQuery.builder()
-                                                    .message(messageRepository.findById(savedUserMessageDto.getId())
-                                                            .orElseThrow(() -> new ResourceNotFoundException(
-                                                                    "User message not found: " + savedUserMessageDto.getId())))
-                                                    .originalQuery(request.getQuery())
-                                                    .optimizedQuery(optimizedQuery)
-                                                    .databaseConnection(finalDbConnection)
-                                                    .createdAt(LocalDateTime.now())
-                                                    .build();
 
-                                            // Measure execution time if connection exists
-                                            if (finalDbConnection != null) {
-                                                log.debug("Measuring query execution time");
-                                                try {
-                                                    long executionTime = measureQueryExecutionTime(finalDbConnection.getId(), optimizedQuery);
-                                                    sqlQuery.setExecutionTimeMs(executionTime);
-                                                    log.debug("Execution time measured: {}ms", executionTime);
-                                                } catch (SQLException e) {
-                                                    log.warn("Failed to measure execution time for query: {}", e.getMessage());
-                                                }
-                                            }
+                                // Measure execution time if connection exists
+                                if (finalDbConnection != null) {
+                                    log.debug("Measuring query execution time");
+                                    try {
+                                        long executionTime = measureQueryExecutionTime(finalDbConnection.getId(),
+                                                optimizedQuery);
+                                        sqlQuery.setExecutionTimeMs(executionTime);
+                                        log.debug("Execution time measured: {}ms", executionTime);
+                                    } catch (SQLException e) {
+                                        log.warn("Failed to measure execution time for query: {}", e.getMessage());
+                                    }
+                                }
 
-                                            log.debug("Saving SqlQuery entity");
-                                            SqlQuery savedQuery = sqlQueryRepository.save(sqlQuery);
-                                            log.info("SQL query saved: id={}", savedQuery.getId());
+                                log.debug("Saving SqlQuery entity");
+                                SqlQuery savedQuery = sqlQueryRepository.save(sqlQuery);
+                                log.info("SQL query saved: id={}", savedQuery.getId());
 
-                                            return SqlQueryResponse.builder()
-                                                    .id(savedQuery.getId())
-                                                    .originalQuery(savedQuery.getOriginalQuery())
-                                                    .optimizedQuery(savedQuery.getOptimizedQuery())
-                                                    .executionTimeMs(savedQuery.getExecutionTimeMs())
-                                                    .createdAt(savedQuery.getCreatedAt())
-                                                    .message(savedLlmMessageDto)
-                                                    .build();
-                                        });
+                                // Отправляем сообщение через WebSocket
+                                String destination = "/topic/chat/" + request.getChatId();
+                                messagingTemplate.convertAndSend(destination, mapToMessageDto(message));
+                                log.info("Successfully sent message to {}: id={}", destination, message.getId());
+
+                                return Mono.just(SqlQueryResponse.builder()
+                                        .id(savedQuery.getId())
+                                        .originalQuery(savedQuery.getOriginalQuery())
+                                        .optimizedQuery(savedQuery.getOptimizedQuery())
+                                        .executionTimeMs(savedQuery.getExecutionTimeMs())
+                                        .createdAt(savedQuery.getCreatedAt())
+                                        .message(mapToMessageDto(message))
+                                        .build());
                             });
                 })
                 .onErrorMap(e -> {
                     if (!(e instanceof ResourceNotFoundException) && !(e instanceof ApiException)) {
                         log.error("Unexpected error during query optimization: {}", e.getMessage(), e);
-                        return new ApiException("Internal error during query optimization", HttpStatus.INTERNAL_SERVER_ERROR);
+                        return new ApiException("Internal error during query optimization",
+                                HttpStatus.INTERNAL_SERVER_ERROR);
                     }
                     return e;
                 });
@@ -189,7 +207,7 @@ public class SqlOptimizationService {
         String explainQuery = "EXPLAIN ANALYZE " + query;
 
         try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(explainQuery)) {
+                ResultSet rs = stmt.executeQuery(explainQuery)) {
             StringBuilder output = new StringBuilder();
             while (rs.next()) {
                 output.append(rs.getString(1)).append("\n");
@@ -222,6 +240,16 @@ public class SqlOptimizationService {
                 .executionTimeMs(sqlQuery.getExecutionTimeMs())
                 .createdAt(sqlQuery.getCreatedAt())
                 .message(messageDto)
+                .build();
+    }
+
+    private MessageDto mapToMessageDto(Message message) {
+        return MessageDto.builder()
+                .id(message.getId())
+                .chatId(message.getChat().getId())
+                .content(message.getContent())
+                .fromUser(message.isFromUser())
+                .createdAt(message.getCreatedAt())
                 .build();
     }
 }

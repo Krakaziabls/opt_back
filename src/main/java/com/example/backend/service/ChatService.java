@@ -107,11 +107,13 @@ public class ChatService {
         message = messageRepository.save(message);
         log.info("Message saved successfully: id={}", message.getId());
 
-        // Отправляем сообщение через WebSocket
-        String destination = "/topic/chat/" + chatId;
-        log.debug("Sending message to destination: {}", destination);
-        messagingTemplate.convertAndSend(destination, mapToMessageDto(message));
-        log.info("Successfully sent message to {}: id={}", destination, message.getId());
+        // Отправляем сообщение через WebSocket только если это не SQL-запрос
+        if (!isSQLQuery(messageDto.getContent())) {
+            String destination = "/topic/chat/" + chatId;
+            log.debug("Sending message to destination: {}", destination);
+            messagingTemplate.convertAndSend(destination, mapToMessageDto(message));
+            log.info("Successfully sent message to {}: id={}", destination, message.getId());
+        }
 
         // Обновляем время последнего обновления чата
         chat.setUpdatedAt(LocalDateTime.now());
@@ -119,6 +121,20 @@ public class ChatService {
         log.debug("Updated chat timestamp: id={}", chat.getId());
 
         return mapToMessageDto(message);
+    }
+
+    private boolean isSQLQuery(String content) {
+        if (content == null || content.trim().isEmpty()) {
+            return false;
+        }
+        String upperContent = content.toUpperCase().trim();
+        return upperContent.startsWith("SELECT") ||
+                upperContent.startsWith("INSERT") ||
+                upperContent.startsWith("UPDATE") ||
+                upperContent.startsWith("DELETE") ||
+                upperContent.startsWith("CREATE") ||
+                upperContent.startsWith("ALTER") ||
+                upperContent.startsWith("DROP");
     }
 
     @Transactional

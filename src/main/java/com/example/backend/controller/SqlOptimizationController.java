@@ -46,12 +46,15 @@ public class SqlOptimizationController {
         log.info("Received SQL optimization request: chatId={}, query={}, llm={}",
                 request.getChatId(), request.getQuery(), request.getLlm());
         log.debug("User details: {}", userDetails);
-        
+
         Long userId = getUserId(userDetails);
         log.info("User ID: {}", userId);
-        
+
         return sqlOptimizationService.optimizeQuery(userId, request)
-                .doOnSuccess(response -> log.info("SQL optimization successful: responseId={}", response.getId()))
+                .doOnSuccess(response -> {
+                    log.info("SQL optimization successful: responseId={}", response.getId());
+                    // Не отправляем сообщение через WebSocket, так как оно уже отправлено в сервисе
+                })
                 .doOnError(error -> log.error("SQL optimization failed: {}", error.getMessage(), error))
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> {

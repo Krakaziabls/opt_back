@@ -26,4 +26,6 @@ public class MessageDto {
     private LocalDateTime createdAt;
 
     private String llmProvider;
+
+    private Long chatId;
 }
