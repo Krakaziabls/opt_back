@@ -1,5 +1,9 @@
 package com.example.backend.config;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -25,6 +29,7 @@ public class WebSocketMessageHandler implements ChannelInterceptor {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final WebSocketSessionManager sessionManager;
+    private final Set<String> processedMessageIds = Collections.synchronizedSet(new HashSet<>());
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -33,6 +38,12 @@ public class WebSocketMessageHandler implements ChannelInterceptor {
         if (accessor == null) {
             log.warn("Received message without StompHeaderAccessor");
             return message;
+        }
+
+        String messageId = accessor.getMessageId();
+        if (messageId != null && !processedMessageIds.add(messageId)) {
+            log.debug("Duplicate message detected, ignoring: {}", messageId);
+            return null;
         }
 
         StompCommand command = accessor.getCommand();
