@@ -202,7 +202,7 @@ public class SqlOptimizationService {
     private long measureQueryExecutionTime(Long connectionId, String query) throws SQLException {
         if (!query.trim().toUpperCase().startsWith("SELECT")) {
             log.info("Skipping execution time measurement for non-SELECT query: {}", query);
-            return Long.parseLong(null); // Use null to indicate no measurement for non-SELECT queries
+            return -1; // Use -1 to indicate no measurement for non-SELECT queries
         }
 
         Connection connection = databaseConnectionService.getConnection(connectionId);
@@ -221,7 +221,7 @@ public class SqlOptimizationService {
                 return (long) Double.parseDouble(matcher.group(1));
             } else {
                 log.warn("Execution time not found in EXPLAIN ANALYZE output");
-                return Long.parseLong(null);
+                return -1;
             }
         } catch (SQLException e) {
             log.error("SQLException during execution time measurement: {}", e.getMessage());
