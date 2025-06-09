@@ -22,4 +22,8 @@ public class SqlQueryRequest {
     private String databaseConnectionId;
 
     private String llm;
+
+    private String promptTemplate;
+
+    private boolean isMPP;
 }

@@ -36,16 +36,16 @@ public class LLMService {
     private final RestTemplate restTemplate;
     private final RestTemplate localRestTemplate;
 
-    public Mono<String> optimizeSqlQuery(String query, String llmProvider) {
+    public Mono<String> optimizeSqlQuery(String query, String llmProvider, String promptTemplate) {
         log.debug("Optimizing SQL query with provider: {}", llmProvider);
         if ("Local".equals(llmProvider)) {
-            return optimizeWithLocalLLM(query);
+            return optimizeWithLocalLLM(query, promptTemplate);
         } else {
-            return optimizeWithCloudLLM(query);
+            return optimizeWithCloudLLM(query, promptTemplate);
         }
     }
 
-    private Mono<String> optimizeWithLocalLLM(String query) {
+    private Mono<String> optimizeWithLocalLLM(String query, String promptTemplate) {
         log.debug("Attempting to optimize with local LLM. Local LLM enabled: {}", llmConfig.isLocalEnabled());
         if (!llmConfig.isLocalEnabled()) {
             log.error("Local LLM is not enabled");
@@ -53,18 +53,17 @@ public class LLMService {
         }
 
         try {
-            Map<String, Object> requestBody = prepareRequestBody(query);
+            Map<String, Object> requestBody = prepareRequestBody(query, promptTemplate);
             log.debug("Prepared request body for local LLM: {}", requestBody);
-            
+
             return Mono.fromCallable(() -> {
                 try {
                     log.debug("Sending request to local LLM at URL: {}", llmConfig.getLocalApiUrl());
                     String response = localRestTemplate.postForObject(
-                        llmConfig.getLocalApiUrl() + "/v1/chat/completions",
-                        requestBody,
-                        String.class
-                    );
-                    
+                            llmConfig.getLocalApiUrl() + "/v1/chat/completions",
+                            requestBody,
+                            String.class);
+
                     if (response == null) {
                         log.error("Empty response from local LLM");
                         throw new ApiException("Empty response from local LLM", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -73,38 +72,39 @@ public class LLMService {
                     log.debug("Received response from local LLM: {}", response);
                     JsonNode rootNode = objectMapper.readTree(response);
                     JsonNode choicesNode = rootNode.path("choices");
-                    
+
                     if (choicesNode.isArray() && choicesNode.size() > 0) {
                         JsonNode firstChoice = choicesNode.get(0);
                         JsonNode messageNode = firstChoice.path("message");
                         String content = messageNode.path("content").asText();
-                        return extractSqlFromResponse(content);
+                        return content;
                     }
-                    
+
                     log.error("Invalid response format from local LLM: {}", response);
                     throw new ApiException("Invalid response format from local LLM", HttpStatus.INTERNAL_SERVER_ERROR);
                 } catch (Exception e) {
                     log.error("Error calling local LLM: {}", e.getMessage(), e);
-                    throw new ApiException("Error calling local LLM: " + e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+                    throw new ApiException("Error calling local LLM: " + e.getMessage(),
+                            HttpStatus.SERVICE_UNAVAILABLE);
                 }
             }).retryWhen(Retry.backoff(MAX_RETRY_ATTEMPTS, Duration.ofMillis(RETRY_DELAY_MS))
-                .filter(e -> e instanceof ApiException && 
-                    ((ApiException) e).getStatus() == HttpStatus.SERVICE_UNAVAILABLE));
+                    .filter(e -> e instanceof ApiException &&
+                            ((ApiException) e).getStatus() == HttpStatus.SERVICE_UNAVAILABLE));
         } catch (Exception e) {
             log.error("Failed to prepare request for local LLM: {}", e.getMessage(), e);
-            return Mono.error(new ApiException("Failed to prepare request for local LLM: " + e.getMessage(), 
-                HttpStatus.INTERNAL_SERVER_ERROR));
+            return Mono.error(new ApiException("Failed to prepare request for local LLM: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
 
-    private Mono<String> optimizeWithCloudLLM(String query) {
+    private Mono<String> optimizeWithCloudLLM(String query, String promptTemplate) {
         if (!StringUtils.hasText(query)) {
             return Mono.error(new ApiException("SQL query cannot be empty", HttpStatus.BAD_REQUEST));
         }
 
         return Mono.defer(() -> {
             validateConfiguration();
-            Map<String, Object> requestBody = prepareRequestBody(query);
+            Map<String, Object> requestBody = prepareRequestBody(query, promptTemplate);
 
             log.debug("Making request to LLM API: URL={}, Body={}",
                     llmConfig.getApiUrl() + "/chat/completions",
@@ -123,10 +123,11 @@ public class LLMService {
                             .bodyToMono(String.class))
                     .flatMap(this::parseResponse)
                     .retryWhen(Retry.backoff(MAX_RETRY_ATTEMPTS, java.time.Duration.ofMillis(RETRY_DELAY_MS))
-                            .doBeforeRetry(signal -> log.warn("Retrying LLM API call, attempt: {}", signal.totalRetries() + 1))
-                            .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> 
-                                new ApiException("Failed to optimize SQL query after " + MAX_RETRY_ATTEMPTS + " attempts",
-                                        HttpStatus.SERVICE_UNAVAILABLE)))
+                            .doBeforeRetry(
+                                    signal -> log.warn("Retrying LLM API call, attempt: {}", signal.totalRetries() + 1))
+                            .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> new ApiException(
+                                    "Failed to optimize SQL query after " + MAX_RETRY_ATTEMPTS + " attempts",
+                                    HttpStatus.SERVICE_UNAVAILABLE)))
                     .onErrorMap(e -> {
                         if (e instanceof ApiException) {
                             return e;
@@ -142,9 +143,6 @@ public class LLMService {
         if (!StringUtils.hasText(llmConfig.getModel())) {
             throw new IllegalStateException("LLM model is not configured");
         }
-        if (!StringUtils.hasText(llmConfig.getSystemPrompt())) {
-            throw new IllegalStateException("LLM system prompt is not configured");
-        }
         if (llmConfig.getTemperature() < 0 || llmConfig.getTemperature() > 1) {
             throw new IllegalStateException("LLM temperature must be between 0 and 1");
         }
@@ -153,13 +151,13 @@ public class LLMService {
         }
     }
 
-    private Map<String, Object> prepareRequestBody(String query) {
+    private Map<String, Object> prepareRequestBody(String query, String promptTemplate) {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("model", llmConfig.getModel());
 
         List<Map<String, String>> messages = new ArrayList<>();
-        messages.add(Map.of("role", "system", "content", llmConfig.getSystemPrompt()));
-        messages.add(Map.of("role", "user", "content", "Optimize this SQL query for PostgreSQL: " + query));
+        messages.add(Map.of("role", "system", "content", promptTemplate));
+        messages.add(Map.of("role", "user", "content", query));
 
         requestBody.put("messages", messages);
         requestBody.put("temperature", llmConfig.getTemperature());
@@ -168,7 +166,8 @@ public class LLMService {
         return requestBody;
     }
 
-    private Mono<? extends Throwable> handleClientError(org.springframework.web.reactive.function.client.ClientResponse clientResponse) {
+    private Mono<? extends Throwable> handleClientError(
+            org.springframework.web.reactive.function.client.ClientResponse clientResponse) {
         return clientResponse.bodyToMono(String.class)
                 .flatMap(errorBody -> {
                     log.error("LLM API client error: status={}, body={}",
@@ -179,7 +178,8 @@ public class LLMService {
                 });
     }
 
-    private Mono<? extends Throwable> handleServerError(org.springframework.web.reactive.function.client.ClientResponse clientResponse) {
+    private Mono<? extends Throwable> handleServerError(
+            org.springframework.web.reactive.function.client.ClientResponse clientResponse) {
         return clientResponse.bodyToMono(String.class)
                 .flatMap(errorBody -> {
                     log.error("LLM API server error: status={}, body={}",
@@ -207,7 +207,7 @@ public class LLMService {
 
             JsonNode firstChoice = choicesNode.get(0);
             JsonNode messageNode = firstChoice.path("message");
-            
+
             if (!messageNode.has("content")) {
                 log.error("Invalid response format: no content in message");
                 return Mono.error(new ApiException("Invalid response format from LLM: no content in message",
@@ -215,34 +215,11 @@ public class LLMService {
             }
 
             String content = messageNode.path("content").asText();
-            String extractedSql = extractSqlFromResponse(content);
-            
-            if (!StringUtils.hasText(extractedSql)) {
-                log.error("No SQL query found in LLM response");
-                return Mono.error(new ApiException("No SQL query found in LLM response",
-                        HttpStatus.INTERNAL_SERVER_ERROR));
-            }
-
-            return Mono.just(extractedSql);
+            return Mono.just(content);
         } catch (Exception e) {
             log.error("Failed to parse LLM response: {}", e.getMessage(), e);
             return Mono.error(new ApiException("Failed to parse LLM response: " + e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR));
         }
-    }
-
-    private String extractSqlFromResponse(String response) {
-        // Extract SQL code between ```sql and ``` markers
-        if (response.contains("```sql")) {
-            int start = response.indexOf("```sql") + 6;
-            int end = response.indexOf("```", start);
-            if (end > start) {
-                String sql = response.substring(start, end).trim();
-                String text = response.substring(0, response.indexOf("```sql")).trim();
-                return text + "\n\n" + sql;
-            }
-        }
-        // Fallback: return the whole response if no code block is found
-        return response.trim();
     }
 }

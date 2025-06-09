@@ -45,15 +45,15 @@ public class SqlOptimizationService {
     private final MessageRepository messageRepository;
     private final ChatRepository chatRepository;
     private final DatabaseConnectionRepository databaseConnectionRepository;
-    private final LLMService llmService; // Assumed service for query optimization
+    private final LLMService llmService;
     private final DatabaseConnectionService databaseConnectionService;
-    private final ChatService chatService; // Assumed service for chat operations
+    private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
 
     @Transactional
     public Mono<SqlQueryResponse> optimizeQuery(Long userId, SqlQueryRequest request) {
-        log.info("Starting query optimization for userId={}, chatId={}, query={}, llm={}",
-                userId, request.getChatId(), request.getQuery(), request.getLlm());
+        log.info("Starting query optimization for userId={}, chatId={}, query={}, llm={}, isMPP={}",
+                userId, request.getChatId(), request.getQuery(), request.getLlm(), request.isMPP());
 
         // Создаем сообщение для исходного запроса пользователя
         AtomicReference<Message> userMessageRef = new AtomicReference<>(new Message());
@@ -104,7 +104,14 @@ public class SqlOptimizationService {
                     }
                     final DatabaseConnection finalDbConnection = dbConnection;
 
-                    return llmService.optimizeSqlQuery(request.getQuery(), request.getLlm())
+                    // Формируем промпт с учетом MPP и наличия соединения
+                    String promptTemplate = request.getPromptTemplate();
+                    if (promptTemplate == null || promptTemplate.isEmpty()) {
+                        promptTemplate = getDefaultPromptTemplate(request.isMPP(), finalDbConnection != null);
+                    }
+
+                    return llmService
+                            .optimizeSqlQuery(request.getQuery(), request.getLlm(), promptTemplate)
                             .doOnSuccess(optimizedQuery -> log.debug("LLM optimization successful: {}", optimizedQuery))
                             .doOnError(error -> log.error("LLM optimization failed: {}", error.getMessage(), error))
                             .flatMap(optimizedQuery -> {
@@ -226,7 +233,7 @@ public class SqlOptimizationService {
         MessageDto messageDto = MessageDto.builder()
                 .content(sqlQuery.getOriginalQuery())
                 .fromUser(true)
-                .build(); // Simplified for this example; adjust based on your MessageDto needs
+                .build();
 
         return SqlQueryResponse.builder()
                 .id(sqlQuery.getId())
@@ -246,5 +253,77 @@ public class SqlOptimizationService {
                 .fromUser(message.isFromUser())
                 .createdAt(message.getCreatedAt())
                 .build();
+    }
+
+    private String getDefaultPromptTemplate(boolean isMPP, boolean hasConnection) {
+        if (isMPP && hasConnection) {
+            return """
+                    Ты — специалист по оптимизации SQL-запросов в MPP-системах, включая Greenplum. Твоя цель — переписать SQL-запрос так, чтобы он выполнялся быстрее и использовал меньше ресурсов, без изменения логики и без вмешательства в СУБД.
+
+                    Входные данные SQL-запрос:
+                    {query_text}
+                    План выполнения (EXPLAIN): {query_plan}
+                    Метаданные таблиц: {tables_meta}
+
+                    Выходные данные
+                    Оптимизированный SQL-запрос:
+                    {optimized_query}
+                    Обоснование изменений:
+                    Кратко опиши, какие узкие места были найдены в плане запроса, и какие методы оптимизации применены.
+                    Оценка улучшения:
+                    Примерное снижение времени выполнения или факторы, которые повлияют на производительность.
+                    Потенциальные риски:
+                    Возможные побочные эффекты изменений, если таковые имеются.""";
+        } else if (isMPP && !hasConnection) {
+            return """
+                    Ты — специалист по оптимизации SQL-запросов в MPP-системах, включая Greenplum. Твоя цель — переписать SQL-запрос так, чтобы он выполнялся быстрее и использовал меньше ресурсов, без изменения логики и без вмешательства в СУБД.
+
+                    Входные данные SQL-запрос:
+                    {query_text}
+
+                    Выходные данные
+                    Оптимизированный SQL-запрос:
+                    {optimized_query}
+                    Обоснование изменений:
+                    Кратко опиши, какие методы оптимизации применены и почему.
+                    Оценка улучшения:
+                    Примерное снижение времени выполнения или факторы, которые повлияют на производительность.
+                    Потенциальные риски:
+                    Возможные побочные эффекты изменений, если таковые имеются.""";
+        } else if (!isMPP && hasConnection) {
+            return """
+                    Ты — специалист по оптимизации SQL-запросов в PostgreSQL. Твоя цель — переписать SQL-запрос так, чтобы он выполнялся быстрее и использовал меньше ресурсов, без изменения логики и без вмешательства в СУБД.
+
+                    Входные данные SQL-запрос:
+                    {query_text}
+                    План выполнения (EXPLAIN): {query_plan}
+                    Метаданные таблиц: {tables_meta}
+
+                    Выходные данные
+                    Оптимизированный SQL-запрос:
+                    {optimized_query}
+                    Обоснование изменений:
+                    Кратко опиши, какие узкие места были найдены в плане запроса, и какие методы оптимизации применены.
+                    Оценка улучшения:
+                    Примерное снижение времени выполнения или факторы, которые повлияют на производительность.
+                    Потенциальные риски:
+                    Возможные побочные эффекты изменений, если таковые имеются.""";
+        } else {
+            return """
+                    Ты — специалист по оптимизации SQL-запросов в PostgreSQL. Твоя цель — переписать SQL-запрос так, чтобы он выполнялся быстрее и использовал меньше ресурсов, без изменения логики и без вмешательства в СУБД.
+
+                    Входные данные SQL-запрос:
+                    {query_text}
+
+                    Выходные данные
+                    Оптимизированный SQL-запрос:
+                    {optimized_query}
+                    Обоснование изменений:
+                    Кратко опиши, какие методы оптимизации применены и почему.
+                    Оценка улучшения:
+                    Примерное снижение времени выполнения или факторы, которые повлияют на производительность.
+                    Потенциальные риски:
+                    Возможные побочные эффекты изменений, если таковые имеются.""";
+        }
     }
 }
