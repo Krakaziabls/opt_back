@@ -112,26 +112,29 @@ public class LLMService {
         StringBuilder formattedResponse = new StringBuilder();
 
         // Добавляем SQL запрос
-        formattedResponse.append("Оптимизированный SQL-запрос:\n```sql\n");
+        formattedResponse.append("## Оптимизированный SQL-запрос\n\n");
         if (content.contains("```sql")) {
             int start = content.indexOf("```sql") + 6;
             int end = content.indexOf("```", start);
             if (end > start) {
+                formattedResponse.append("```sql\n");
                 formattedResponse.append(content.substring(start, end).trim());
+                formattedResponse.append("\n```\n\n");
             }
         } else {
+            formattedResponse.append("```sql\n");
             formattedResponse.append(content.trim());
+            formattedResponse.append("\n```\n\n");
         }
-        formattedResponse.append("\n```\n\n");
 
         // Добавляем остальные секции
-        formattedResponse.append("Обоснование изменений:\n");
+        formattedResponse.append("## Обоснование изменений\n\n");
         formattedResponse.append("Оптимизация запроса выполнена с учетом лучших практик SQL.\n\n");
 
-        formattedResponse.append("Оценка улучшения:\n");
+        formattedResponse.append("## Оценка улучшения\n\n");
         formattedResponse.append("Ожидается улучшение производительности за счет оптимизации структуры запроса.\n\n");
 
-        formattedResponse.append("Потенциальные риски:\n");
+        formattedResponse.append("## Потенциальные риски\n\n");
         formattedResponse.append("Изменения не должны повлиять на логику работы запроса.");
 
         return formattedResponse.toString();
