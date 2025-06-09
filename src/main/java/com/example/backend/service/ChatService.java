@@ -14,11 +14,9 @@ import com.example.backend.model.dto.ChatDto;
 import com.example.backend.model.dto.MessageDto;
 import com.example.backend.model.entity.Chat;
 import com.example.backend.model.entity.Message;
-import com.example.backend.model.entity.SqlQuery;
 import com.example.backend.model.entity.User;
 import com.example.backend.repository.ChatRepository;
 import com.example.backend.repository.MessageRepository;
-import com.example.backend.repository.SqlQueryRepository;
 import com.example.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -34,8 +32,6 @@ public class ChatService {
     private final UserRepository userRepository;
     private final DatabaseConnectionService databaseConnectionService;
     private final SimpMessagingTemplate messagingTemplate;
-    private final SqlQueryRepository sqlQueryRepository;
-    private final LLMService llmService;
 
     public List<ChatDto> getUserChats(Long userId) {
         log.debug("Fetching chats for userId={}", userId);
@@ -122,82 +118,7 @@ public class ChatService {
         chatRepository.save(chat);
         log.debug("Updated chat timestamp: id={}", chat.getId());
 
-        // Получаем оптимизированный SQL через LLM
-        if (messageDto.getFromUser() && isSQLQuery(messageDto.getContent())) {
-            log.debug("Processing SQL query: {}", messageDto.getContent());
-            try {
-                String llmProvider = messageDto.getLlmProvider() != null ? messageDto.getLlmProvider() : "GigaChat";
-                log.debug("Using LLM provider: {}", llmProvider);
-                String optimizedSql = llmService.optimizeSqlQuery(messageDto.getContent(), llmProvider).block();
-                if (optimizedSql != null && !optimizedSql.trim().isEmpty()) {
-                    log.debug("Received optimized SQL: {}", optimizedSql);
-
-                    // Разделяем текст и SQL
-                    String[] parts = optimizedSql.split("\n\n", 2);
-                    String text = parts[0].trim();
-                    String sql = parts.length > 1 ? parts[1].trim() : "";
-
-                    // Сохраняем текстовое сообщение
-                    if (!text.isEmpty()) {
-                        Message textMessage = new Message();
-                        textMessage.setChat(chat);
-                        textMessage.setContent(text);
-                        textMessage.setFromUser(false);
-                        textMessage.setCreatedAt(LocalDateTime.now());
-                        textMessage = messageRepository.save(textMessage);
-                        log.debug("Saved text message: id={}", textMessage.getId());
-
-                        // Отправляем текстовое сообщение через WebSocket
-                        messagingTemplate.convertAndSend(destination, mapToMessageDto(textMessage));
-                        log.info("Successfully sent text message to {}: id={}", destination, textMessage.getId());
-                    }
-
-                    // Сохраняем SQL сообщение
-                    if (!sql.isEmpty()) {
-                        Message sqlMessage = new Message();
-                        sqlMessage.setChat(chat);
-                        sqlMessage.setContent(sql);
-                        sqlMessage.setFromUser(false);
-                        sqlMessage.setCreatedAt(LocalDateTime.now());
-                        sqlMessage = messageRepository.save(sqlMessage);
-                        log.debug("Saved SQL message: id={}", sqlMessage.getId());
-
-                        // Сохраняем информацию о SQL запросе
-                        SqlQuery sqlQuery = new SqlQuery();
-                        sqlQuery.setMessage(sqlMessage);
-                        sqlQuery.setOriginalQuery(messageDto.getContent());
-                        sqlQuery.setOptimizedQuery(sql);
-                        sqlQuery.setCreatedAt(LocalDateTime.now());
-                        sqlQueryRepository.save(sqlQuery);
-                        log.debug("Saved SQL query info: messageId={}", sqlMessage.getId());
-
-                        // Отправляем SQL сообщение через WebSocket
-                        messagingTemplate.convertAndSend(destination, mapToMessageDto(sqlMessage));
-                        log.info("Successfully sent SQL message to {}: id={}", destination, sqlMessage.getId());
-                    }
-                }
-            } catch (Exception e) {
-                log.error("Error processing SQL query: {}", e.getMessage(), e);
-            }
-        } else {
-            log.debug("Message is not a SQL query or not from user, skipping LLM processing");
-        }
-
         return mapToMessageDto(message);
-    }
-
-    private boolean isSQLQuery(String content) {
-        if (content == null || content.trim().isEmpty()) {
-            return false;
-        }
-        String upperContent = content.toUpperCase().trim();
-        return upperContent.startsWith("SELECT") ||
-                upperContent.startsWith("INSERT") ||
-                upperContent.startsWith("UPDATE") ||
-                upperContent.startsWith("DELETE") ||
-                upperContent.startsWith("CREATE") ||
-                upperContent.startsWith("ALTER") ||
-                upperContent.startsWith("DROP");
     }
 
     @Transactional
