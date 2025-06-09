@@ -237,7 +237,9 @@ public class LLMService {
             int start = response.indexOf("```sql") + 6;
             int end = response.indexOf("```", start);
             if (end > start) {
-                return response.substring(start, end).trim();
+                String sql = response.substring(start, end).trim();
+                String text = response.substring(0, response.indexOf("```sql")).trim();
+                return text + "\n\n" + sql;
             }
         }
         // Fallback: return the whole response if no code block is found

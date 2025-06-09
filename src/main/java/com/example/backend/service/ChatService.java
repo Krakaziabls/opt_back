@@ -92,21 +92,21 @@ public class ChatService {
     @Transactional
     public MessageDto sendMessage(Long chatId, Long userId, MessageDto messageDto) {
         log.info("Processing sendMessage: chatId={}, userId={}, content={}", chatId, userId, messageDto.getContent());
-        
+
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new ResourceNotFoundException("Chat not found with id: " + chatId));
-        
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-        
+
         log.debug("Found chat: id={}, title={}", chat.getId(), chat.getTitle());
-        
+
         Message message = new Message();
         message.setChat(chat);
         message.setContent(messageDto.getContent());
         message.setFromUser(messageDto.getFromUser());
         message.setCreatedAt(LocalDateTime.now());
-        
+
         log.debug("Saving message: content={}, fromUser={}", message.getContent(), message.isFromUser());
         message = messageRepository.save(message);
         log.info("Message saved successfully: id={}", message.getId());
@@ -114,7 +114,7 @@ public class ChatService {
         // Отправляем сообщение через WebSocket
         String destination = "/topic/chat/" + chatId;
         log.debug("Sending message to destination: {}", destination);
-        messagingTemplate.convertAndSend(destination, message);
+        messagingTemplate.convertAndSend(destination, mapToMessageDto(message));
         log.info("Successfully sent message to {}: id={}", destination, message.getId());
 
         // Обновляем время последнего обновления чата
@@ -131,27 +131,50 @@ public class ChatService {
                 String optimizedSql = llmService.optimizeSqlQuery(messageDto.getContent(), llmProvider).block();
                 if (optimizedSql != null && !optimizedSql.trim().isEmpty()) {
                     log.debug("Received optimized SQL: {}", optimizedSql);
-                    
-                    Message llmResponse = new Message();
-                    llmResponse.setChat(chat);
-                    llmResponse.setContent(optimizedSql);
-                    llmResponse.setFromUser(false);
-                    llmResponse.setCreatedAt(LocalDateTime.now());
-                    llmResponse = messageRepository.save(llmResponse);
-                    log.debug("Saved LLM response: id={}", llmResponse.getId());
 
-                    // Сохраняем информацию о SQL запросе
-                    SqlQuery sqlQuery = new SqlQuery();
-                    sqlQuery.setMessage(llmResponse);
-                    sqlQuery.setOriginalQuery(messageDto.getContent());
-                    sqlQuery.setOptimizedQuery(optimizedSql);
-                    sqlQuery.setCreatedAt(LocalDateTime.now());
-                    sqlQueryRepository.save(sqlQuery);
-                    log.debug("Saved SQL query info: messageId={}", llmResponse.getId());
+                    // Разделяем текст и SQL
+                    String[] parts = optimizedSql.split("\n\n", 2);
+                    String text = parts[0].trim();
+                    String sql = parts.length > 1 ? parts[1].trim() : "";
 
-                    // Отправляем ответ LLM через WebSocket
-                    messagingTemplate.convertAndSend(destination, llmResponse);
-                    log.info("Successfully sent LLM response to {}: id={}", destination, llmResponse.getId());
+                    // Сохраняем текстовое сообщение
+                    if (!text.isEmpty()) {
+                        Message textMessage = new Message();
+                        textMessage.setChat(chat);
+                        textMessage.setContent(text);
+                        textMessage.setFromUser(false);
+                        textMessage.setCreatedAt(LocalDateTime.now());
+                        textMessage = messageRepository.save(textMessage);
+                        log.debug("Saved text message: id={}", textMessage.getId());
+
+                        // Отправляем текстовое сообщение через WebSocket
+                        messagingTemplate.convertAndSend(destination, mapToMessageDto(textMessage));
+                        log.info("Successfully sent text message to {}: id={}", destination, textMessage.getId());
+                    }
+
+                    // Сохраняем SQL сообщение
+                    if (!sql.isEmpty()) {
+                        Message sqlMessage = new Message();
+                        sqlMessage.setChat(chat);
+                        sqlMessage.setContent(sql);
+                        sqlMessage.setFromUser(false);
+                        sqlMessage.setCreatedAt(LocalDateTime.now());
+                        sqlMessage = messageRepository.save(sqlMessage);
+                        log.debug("Saved SQL message: id={}", sqlMessage.getId());
+
+                        // Сохраняем информацию о SQL запросе
+                        SqlQuery sqlQuery = new SqlQuery();
+                        sqlQuery.setMessage(sqlMessage);
+                        sqlQuery.setOriginalQuery(messageDto.getContent());
+                        sqlQuery.setOptimizedQuery(sql);
+                        sqlQuery.setCreatedAt(LocalDateTime.now());
+                        sqlQueryRepository.save(sqlQuery);
+                        log.debug("Saved SQL query info: messageId={}", sqlMessage.getId());
+
+                        // Отправляем SQL сообщение через WebSocket
+                        messagingTemplate.convertAndSend(destination, mapToMessageDto(sqlMessage));
+                        log.info("Successfully sent SQL message to {}: id={}", destination, sqlMessage.getId());
+                    }
                 }
             } catch (Exception e) {
                 log.error("Error processing SQL query: {}", e.getMessage(), e);
@@ -168,13 +191,13 @@ public class ChatService {
             return false;
         }
         String upperContent = content.toUpperCase().trim();
-        return upperContent.startsWith("SELECT") || 
-               upperContent.startsWith("INSERT") || 
-               upperContent.startsWith("UPDATE") || 
-               upperContent.startsWith("DELETE") || 
-               upperContent.startsWith("CREATE") || 
-               upperContent.startsWith("ALTER") || 
-               upperContent.startsWith("DROP");
+        return upperContent.startsWith("SELECT") ||
+                upperContent.startsWith("INSERT") ||
+                upperContent.startsWith("UPDATE") ||
+                upperContent.startsWith("DELETE") ||
+                upperContent.startsWith("CREATE") ||
+                upperContent.startsWith("ALTER") ||
+                upperContent.startsWith("DROP");
     }
 
     @Transactional

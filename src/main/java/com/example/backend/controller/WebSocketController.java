@@ -35,9 +35,6 @@ public class WebSocketController {
                 .build();
         
         chatService.sendMessage(chatMessage.getChatId(), Long.parseLong(username), messageDto);
-        
-        // Отправляем сообщение всем подписчикам чата
-        messagingTemplate.convertAndSend("/topic/chat/" + chatMessage.getChatId(), chatMessage);
     }
 
     @MessageMapping("/chat.addUser")
