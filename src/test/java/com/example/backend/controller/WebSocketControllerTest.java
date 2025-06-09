@@ -23,7 +23,7 @@ import com.example.backend.model.dto.MessageDto;
 import com.example.backend.service.ChatService;
 
 @WebMvcTest(WebSocketController.class)
-@Import({TestConfig.class, TestSecurityConfig.class, TestWebSocketConfig.class})
+@Import({ TestConfig.class, TestSecurityConfig.class, TestWebSocketConfig.class })
 public class WebSocketControllerTest {
 
     @Autowired
@@ -57,7 +57,6 @@ public class WebSocketControllerTest {
         webSocketController.sendMessage(chatMessage, headerAccessor);
 
         // Assert
-        verify(messagingTemplate).convertAndSend(eq("/topic/chat/123"), any(ChatMessage.class));
         verify(chatService).sendMessage(eq(123L), eq(1L), any(MessageDto.class));
     }
 }

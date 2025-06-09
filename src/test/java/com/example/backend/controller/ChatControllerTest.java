@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,148 +35,147 @@ import com.example.backend.service.ChatService;
 import com.example.backend.service.DatabaseConnectionService;
 
 @WebMvcTest(ChatController.class)
-@Import({TestConfig.class, TestSecurityConfig.class})
+@Import({ TestConfig.class, TestSecurityConfig.class })
 @ActiveProfiles("test")
 public class ChatControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @MockBean
-    private ChatService chatService;
+        @MockBean
+        private ChatService chatService;
 
-    @MockBean
-    private ChatRepository chatRepository;
+        @MockBean
+        private ChatRepository chatRepository;
 
-    @MockBean
-    private MessageRepository messageRepository;
+        @MockBean
+        private MessageRepository messageRepository;
 
-    @MockBean
-    private UserRepository userRepository;
+        @MockBean
+        private UserRepository userRepository;
 
-    @MockBean
-    private DatabaseConnectionService databaseConnectionService;
+        @MockBean
+        private DatabaseConnectionService databaseConnectionService;
 
-    @MockBean
-    private SimpMessagingTemplate messagingTemplate;
+        @MockBean
+        private SimpMessagingTemplate messagingTemplate;
 
-    @Test
-    @WithTestUser
-    public void getUserChats_ReturnsOk() throws Exception {
-        List<ChatDto> chats = Arrays.asList(
-            ChatDto.builder().id(1L).title("Chat 1").build(),
-            ChatDto.builder().id(2L).title("Chat 2").build()
-        );
+        @Test
+        @WithTestUser
+        public void getUserChats_ReturnsOk() throws Exception {
+                List<ChatDto> chats = Arrays.asList(
+                                ChatDto.builder().id(1L).title("Chat 1").build(),
+                                ChatDto.builder().id(2L).title("Chat 2").build());
 
-        when(chatService.getUserChats(eq(1L))).thenReturn(chats);
+                when(chatService.getUserChats(eq(1L))).thenReturn(chats);
 
-        mockMvc.perform(get("/chats"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].title").value("Chat 1"))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].title").value("Chat 2"));
-    }
+                mockMvc.perform(get("/chats"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$[0].id").value(1))
+                                .andExpect(jsonPath("$[0].title").value("Chat 1"))
+                                .andExpect(jsonPath("$[1].id").value(2))
+                                .andExpect(jsonPath("$[1].title").value("Chat 2"));
+        }
 
-    @Test
-    @WithTestUser
-    public void createChat_ValidRequest_ReturnsOk() throws Exception {
-        ChatDto chatDto = ChatDto.builder()
-                .id(1L)
-                .title("New Chat")
-                .build();
+        @Test
+        @WithTestUser
+        public void createChat_ValidRequest_ReturnsOk() throws Exception {
+                ChatDto chatDto = ChatDto.builder()
+                                .id(1L)
+                                .title("New Chat")
+                                .build();
 
-        when(chatService.createChat(eq(1L), any(ChatDto.class))).thenReturn(chatDto);
+                when(chatService.createChat(eq(1L), any(ChatDto.class))).thenReturn(chatDto);
 
-        mockMvc.perform(post("/chats")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\":\"New Chat\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("New Chat"));
-    }
+                mockMvc.perform(post("/chats")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"title\":\"New Chat\"}"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(1))
+                                .andExpect(jsonPath("$.title").value("New Chat"));
+        }
 
-    @Test
-    @WithTestUser
-    public void getChat_ValidId_ReturnsOk() throws Exception {
-        ChatDto chatDto = ChatDto.builder()
-                .id(1L)
-                .title("Test Chat")
-                .build();
+        @Test
+        @WithTestUser
+        public void getChat_ValidId_ReturnsOk() throws Exception {
+                ChatDto chatDto = ChatDto.builder()
+                                .id(1L)
+                                .title("Test Chat")
+                                .build();
 
-        when(chatService.getChat(eq(1L), eq(1L))).thenReturn(chatDto);
+                when(chatService.getChat(eq(1L), eq(1L))).thenReturn(chatDto);
 
-        mockMvc.perform(get("/chats/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("Test Chat"));
-    }
+                mockMvc.perform(get("/chats/1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(1))
+                                .andExpect(jsonPath("$.title").value("Test Chat"));
+        }
 
-    @Test
-    @WithTestUser
-    public void updateChat_ValidRequest_ReturnsOk() throws Exception {
-        ChatDto chatDto = ChatDto.builder()
-                .id(1L)
-                .title("Updated Chat")
-                .build();
+        @Test
+        @WithTestUser
+        public void updateChat_ValidRequest_ReturnsOk() throws Exception {
+                ChatDto chatDto = ChatDto.builder()
+                                .id(1L)
+                                .title("Updated Chat")
+                                .build();
 
-        when(chatService.updateChat(eq(1L), eq(1L), any(ChatDto.class))).thenReturn(chatDto);
+                when(chatService.updateChat(eq(1L), eq(1L), any(ChatDto.class))).thenReturn(chatDto);
 
-        mockMvc.perform(post("/chats/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\":\"Updated Chat\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("Updated Chat"));
-    }
+                mockMvc.perform(put("/chats/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"title\":\"Updated Chat\"}"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(1))
+                                .andExpect(jsonPath("$.title").value("Updated Chat"));
+        }
 
-    @Test
-    @WithTestUser
-    public void deleteChat_ValidId_ReturnsOk() throws Exception {
-        mockMvc.perform(delete("/chats/1"))
-                .andExpect(status().isOk());
-    }
+        @Test
+        @WithTestUser
+        public void deleteChat_ValidId_ReturnsOk() throws Exception {
+                mockMvc.perform(delete("/chats/1"))
+                                .andExpect(status().isOk());
+        }
 
-    @Test
-    @WithTestUser
-    public void archiveChat_ValidId_ReturnsNoContent() throws Exception {
-        mockMvc.perform(post("/chats/1/archive"))
-                .andExpect(status().isNoContent());
-    }
+        @Test
+        @WithTestUser
+        public void archiveChat_ValidId_ReturnsNoContent() throws Exception {
+                mockMvc.perform(post("/chats/1/archive"))
+                                .andExpect(status().isNoContent());
+        }
 
-    @Test
-    @WithTestUser
-    public void getChatMessages_ValidId_ReturnsOk() throws Exception {
-        List<MessageDto> messages = Arrays.asList(
-            MessageDto.builder().id(1L).content("Message 1").build(),
-            MessageDto.builder().id(2L).content("Message 2").build()
-        );
+        @Test
+        @WithTestUser
+        public void getChatMessages_ValidId_ReturnsOk() throws Exception {
+                List<MessageDto> messages = Arrays.asList(
+                                MessageDto.builder().id(1L).content("Message 1").build(),
+                                MessageDto.builder().id(2L).content("Message 2").build());
 
-        when(chatService.getChatMessages(eq(1L), eq(1L))).thenReturn(messages);
+                when(chatService.getChatMessages(eq(1L), eq(1L))).thenReturn(messages);
 
-        mockMvc.perform(get("/chats/1/messages"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].content").value("Message 1"))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].content").value("Message 2"));
-    }
+                mockMvc.perform(get("/chats/1/messages"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$[0].id").value(1))
+                                .andExpect(jsonPath("$[0].content").value("Message 1"))
+                                .andExpect(jsonPath("$[1].id").value(2))
+                                .andExpect(jsonPath("$[1].content").value("Message 2"));
+        }
 
-    @Test
-    @WithTestUser
-    public void sendMessage_ValidRequest_ReturnsOk() throws Exception {
-        MessageDto messageDto = MessageDto.builder()
-                .id(1L)
-                .content("New Message")
-                .build();
+        @Test
+        @WithTestUser
+        public void sendMessage_ValidRequest_ReturnsOk() throws Exception {
+                MessageDto messageDto = MessageDto.builder()
+                                .id(1L)
+                                .content("New Message")
+                                .fromUser(true)
+                                .build();
 
-        when(chatService.sendMessage(eq(1L), eq(1L), any(MessageDto.class))).thenReturn(messageDto);
+                when(chatService.sendMessage(eq(1L), eq(1L), any(MessageDto.class))).thenReturn(messageDto);
 
-        mockMvc.perform(post("/chats/1/messages")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"content\":\"New Message\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.content").value("New Message"));
-    }
-} 
+                mockMvc.perform(post("/chats/1/messages")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"content\":\"New Message\", \"fromUser\":true}"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(1))
+                                .andExpect(jsonPath("$.content").value("New Message"));
+        }
+}

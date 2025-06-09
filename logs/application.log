@@ -1093,3 +1093,11 @@ Caused by: io.netty.resolver.dns.DnsNameResolverTimeoutException: [6941: /8.8.8.
 2025-06-09 20:55:53 [http-nio-8080-exec-7] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
 2025-06-09 20:55:53 [http-nio-8080-exec-1] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
 2025-06-09 20:55:54 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-09 20:58:40 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-09 20:58:40 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-09 20:58:40 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-09 20:58:40 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@791a5c5a]]
+2025-06-09 20:58:40 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-09 20:58:48 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-09 20:58:48 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-09 20:58:48 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
