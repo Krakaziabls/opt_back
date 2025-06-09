@@ -80,11 +80,6 @@ public class SqlOptimizationService {
             userMessageRef.set(savedMessage);
             log.debug("Saved user message: id={}", savedMessage.getId());
 
-            // Отправляем сообщение пользователя через WebSocket
-            String destination = "/topic/chat/" + request.getChatId();
-            messagingTemplate.convertAndSend(destination, mapToMessageDto(savedMessage));
-            log.info("Successfully sent user message to {}: id={}", destination, savedMessage.getId());
-
             return chat;
         })
                 .flatMap(chat -> {
