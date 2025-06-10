@@ -1,7 +1,6 @@
 package com.example.backend.config;
 
-import java.util.Map;
-
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -9,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-import jakarta.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @Component
 public class WebSocketAuthHandler implements HandshakeInterceptor {
@@ -19,10 +18,10 @@ public class WebSocketAuthHandler implements HandshakeInterceptor {
                                  WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         if (request instanceof ServletServerHttpRequest) {
             HttpServletRequest servletRequest = ((ServletServerHttpRequest) request).getServletRequest();
-            
+
             // Проверяем токен в параметрах URL
             String token = servletRequest.getParameter("token");
-            
+
             // Если токена нет в параметрах, проверяем в заголовках
             if (token == null || token.isEmpty()) {
                 String authHeader = servletRequest.getHeader("Authorization");
@@ -30,7 +29,7 @@ public class WebSocketAuthHandler implements HandshakeInterceptor {
                     token = authHeader.substring(7);
                 }
             }
-            
+
             if (token != null && !token.isEmpty()) {
                 attributes.put("token", token);
                 return true;
@@ -44,4 +43,4 @@ public class WebSocketAuthHandler implements HandshakeInterceptor {
                              WebSocketHandler wsHandler, Exception exception) {
         // Ничего не делаем после рукопожатия
     }
-} 
+}

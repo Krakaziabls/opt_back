@@ -1,21 +1,5 @@
 package com.example.backend.service;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.example.backend.exception.ApiException;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.model.dto.MessageDto;
@@ -29,12 +13,29 @@ import com.example.backend.repository.ChatRepository;
 import com.example.backend.repository.DatabaseConnectionRepository;
 import com.example.backend.repository.MessageRepository;
 import com.example.backend.repository.SqlQueryRepository;
-
+import com.example.sqlopt.ast.Operation;
+import com.example.sqlopt.ast.QueryPlanResult;
+import com.example.sqlopt.service.ASTService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +50,7 @@ public class SqlOptimizationService {
     private final DatabaseConnectionService databaseConnectionService;
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ASTService astService;
 
     @Transactional
     public Mono<SqlQueryResponse> optimizeQuery(Long userId, SqlQueryRequest request) {
@@ -116,6 +118,32 @@ public class SqlOptimizationService {
                             .doOnError(error -> log.error("LLM optimization failed: {}", error.getMessage(), error))
                             .flatMap(optimizedQuery -> {
                                 log.debug("Saving optimized query");
+
+                                // Анализируем план запроса с помощью AST
+                                String explainQuery = "EXPLAIN " + optimizedQuery;
+                                try {
+                                    if (finalDbConnection != null) {
+                                        Connection connection = databaseConnectionService.getConnection(finalDbConnection.getId());
+                                        try (Statement stmt = connection.createStatement();
+                                             ResultSet rs = stmt.executeQuery(explainQuery)) {
+                                            StringBuilder planOutput = new StringBuilder();
+                                            while (rs.next()) {
+                                                planOutput.append(rs.getString(1)).append("\n");
+                                            }
+
+                                            // Анализируем план запроса только если есть подключение к БД
+                                            if (planOutput.length() > 0) {
+                                                QueryPlanResult planResult = astService.analyzeQueryPlan(planOutput.toString());
+
+                                                // Добавляем результаты анализа в оптимизированный запрос
+                                                optimizedQuery = optimizedQuery + "\n\n-- Анализ плана запроса:\n" +
+                                                    formatPlanAnalysis(planResult);
+                                            }
+                                        }
+                                    }
+                                } catch (SQLException e) {
+                                    log.warn("Failed to analyze query plan: {}", e.getMessage());
+                                }
 
                                 // Создаем сообщение для оптимизированного запроса
                                 Message message = new Message();
@@ -325,5 +353,32 @@ public class SqlOptimizationService {
                     Потенциальные риски:
                     Возможные побочные эффекты изменений, если таковые имеются.""";
         }
+    }
+
+    private String formatPlanAnalysis(QueryPlanResult planResult) {
+        StringBuilder analysis = new StringBuilder();
+        analysis.append("## Анализ плана запроса\n\n");
+
+        for (Operation operation : planResult.getOperations()) {
+            analysis.append("### Операция: ").append(operation.getType()).append("\n");
+            if (operation.getTableName() != null) {
+                analysis.append("- Таблица: ").append(operation.getTableName()).append("\n");
+            }
+            if (!operation.getTableMetadata().isEmpty()) {
+                analysis.append("- Метаинформация таблицы:\n");
+                operation.getTableMetadata().forEach((key, value) ->
+                    analysis.append("  - ").append(key).append(": ").append(value).append("\n")
+                );
+            }
+            if (!operation.getAdditionalInfo().isEmpty()) {
+                analysis.append("- Дополнительная информация:\n");
+                operation.getAdditionalInfo().forEach((key, value) ->
+                    analysis.append("  - ").append(key).append(": ").append(value).append("\n")
+                );
+            }
+            analysis.append("\n");
+        }
+
+        return analysis.toString();
     }
 }

@@ -1,20 +1,18 @@
 package com.example.backend.service;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.example.backend.exception.ApiException;
 import com.example.backend.model.dto.AuthRequest;
 import com.example.backend.model.dto.AuthResponse;
 import com.example.backend.model.entity.User;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtTokenProvider;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -51,10 +49,10 @@ public class AuthService {
         try {
             User user = userRepository.findByUsername(request.getUsername())
                     .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
-            
+
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            
+
             String token = jwtTokenProvider.createToken(user.getUsername());
             return AuthResponse.builder()
                     .token(token)
