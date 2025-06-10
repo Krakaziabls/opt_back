@@ -19,7 +19,7 @@ public class SqlQueryRequest {
     @NotBlank(message = "Query is required")
     private String query;
 
-    private String databaseConnectionId;
+    private Long databaseConnectionId;
 
     private String llm;
 
