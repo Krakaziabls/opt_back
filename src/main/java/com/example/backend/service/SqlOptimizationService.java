@@ -29,7 +29,6 @@ import com.example.backend.repository.ChatRepository;
 import com.example.backend.repository.DatabaseConnectionRepository;
 import com.example.backend.repository.MessageRepository;
 import com.example.backend.repository.SqlQueryRepository;
-import com.example.sqlopt.ast.Operation;
 import com.example.sqlopt.ast.QueryPlanResult;
 import com.example.sqlopt.service.ASTService;
 
@@ -126,22 +125,32 @@ public class SqlOptimizationService {
                                         .createdAt(LocalDateTime.now())
                                         .build();
 
-                                // Measure execution time if connection exists
+                                // Measure execution time and get EXPLAIN ANALYZE output if connection exists
+                                String explainOutput = null;
+                                QueryPlanResult planResult = null;
                                 if (finalDbConnection != null) {
-                                    log.debug("Measuring query execution time");
+                                    log.debug("Measuring query execution time and analyzing query plan");
                                     try {
-                                        long executionTime = measureQueryExecutionTime(finalDbConnection.getId(),
-                                                optimizedQuery);
-                                        sqlQuery.setExecutionTimeMs(executionTime);
-                                        log.debug("Execution time measured: {}ms", executionTime);
+                                        ExecutionResult executionResult = measureQueryExecutionTime(finalDbConnection.getId(), optimizedQuery);
+                                        sqlQuery.setExecutionTimeMs(executionResult.getExecutionTime());
+                                        explainOutput = executionResult.getExplainOutput();
+                                        if (explainOutput != null) {
+                                            planResult = astService.analyzeQueryPlan(explainOutput);
+                                        }
+                                        log.debug("Execution time measured: {}ms, plan analyzed: {}", executionResult.getExecutionTime(), planResult != null);
                                     } catch (SQLException e) {
-                                        log.warn("Failed to measure execution time for query: {}", e.getMessage());
+                                        log.warn("Failed to measure execution time or analyze query plan: {}", e.getMessage());
                                     }
                                 }
 
                                 log.debug("Saving SqlQuery entity");
                                 SqlQuery savedQuery = sqlQueryRepository.save(sqlQuery);
                                 log.info("SQL query saved: id={}", savedQuery.getId());
+
+                                // Форматируем ответ с учетом результатов AST-анализа
+                                String formattedResponse = formatOptimizationResponse(optimizedQuery, planResult);
+                                message.setContent(formattedResponse);
+                                messageRepository.save(message);
 
                                 // Отправляем сообщение через WebSocket
                                 String destination = "/topic/chat/" + request.getChatId();
@@ -175,10 +184,10 @@ public class SqlOptimizationService {
         }
     }
 
-    private long measureQueryExecutionTime(Long connectionId, String query) throws SQLException {
+    private ExecutionResult measureQueryExecutionTime(Long connectionId, String query) throws SQLException {
         if (!query.trim().toUpperCase().startsWith("SELECT")) {
             log.info("Skipping execution time measurement for non-SELECT query: {}", query);
-            return -1; // Use -1 to indicate no measurement for non-SELECT queries
+            return new ExecutionResult(-1, null);
         }
 
         Connection connection = databaseConnectionService.getConnection(connectionId);
@@ -190,18 +199,37 @@ public class SqlOptimizationService {
             while (rs.next()) {
                 output.append(rs.getString(1)).append("\n");
             }
-
+            String explainOutput = output.toString();
             Pattern pattern = Pattern.compile("Execution Time: (\\d+\\.\\d+) ms");
-            Matcher matcher = pattern.matcher(output.toString());
+            Matcher matcher = pattern.matcher(explainOutput);
             if (matcher.find()) {
-                return (long) Double.parseDouble(matcher.group(1));
+                long executionTime = (long) Double.parseDouble(matcher.group(1));
+                return new ExecutionResult(executionTime, explainOutput);
             } else {
                 log.warn("Execution time not found in EXPLAIN ANALYZE output");
-                return -1;
+                return new ExecutionResult(-1, explainOutput);
             }
         } catch (SQLException e) {
             log.error("SQLException during execution time measurement: {}", e.getMessage());
             throw e;
+        }
+    }
+
+    private static class ExecutionResult {
+        private final long executionTime;
+        private final String explainOutput;
+
+        public ExecutionResult(long executionTime, String explainOutput) {
+            this.executionTime = executionTime;
+            this.explainOutput = explainOutput;
+        }
+
+        public long getExecutionTime() {
+            return executionTime;
+        }
+
+        public String getExplainOutput() {
+            return explainOutput;
         }
     }
 
@@ -228,22 +256,24 @@ public class SqlOptimizationService {
     private String getDefaultPromptTemplate(boolean isMPP, boolean hasConnection) {
         if (isMPP && hasConnection) {
             return """
-                    Ты — специалист по оптимизации SQL-запросов в MPP-системах, включая Greenplum. Твоя цель — переписать SQL-запрос так, чтобы он выполнялся быстрее и использовал меньше ресурсов, без изменения логики и без вмешательства в СУБД.
+                                        Ты — специалист по оптимизации SQL-запросов в MPP-системах, включая Greenplum. Твоя цель — переписать SQL-запрос так, чтобы он выполнялся быстрее и использовал меньше ресурсов, без изменения логики и без вмешательства в СУБД.
 
-                    Входные данные SQL-запрос:
-                    {query_text}
-                    План выполнения (EXPLAIN): {query_plan}
-                    Метаданные таблиц: {tables_meta}
+                    ociative
 
-                    Выходные данные
-                    Оптимизированный SQL-запрос:
-                    {optimized_query}
-                    Обоснование изменений:
-                    Кратко опиши, какие узкие места были найдены в плане запроса, и какие методы оптимизации применены.
-                    Оценка улучшения:
-                    Примерное снижение времени выполнения или факторы, которые повлияют на производительность.
-                    Потенциальные риски:
-                    Возможные побочные эффекты изменений, если таковые имеются.""";
+                                        Входные данные SQL-запрос:
+                                        {query_text}
+                                        План выполнения (EXPLAIN): {query_plan}
+                                        Метаданные таблиц: {tables_meta}
+
+                                        Выходные данные
+                                        Оптимизированный SQL-запрос:
+                                        {optimized_query}
+                                        Обоснование изменений:
+                                        Кратко опиши, какие узкие места были найдены в плане запроса, и какие методы оптимизации применены.
+                                        Оценка улучшения:
+                                        Примерное снижение времени выполнения или факторы, которые повлияют на производительность.
+                                        Потенциальные риски:
+                                        Возможные побочные эффекты изменений, если таковые имеются.""";
         } else if (isMPP && !hasConnection) {
             return """
                     Ты — специалист по оптимизации SQL-запросов в MPP-системах, включая Greenplum. Твоя цель — переписать SQL-запрос так, чтобы он выполнялся быстрее и использовал меньше ресурсов, без изменения логики и без вмешательства в СУБД.
@@ -262,7 +292,7 @@ public class SqlOptimizationService {
                     Возможные побочные эффекты изменений, если таковые имеются.""";
         } else if (!isMPP && hasConnection) {
             return """
-                    Ты — специалист по оптимизации SQL-запросов в PostgreSQL. Твоя цель — переписать SQL-запрос так, чтобы он выполнялся быстрее и использовал меньше ресурсов, без изменения логики и без вмешательства в СУБД.
+                    Ты — специалист по оптимизации SQL-запросов в PostgreSQL. Твоя цель — переписать SQL-запрос так, чтобы он вовремя быстрее и использовал меньше ресурсов, без изменения логики и без вмешательства в СУБД.
 
                     Входные данные SQL-запрос:
                     {query_text}
@@ -306,7 +336,7 @@ public class SqlOptimizationService {
 
         if (planResult != null && !planResult.getOperations().isEmpty()) {
             response.append("## Анализ плана запроса\n\n");
-            for (Operation operation : planResult.getOperations()) {
+            for (com.example.sqlopt.ast.Operation operation : planResult.getOperations()) {
                 response.append("- **").append(operation.getType()).append("**");
                 if (operation.getTableName() != null) {
                     response.append(" для таблицы `").append(operation.getTableName()).append("`");
