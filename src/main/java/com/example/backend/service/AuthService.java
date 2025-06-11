@@ -47,11 +47,13 @@ public class AuthService {
 
     public AuthResponse login(AuthRequest request) {
         try {
-            User user = userRepository.findByUsername(request.getUsername())
-                    .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
-
+            // Сначала проверяем учетные данные
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+
+            // Если аутентификация успешна, получаем пользователя
+            User user = userRepository.findByUsername(request.getUsername())
+                    .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
 
             String token = jwtTokenProvider.createToken(user.getUsername());
             return AuthResponse.builder()

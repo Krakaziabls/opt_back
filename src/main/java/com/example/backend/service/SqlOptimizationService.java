@@ -184,14 +184,209 @@ public class SqlOptimizationService {
         return result;
     }
 
+    private ExecutionResult executeExplainAnalyze(Connection connection, String query) throws SQLException {
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("EXPLAIN ANALYZE " + query)) {
+            StringBuilder output = new StringBuilder();
+            while (rs.next()) {
+                output.append(rs.getString(1)).append("\n");
+            }
+            String explainOutput = output.toString();
+            
+            // Извлекаем время выполнения
+            Pattern pattern = Pattern.compile("Execution Time: (\\d+\\.\\d+) ms");
+            Matcher matcher = pattern.matcher(explainOutput);
+            if (matcher.find()) {
+                long executionTime = (long) Double.parseDouble(matcher.group(1));
+                return new ExecutionResult(executionTime, explainOutput);
+            }
+            return new ExecutionResult(-1, explainOutput);
+        }
+    }
+
+    private String formatOptimizationResponse(
+            String optimizedQuery, 
+            com.example.sqlopt.ast.QueryPlanResult planResult, 
+            Map<String, Map<String, Object>> tablesMetadata,
+            String optimizationRationale,
+            String performanceImpact,
+            String potentialRisks,
+            ExecutionResult originalExecution,
+            ExecutionResult optimizedExecution) {
+        
+        StringBuilder response = new StringBuilder();
+        
+        // Добавляем информацию о запросе и плане
+        response.append("## Информация о запросе\n\n");
+        
+        if (originalExecution != null && originalExecution.getExplainOutput() != null) {
+            // Добавляем визуальное сравнение планов выполнения
+            response.append("### Сравнение планов выполнения\n\n");
+            response.append("<div class='plan-comparison'>\n");
+            response.append("<table class='plan-table'>\n");
+            response.append("<tr><th>Метрика</th><th>Исходный запрос</th><th>Оптимизированный запрос</th><th>Изменение</th></tr>\n");
+            
+            // Добавляем время выполнения
+            response.append("<tr>\n");
+            response.append("<td>Время выполнения</td>\n");
+            response.append("<td>").append(originalExecution.getExecutionTime()).append(" мс</td>\n");
+            response.append("<td>").append(optimizedExecution.getExecutionTime()).append(" мс</td>\n");
+            double timeImprovement = ((double) (originalExecution.getExecutionTime() - optimizedExecution.getExecutionTime()) / originalExecution.getExecutionTime()) * 100;
+            response.append("<td class='").append(timeImprovement > 0 ? "improvement" : "degradation").append("'>")
+                   .append(String.format("%.2f", timeImprovement)).append("%</td>\n");
+            response.append("</tr>\n");
+            
+            // Добавляем график производительности
+            response.append("</table>\n");
+            response.append("<div class='performance-chart'>\n");
+            response.append("```chart\n");
+            response.append("type: bar\n");
+            response.append("data:\n");
+            response.append("  - label: Исходный запрос\n");
+            response.append("    value: ").append(originalExecution.getExecutionTime()).append("\n");
+            response.append("  - label: Оптимизированный запрос\n");
+            response.append("    value: ").append(optimizedExecution.getExecutionTime()).append("\n");
+            response.append("```\n");
+            response.append("</div>\n");
+            response.append("</div>\n\n");
+            
+            // Добавляем детальные планы выполнения
+            response.append("### Детальные планы выполнения\n\n");
+            response.append("<div class='plan-details'>\n");
+            response.append("<div class='original-plan'>\n");
+            response.append("#### Исходный запрос\n");
+            response.append("```sql\n");
+            response.append(originalExecution.getExplainOutput());
+            response.append("\n```\n");
+            response.append("</div>\n");
+            
+            response.append("<div class='optimized-plan'>\n");
+            response.append("#### Оптимизированный запрос\n");
+            response.append("```sql\n");
+            response.append(optimizedExecution.getExplainOutput());
+            response.append("\n```\n");
+            response.append("</div>\n");
+            response.append("</div>\n\n");
+        }
+        
+        // Добавляем сравнение запросов с подсветкой различий
+        response.append("### Сравнение запросов\n\n");
+        response.append("<div class='query-comparison'>\n");
+        response.append("<div class='original-query'>\n");
+        response.append("#### Исходный запрос\n");
+        response.append("```sql\n");
+        response.append(optimizedQuery);
+        response.append("\n```\n");
+        response.append("</div>\n");
+        
+        response.append("<div class='optimized-query'>\n");
+        response.append("#### Оптимизированный запрос\n");
+        response.append("```sql\n");
+        response.append(optimizedQuery);
+        response.append("\n```\n");
+        response.append("</div>\n");
+        response.append("</div>\n\n");
+        
+        // Добавляем интерактивные метаданные таблиц
+        if (tablesMetadata != null && !tablesMetadata.isEmpty()) {
+            response.append("### Метаданные таблиц\n\n");
+            response.append("<div class='table-metadata'>\n");
+            for (Map.Entry<String, Map<String, Object>> entry : tablesMetadata.entrySet()) {
+                response.append("<details class='metadata-details'>\n");
+                response.append("<summary>Таблица: ").append(entry.getKey()).append("</summary>\n");
+                response.append("<div class='metadata-content'>\n");
+                
+                // Колонки
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> columns = (List<Map<String, Object>>) entry.getValue().get("columns");
+                if (columns != null && !columns.isEmpty()) {
+                    response.append("<h4>Колонки</h4>\n");
+                    response.append("<table class='columns-table'>\n");
+                    response.append("<tr><th>Имя</th><th>Тип</th><th>Размер</th><th>Nullable</th><th>Default</th></tr>\n");
+                    for (Map<String, Object> column : columns) {
+                        response.append("<tr>\n");
+                        response.append("<td>").append(column.get("name")).append("</td>\n");
+                        response.append("<td>").append(column.get("type")).append("</td>\n");
+                        response.append("<td>").append(column.get("size")).append("</td>\n");
+                        response.append("<td>").append(column.get("nullable")).append("</td>\n");
+                        response.append("<td>").append(column.get("default")).append("</td>\n");
+                        response.append("</tr>\n");
+                    }
+                    response.append("</table>\n");
+                }
+                
+                // Индексы
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> indexes = (List<Map<String, Object>>) entry.getValue().get("indexes");
+                if (indexes != null && !indexes.isEmpty()) {
+                    response.append("<h4>Индексы</h4>\n");
+                    response.append("<table class='indexes-table'>\n");
+                    response.append("<tr><th>Имя</th><th>Колонки</th><th>Уникальный</th><th>Тип</th></tr>\n");
+                    for (Map<String, Object> index : indexes) {
+                        response.append("<tr>\n");
+                        response.append("<td>").append(index.get("name")).append("</td>\n");
+                        response.append("<td>").append(index.get("columns")).append("</td>\n");
+                        response.append("<td>").append(index.get("unique")).append("</td>\n");
+                        response.append("<td>").append(index.get("type")).append("</td>\n");
+                        response.append("</tr>\n");
+                    }
+                    response.append("</table>\n");
+                }
+                
+                // Статистика
+                @SuppressWarnings("unchecked")
+                Map<String, Object> statistics = (Map<String, Object>) entry.getValue().get("statistics");
+                if (statistics != null && !statistics.isEmpty()) {
+                    response.append("<h4>Статистика</h4>\n");
+                    response.append("<table class='statistics-table'>\n");
+                    response.append("<tr><th>Метрика</th><th>Значение</th></tr>\n");
+                    for (Map.Entry<String, Object> stat : statistics.entrySet()) {
+                        if (!stat.getKey().equals("column_stats")) {
+                            response.append("<tr>\n");
+                            response.append("<td>").append(stat.getKey()).append("</td>\n");
+                            response.append("<td>").append(stat.getValue()).append("</td>\n");
+                            response.append("</tr>\n");
+                        }
+                    }
+                    response.append("</table>\n");
+                }
+                
+                response.append("</div>\n");
+                response.append("</details>\n");
+            }
+            response.append("</div>\n\n");
+        }
+        
+        // Добавляем обоснование оптимизации
+        response.append("## Обоснование оптимизации\n\n");
+        response.append("<div class='optimization-rationale'>\n");
+        response.append(optimizationRationale);
+        response.append("\n</div>\n\n");
+        
+        // Добавляем оценку улучшения
+        response.append("## Оценка улучшения\n\n");
+        response.append("<div class='performance-impact'>\n");
+        response.append(performanceImpact);
+        response.append("\n</div>\n\n");
+        
+        // Добавляем потенциальные риски
+        response.append("## Потенциальные риски\n\n");
+        response.append("<div class='potential-risks'>\n");
+        response.append(potentialRisks);
+        response.append("\n</div>");
+        
+        return response.toString();
+    }
+
     @Transactional
     public Mono<SqlQueryResponse> optimizeQuery(Long userId, SqlQueryRequest request) {
         log.info("Starting query optimization for userId={}, chatId={}, query={}, llm={}, isMPP={}",
                 userId, request.getChatId(), request.getQuery(), request.getLlm(), request.isMPP());
 
-        // Используем AtomicReference для переменных, которые будут изменяться в лямбда-выражениях
         AtomicReference<Map<String, Map<String, Object>>> tablesMetadataRef = new AtomicReference<>(null);
         AtomicReference<com.example.sqlopt.ast.QueryPlanResult> originalPlanResultRef = new AtomicReference<>(null);
+        AtomicReference<ExecutionResult> originalExecutionRef = new AtomicReference<>(null);
+        AtomicReference<ExecutionResult> optimizedExecutionRef = new AtomicReference<>(null);
 
         return Mono.just(request)
                 .flatMap(req -> {
@@ -230,11 +425,9 @@ public class SqlOptimizationService {
                     return Mono.just(sqlQuery);
                 })
                 .flatMap(sqlQuery -> {
-                    // Получаем шаблон промпта
                     String promptTemplate = getDefaultPromptTemplate(request.isMPP(), 
                             request.getDatabaseConnectionId() != null);
 
-                    // Формируем промпт
                     String prompt;
 
                     if (request.getDatabaseConnectionId() != null) {
@@ -245,15 +438,18 @@ public class SqlOptimizationService {
                             originalPlanResultRef.set(astService.analyzeQueryPlan(request.getQuery()));
                             log.info("Original query plan: {}", originalPlanResultRef.get());
                             
-                            // Собираем метаданные таблиц
+                            // Получаем EXPLAIN ANALYZE для исходного запроса
                             Connection connection = databaseConnectionService.getConnection(dbConnection.getId());
+                            originalExecutionRef.set(executeExplainAnalyze(connection, request.getQuery()));
+                            log.info("Original query execution: {}", originalExecutionRef.get().getExplainOutput());
+                            
+                            // Собираем метаданные таблиц
                             List<String> tables = extractTablesFromQuery(request.getQuery());
                             if (!tables.isEmpty()) {
                                 tablesMetadataRef.set(collectTableMetadata(connection, tables));
                                 log.info("Collected metadata for tables: {}", tablesMetadataRef.get());
                             }
                             
-                            // Получаем информацию о подключении к БД
                             String dbInfo = getDatabaseInfo(dbConnection);
                             log.info("Database connection info: {}", dbInfo);
                             
@@ -266,31 +462,32 @@ public class SqlOptimizationService {
                         prompt = formatPrompt(promptTemplate, request.getQuery(), null, null);
                     }
 
-                    // Вызываем LLM
                     return llmService.optimizeSqlQuery(prompt, request.getLlm(), promptTemplate)
                             .map(llmResponse -> {
                                 try {
-                                    // Парсим ответ LLM
                                     LLMResponse parsedResponse = parseLLMResponse(llmResponse);
                                     
-                                    // Сохраняем оптимизированный запрос
                                     sqlQuery.setOptimizedQuery(parsedResponse.getOptimizedSql());
                                     sqlQuery.setOptimizationRationale(parsedResponse.getOptimizationRationale());
                                     sqlQuery.setPerformanceImpact(parsedResponse.getPerformanceImpact());
                                     sqlQuery.setPotentialRisks(parsedResponse.getPotentialRisks());
 
-                                    // Если есть подключение к БД, анализируем план оптимизированного запроса
                                     if (request.getDatabaseConnectionId() != null) {
                                         try {
+                                            DatabaseConnection dbConnection = sqlQuery.getDatabaseConnection();
+                                            Connection connection = databaseConnectionService.getConnection(dbConnection.getId());
+                                            
+                                            // Получаем EXPLAIN ANALYZE для оптимизированного запроса
+                                            optimizedExecutionRef.set(executeExplainAnalyze(connection, parsedResponse.getOptimizedSql()));
+                                            log.info("Optimized query execution: {}", optimizedExecutionRef.get().getExplainOutput());
+                                            
                                             // Анализируем план оптимизированного запроса
                                             com.example.sqlopt.ast.QueryPlanResult optimizedPlanResult = 
                                                 astService.analyzeQueryPlan(parsedResponse.getOptimizedSql());
                                             
-                                            // Сохраняем оба плана
                                             sqlQuery.setOriginalPlan(originalPlanResultRef.get());
                                             sqlQuery.setOptimizedPlan(optimizedPlanResult);
                                             
-                                            // Обновляем метаданные таблиц
                                             if (tablesMetadataRef.get() != null) {
                                                 sqlQuery.setTablesMetadata(tablesMetadataRef.get());
                                             }
@@ -304,7 +501,6 @@ public class SqlOptimizationService {
                                     return sqlQuery;
                                 } catch (Exception e) {
                                     log.error("Error parsing LLM response: {}", e.getMessage());
-                                    // В случае ошибки парсинга, используем оригинальный запрос
                                     sqlQuery.setOptimizedQuery(request.getQuery());
                                     sqlQuery.setOptimizationRationale("Не удалось получить оптимизированную версию запроса. Пожалуйста, попробуйте позже.");
                                     sqlQuery.setPerformanceImpact("Нет данных");
@@ -314,7 +510,6 @@ public class SqlOptimizationService {
                             })
                             .onErrorResume(e -> {
                                 log.error("Error during LLM optimization: {}", e.getMessage());
-                                // В случае ошибки LLM, используем оригинальный запрос
                                 sqlQuery.setOptimizedQuery(request.getQuery());
                                 sqlQuery.setOptimizationRationale("Сервис оптимизации временно недоступен. Пожалуйста, попробуйте позже.");
                                 sqlQuery.setPerformanceImpact("Нет данных");
@@ -324,20 +519,19 @@ public class SqlOptimizationService {
                 })
                 .flatMap(sqlQuery -> {
                     try {
-                        // Сохраняем запрос
                         SqlQuery savedQuery = sqlQueryRepository.save(sqlQuery);
 
-                        // Форматируем ответ
                         String formattedResponse = formatOptimizationResponse(
                             sqlQuery.getOptimizedQuery(),
                             sqlQuery.getOptimizedPlan(),
                             tablesMetadataRef.get(),
                             sqlQuery.getOptimizationRationale(),
                             sqlQuery.getPerformanceImpact(),
-                            sqlQuery.getPotentialRisks()
+                            sqlQuery.getPotentialRisks(),
+                            originalExecutionRef.get(),
+                            optimizedExecutionRef.get()
                         );
 
-                        // Создаем новое сообщение от LLM
                         Message llmMessage = Message.builder()
                             .chat(sqlQuery.getMessage().getChat())
                             .content(formattedResponse)
@@ -346,7 +540,6 @@ public class SqlOptimizationService {
                             .build();
                         llmMessage = messageRepository.save(llmMessage);
 
-                        // Отправляем сообщение через WebSocket
                         String destination = "/topic/chat/" + request.getChatId();
                         MessageDto messageDto = MessageDto.builder()
                             .id(llmMessage.getId())
@@ -661,56 +854,6 @@ public class SqlOptimizationService {
         if (endIndex == -1) return null;
         
         return text.substring(startIndex, endIndex).trim();
-    }
-
-    private String formatOptimizationResponse(
-            String optimizedQuery, 
-            com.example.sqlopt.ast.QueryPlanResult planResult, 
-            Map<String, Map<String, Object>> tablesMetadata,
-            String optimizationRationale,
-            String performanceImpact,
-            String potentialRisks) {
-        
-        StringBuilder response = new StringBuilder();
-        
-        // Добавляем информацию о запросе и плане
-        if (planResult != null) {
-            response.append("## Информация о запросе\n\n");
-            response.append("### План выполнения\n");
-            response.append("```sql\n");
-            response.append(planResult.toString());
-            response.append("\n```\n\n");
-            
-            if (tablesMetadata != null && !tablesMetadata.isEmpty()) {
-                response.append("### Метаданные таблиц\n");
-                for (Map.Entry<String, Map<String, Object>> entry : tablesMetadata.entrySet()) {
-                    response.append("#### Таблица: ").append(entry.getKey()).append("\n");
-                    response.append("```json\n");
-                    response.append(new Gson().toJson(entry.getValue()));
-                    response.append("\n```\n\n");
-                }
-            }
-        }
-        
-        // Добавляем оптимизированный запрос
-        response.append("## Оптимизированный SQL-запрос\n\n");
-        response.append("```sql\n");
-        response.append(optimizedQuery);
-        response.append("\n```\n\n");
-        
-        // Добавляем обоснование оптимизации
-        response.append("## Обоснование оптимизации\n\n");
-        response.append(optimizationRationale).append("\n\n");
-        
-        // Добавляем оценку улучшения
-        response.append("## Оценка улучшения\n\n");
-        response.append(performanceImpact).append("\n\n");
-        
-        // Добавляем потенциальные риски
-        response.append("## Потенциальные риски\n\n");
-        response.append(potentialRisks);
-        
-        return response.toString();
     }
 
     private List<String> extractTablesFromQuery(String query) {
