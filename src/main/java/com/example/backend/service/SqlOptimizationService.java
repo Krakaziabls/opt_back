@@ -67,10 +67,120 @@ public class SqlOptimizationService {
     private final ASTService astService;
 
     private static class LLMResponse {
-        private String optimizedSQL;
+        private String optimizedSql;
         private String optimizationRationale;
         private String performanceImpact;
         private String potentialRisks;
+
+        public String getOptimizedSql() {
+            return optimizedSql;
+        }
+
+        public void setOptimizedSql(String optimizedSql) {
+            this.optimizedSql = optimizedSql;
+        }
+
+        public String getOptimizationRationale() {
+            return optimizationRationale;
+        }
+
+        public void setOptimizationRationale(String optimizationRationale) {
+            this.optimizationRationale = optimizationRationale;
+        }
+
+        public String getPerformanceImpact() {
+            return performanceImpact;
+        }
+
+        public void setPerformanceImpact(String performanceImpact) {
+            this.performanceImpact = performanceImpact;
+        }
+
+        public String getPotentialRisks() {
+            return potentialRisks;
+        }
+
+        public void setPotentialRisks(String potentialRisks) {
+            this.potentialRisks = potentialRisks;
+        }
+    }
+
+    private String formatPrompt(String promptTemplate, String query, QueryPlanResult planResult, Map<String, Map<String, Object>> tablesMetadata) {
+        StringBuilder prompt = new StringBuilder(promptTemplate);
+        
+        // Добавляем SQL-запрос
+        prompt.append("\n\nSQL-запрос для оптимизации:\n```sql\n").append(query).append("\n```\n");
+        
+        // Если есть план выполнения, добавляем его
+        if (planResult != null && !planResult.getOperations().isEmpty()) {
+            prompt.append("\nПлан выполнения запроса:\n");
+            for (com.example.sqlopt.ast.Operation operation : planResult.getOperations()) {
+                prompt.append("- ").append(operation.getType());
+                if (operation.getTableName() != null) {
+                    prompt.append(" по таблице ").append(operation.getTableName());
+                }
+                prompt.append("\n");
+            }
+        }
+        
+        // Если есть метаданные таблиц, добавляем их
+        if (tablesMetadata != null && !tablesMetadata.isEmpty()) {
+            prompt.append("\nМетаданные таблиц:\n");
+            for (Map.Entry<String, Map<String, Object>> entry : tablesMetadata.entrySet()) {
+                prompt.append("\nТаблица: ").append(entry.getKey()).append("\n");
+                Map<String, Object> metadata = entry.getValue();
+                
+                // Колонки
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> columns = (List<Map<String, Object>>) metadata.get("columns");
+                if (columns != null && !columns.isEmpty()) {
+                    prompt.append("Колонки:\n");
+                    for (Map<String, Object> column : columns) {
+                        prompt.append("- ").append(column.get("name"))
+                              .append(" (").append(column.get("type")).append(")");
+                        if (column.get("nullable") != null) {
+                            prompt.append(column.get("nullable").equals(true) ? " NULL" : " NOT NULL");
+                        }
+                        prompt.append("\n");
+                    }
+                }
+                
+                // Индексы
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> indexes = (List<Map<String, Object>>) metadata.get("indexes");
+                if (indexes != null && !indexes.isEmpty()) {
+                    prompt.append("Индексы:\n");
+                    for (Map<String, Object> index : indexes) {
+                        prompt.append("- ").append(index.get("name"))
+                              .append(" (").append(index.get("columns")).append(")");
+                        if (index.get("unique") != null) {
+                            prompt.append(index.get("unique").equals(true) ? " UNIQUE" : "");
+                        }
+                        prompt.append("\n");
+                    }
+                }
+            }
+        }
+        
+        return prompt.toString();
+    }
+
+    private com.example.sqlopt.ast.QueryPlanResult convertToAstQueryPlanResult(QueryPlanResult result) {
+        com.example.sqlopt.ast.QueryPlanResult astResult = new com.example.sqlopt.ast.QueryPlanResult();
+        astResult.setOperations(result.getOperations());
+        astResult.setCost(result.getCost());
+        astResult.setPlanningTimeMs(result.getPlanningTimeMs());
+        astResult.setExecutionTimeMs(result.getExecutionTimeMs());
+        return astResult;
+    }
+
+    private QueryPlanResult convertFromAstQueryPlanResult(com.example.sqlopt.ast.QueryPlanResult astResult) {
+        QueryPlanResult result = new QueryPlanResult();
+        result.setOperations(astResult.getOperations());
+        result.setCost(astResult.getCost());
+        result.setPlanningTimeMs(astResult.getPlanningTimeMs());
+        result.setExecutionTimeMs(astResult.getExecutionTimeMs());
+        return result;
     }
 
     @Transactional
@@ -78,151 +188,147 @@ public class SqlOptimizationService {
         log.info("Starting query optimization for userId={}, chatId={}, query={}, llm={}, isMPP={}",
                 userId, request.getChatId(), request.getQuery(), request.getLlm(), request.isMPP());
 
-        // Создаем сообщение для исходного запроса пользователя
-        AtomicReference<Message> userMessageRef = new AtomicReference<>(new Message());
-        Message initialMessage = userMessageRef.get();
-        initialMessage.setContent(request.getQuery());
-        initialMessage.setFromUser(true);
-        initialMessage.setCreatedAt(LocalDateTime.now());
+        // Используем AtomicReference для переменных, которые будут изменяться в лямбда-выражениях
+        AtomicReference<Map<String, Map<String, Object>>> tablesMetadataRef = new AtomicReference<>(null);
+        AtomicReference<com.example.sqlopt.ast.QueryPlanResult> originalPlanResultRef = new AtomicReference<>(null);
 
-        return Mono.fromCallable(() -> {
-                    log.debug("Validating chat existence and ownership");
-                    // Validate chat existence and ownership
-                    Chat chat = chatRepository.findById(request.getChatId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Chat not found with ID: " + request.getChatId()));
-                    log.debug("Chat found: id={}, title={}", chat.getId(), chat.getTitle());
+        return Mono.just(request)
+                .flatMap(req -> {
+                    // Создаем сообщение
+                    Message message = new Message();
+                    message.setChat(chatRepository.findById(req.getChatId())
+                            .orElseThrow(() -> new RuntimeException("Chat not found")));
+                    message.setContent(req.getQuery());
+                    message.setFromUser(true);
+                    message.setCreatedAt(LocalDateTime.now());
+                    messageRepository.save(message);
 
-                    log.debug("Validating SQL query syntax");
-                    // Validate SQL query syntax
-                    validateSqlQuery(request.getQuery());
-                    log.debug("SQL query syntax is valid");
+                    // Создаем запись SQL-запроса
+                    SqlQuery sqlQuery = new SqlQuery();
+                    sqlQuery.setMessage(message);
+                    sqlQuery.setOriginalQuery(req.getQuery());
+                    sqlQuery.setCreatedAt(LocalDateTime.now());
 
-                    // Устанавливаем чат для сообщения и сохраняем его
-                    initialMessage.setChat(chat);
-                    Message savedMessage = messageRepository.save(initialMessage);
-                    userMessageRef.set(savedMessage);
-                    log.debug("Saved user message: id={}", savedMessage.getId());
+                    // Если есть подключение к БД, сохраняем его
+                    if (req.getDatabaseConnectionId() != null) {
+                        DatabaseConnection dbConnection = databaseConnectionRepository
+                                .findById(req.getDatabaseConnectionId())
+                                .orElseThrow(() -> new RuntimeException("Database connection not found"));
+                        sqlQuery.setDatabaseConnection(dbConnection);
+                    }
 
-                    return chat;
+                    return Mono.just(sqlQuery);
                 })
-                .flatMap(chat -> {
-                    // Проверяем наличие подключения к БД
-                    DatabaseConnection dbConnection = null;
-                    if (request.getDatabaseConnectionId() != null) {
-                        dbConnection = databaseConnectionRepository.findById(request.getDatabaseConnectionId())
-                                .orElseThrow(() -> new ResourceNotFoundException("Database connection not found"));
-                    }
-                    final DatabaseConnection finalDbConnection = dbConnection;
-
+                .flatMap(sqlQuery -> {
                     // Получаем шаблон промпта
-                    String promptTemplate = request.getPromptTemplate();
-                    if (promptTemplate == null || promptTemplate.trim().isEmpty()) {
-                        promptTemplate = getDefaultPromptTemplate(request.isMPP(), finalDbConnection != null);
-                    }
+                    String promptTemplate = getDefaultPromptTemplate(request.isMPP(), 
+                            request.getDatabaseConnectionId() != null);
 
-                    // Собираем метаданные таблиц, если есть подключение к БД
-                    final Map<String, Map<String, Object>> tablesMetadata = new HashMap<>();
-                    if (finalDbConnection != null) {
+                    // Формируем промпт
+                    String prompt;
+
+                    if (request.getDatabaseConnectionId() != null) {
                         try {
-                            Connection connection = databaseConnectionService.getConnection(finalDbConnection.getId());
+                            DatabaseConnection dbConnection = sqlQuery.getDatabaseConnection();
+                            
+                            // Анализируем план исходного запроса
+                            originalPlanResultRef.set(astService.analyzeQueryPlan(request.getQuery()));
+                            
+                            // Собираем метаданные таблиц
+                            Connection connection = databaseConnectionService.getConnection(dbConnection.getId());
                             List<String> tables = extractTablesFromQuery(request.getQuery());
                             if (!tables.isEmpty()) {
-                                tablesMetadata.putAll(collectTableMetadata(connection, tables));
-                                log.debug("Collected metadata for {} tables", tablesMetadata.size());
+                                tablesMetadataRef.set(collectTableMetadata(connection, tables));
+                                log.debug("Collected metadata for {} tables", tablesMetadataRef.get().size());
                             }
-                        } catch (SQLException e) {
-                            log.warn("Failed to collect table metadata: {}", e.getMessage());
+                            
+                            prompt = formatPrompt(promptTemplate, request.getQuery(), originalPlanResultRef.get(), tablesMetadataRef.get());
+                        } catch (Exception e) {
+                            log.warn("Failed to collect metadata or analyze plan: {}", e.getMessage());
+                            prompt = formatPrompt(promptTemplate, request.getQuery(), null, null);
                         }
+                    } else {
+                        prompt = formatPrompt(promptTemplate, request.getQuery(), null, null);
                     }
 
-                    return llmService
-                            .optimizeSqlQuery(request.getQuery(), request.getLlm(), promptTemplate)
-                            .doOnSuccess(optimizedQuery -> log.debug("LLM optimization successful: {}", optimizedQuery))
-                            .doOnError(error -> log.error("LLM optimization failed: {}", error.getMessage(), error))
-                            .flatMap(llmResponse -> {
-                                log.debug("Parsing LLM response");
-                                LLMResponse parsedResponse = parseLLMResponse(llmResponse);
-                                String optimizedQuery = parsedResponse.optimizedSQL;
+                    // Вызываем LLM
+                    return llmService.optimizeSqlQuery(prompt, request.getLlm(), promptTemplate)
+                            .map(llmResponse -> {
+                                try {
+                                    // Парсим ответ LLM
+                                    LLMResponse parsedResponse = parseLLMResponse(llmResponse);
+                                    
+                                    // Сохраняем оптимизированный запрос
+                                    sqlQuery.setOptimizedQuery(parsedResponse.getOptimizedSql());
+                                    sqlQuery.setOptimizationRationale(parsedResponse.getOptimizationRationale());
+                                    sqlQuery.setPerformanceImpact(parsedResponse.getPerformanceImpact());
+                                    sqlQuery.setPotentialRisks(parsedResponse.getPotentialRisks());
 
-                                log.debug("Saving optimized query");
-
-                                // Создаем сообщение для оптимизированного запроса
-                                Message message = new Message();
-                                message.setChat(chat);
-                                message.setContent(optimizedQuery);
-                                message.setFromUser(false);
-                                message.setCreatedAt(LocalDateTime.now());
-                                message = messageRepository.save(message);
-                                log.debug("Saved message for optimized query: id={}", message.getId());
-
-                                // Build and save SqlQuery entity
-                                SqlQuery sqlQuery = SqlQuery.builder()
-                                        .message(userMessageRef.get())
-                                        .originalQuery(request.getQuery())
-                                        .optimizedQuery(optimizedQuery)
-                                        .databaseConnection(finalDbConnection)
-                                        .createdAt(LocalDateTime.now())
-                                        .optimizationRationale(parsedResponse.optimizationRationale)
-                                        .performanceImpact(parsedResponse.performanceImpact)
-                                        .potentialRisks(parsedResponse.potentialRisks)
-                                        .build();
-
-                                // Measure execution time and get EXPLAIN ANALYZE output if connection exists
-                                String explainOutput = null;
-                                QueryPlanResult planResult = null;
-                                if (finalDbConnection != null) {
-                                    log.debug("Measuring query execution time and analyzing query plan");
-                                    try {
-                                        // Получаем план для исходного запроса
-                                        ExecutionResult originalExecutionResult = measureQueryExecutionTime(finalDbConnection.getId(), request.getQuery());
-                                        sqlQuery.setExecutionTimeMs(originalExecutionResult.getExecutionTime());
-                                        if (originalExecutionResult.getExplainOutput() != null) {
-                                            sqlQuery.setOriginalPlan(astService.analyzeQueryPlan(originalExecutionResult.getExplainOutput()));
+                                    // Если есть подключение к БД, анализируем план оптимизированного запроса
+                                    if (request.getDatabaseConnectionId() != null) {
+                                        try {
+                                            com.example.sqlopt.ast.QueryPlanResult optimizedPlanResult = 
+                                                astService.analyzeQueryPlan(parsedResponse.getOptimizedSql());
+                                            sqlQuery.setOriginalPlan(originalPlanResultRef.get());
+                                            sqlQuery.setOptimizedPlan(optimizedPlanResult);
+                                        } catch (Exception e) {
+                                            log.warn("Failed to analyze optimized query plan: {}", e.getMessage());
                                         }
-
-                                        // Получаем план для оптимизированного запроса
-                                        ExecutionResult optimizedExecutionResult = measureQueryExecutionTime(finalDbConnection.getId(), optimizedQuery);
-                                        if (optimizedExecutionResult.getExplainOutput() != null) {
-                                            planResult = astService.analyzeQueryPlan(optimizedExecutionResult.getExplainOutput());
-                                            sqlQuery.setOptimizedPlan(planResult);
-                                        }
-                                        log.debug("Execution time measured: {}ms, plan analyzed: {}", 
-                                            optimizedExecutionResult.getExecutionTime(), planResult != null);
-                                    } catch (SQLException e) {
-                                        log.warn("Failed to measure execution time or analyze query plan: {}", e.getMessage());
                                     }
+
+                                    return sqlQuery;
+                                } catch (Exception e) {
+                                    log.error("Error parsing LLM response: {}", e.getMessage());
+                                    // В случае ошибки парсинга, используем оригинальный запрос
+                                    sqlQuery.setOptimizedQuery(request.getQuery());
+                                    sqlQuery.setOptimizationRationale("Не удалось получить оптимизированную версию запроса. Пожалуйста, попробуйте позже.");
+                                    sqlQuery.setPerformanceImpact("Нет данных");
+                                    sqlQuery.setPotentialRisks("Нет данных");
+                                    return sqlQuery;
                                 }
-
-                                log.debug("Saving SqlQuery entity");
-                                SqlQuery savedQuery = sqlQueryRepository.save(sqlQuery);
-                                log.info("SQL query saved: id={}", savedQuery.getId());
-
-                                // Форматируем ответ с учетом результатов AST-анализа
-                                String formattedResponse = formatOptimizationResponse(
-                                    optimizedQuery, 
-                                    planResult, 
-                                    finalDbConnection != null ? tablesMetadata : null,
-                                    parsedResponse.optimizationRationale,
-                                    parsedResponse.performanceImpact,
-                                    parsedResponse.potentialRisks
-                                );
-                                message.setContent(formattedResponse);
-                                messageRepository.save(message);
-
-                                // Отправляем сообщение через WebSocket
-                                String destination = "/topic/chat/" + request.getChatId();
-                                MessageDto messageDto = MessageDto.builder()
-                                    .id(message.getId())
-                                    .content(formattedResponse)
-                                    .fromUser(false)
-                                    .createdAt(message.getCreatedAt())
-                                    .chatId(request.getChatId())
-                                    .build();
-                                messagingTemplate.convertAndSend(destination, messageDto);
-                                log.info("Successfully sent message to {}: id={}", destination, message.getId());
-
-                                return Mono.just(mapToResponse(savedQuery));
+                            })
+                            .onErrorResume(e -> {
+                                log.error("Error during LLM optimization: {}", e.getMessage());
+                                // В случае ошибки LLM, используем оригинальный запрос
+                                sqlQuery.setOptimizedQuery(request.getQuery());
+                                sqlQuery.setOptimizationRationale("Сервис оптимизации временно недоступен. Пожалуйста, попробуйте позже.");
+                                sqlQuery.setPerformanceImpact("Нет данных");
+                                sqlQuery.setPotentialRisks("Нет данных");
+                                return Mono.just(sqlQuery);
                             });
+                })
+                .flatMap(sqlQuery -> {
+                    // Сохраняем запрос
+                    SqlQuery savedQuery = sqlQueryRepository.save(sqlQuery);
+
+                    // Форматируем ответ
+                    String formattedResponse = formatOptimizationResponse(
+                        sqlQuery.getOptimizedQuery(),
+                        sqlQuery.getOptimizedPlan(),
+                        tablesMetadataRef.get(),
+                        sqlQuery.getOptimizationRationale(),
+                        sqlQuery.getPerformanceImpact(),
+                        sqlQuery.getPotentialRisks()
+                    );
+
+                    // Обновляем сообщение
+                    Message message = sqlQuery.getMessage();
+                    message.setContent(formattedResponse);
+                    messageRepository.save(message);
+
+                    // Отправляем сообщение через WebSocket
+                    String destination = "/topic/chat/" + request.getChatId();
+                    MessageDto messageDto = MessageDto.builder()
+                        .id(message.getId())
+                        .content(formattedResponse)
+                        .fromUser(false)
+                        .createdAt(message.getCreatedAt())
+                        .chatId(request.getChatId())
+                        .build();
+                    messagingTemplate.convertAndSend(destination, messageDto);
+                    log.info("Successfully sent message to {}: id={}", destination, message.getId());
+
+                    return Mono.just(mapToResponse(savedQuery));
                 });
     }
 
@@ -357,6 +463,12 @@ public class SqlOptimizationService {
         
         template.append("Ты — специалист по оптимизации SQL-запросов. Твоя задача — проанализировать предоставленный SQL-запрос и предложить его оптимизированную версию.\n\n");
         
+        if (hasConnection) {
+            template.append("У тебя есть доступ к базе данных и возможность анализировать план выполнения запроса.\n\n");
+        } else {
+            template.append("У тебя нет доступа к базе данных. Оптимизация будет выполнена на основе общих принципов и лучших практик SQL.\n\n");
+        }
+        
         template.append("SQL-запрос:\n");
         template.append("```sql\n");
         template.append("{query}\n");
@@ -370,8 +482,6 @@ public class SqlOptimizationService {
 
             template.append("Метаданные таблиц:\n");
             template.append("{tables_meta}\n\n");
-        } else {
-            template.append("Примечание: Подключение к базе данных отсутствует. Оптимизация будет выполнена на основе общих принципов и лучших практик SQL.\n\n");
         }
 
         template.append("Требования к ответу:\n");
@@ -389,15 +499,27 @@ public class SqlOptimizationService {
         template.append("[подробное объяснение внесенных изменений]\n\n");
         
         template.append("## Оценка улучшения\n\n");
-        template.append("[оценка ожидаемого улучшения производительности]\n\n");
+        if (hasConnection) {
+            template.append("[оценка ожидаемого улучшения производительности на основе анализа плана выполнения]\n\n");
+        } else {
+            template.append("[оценка ожидаемого улучшения производительности на основе общих принципов SQL]\n\n");
+        }
         
         template.append("## Потенциальные риски\n\n");
-        template.append("[описание возможных рисков и побочных эффектов]\n\n");
+        if (hasConnection) {
+            template.append("[описание возможных рисков и побочных эффектов на основе анализа плана выполнения]\n\n");
+        } else {
+            template.append("[описание возможных рисков и побочных эффектов на основе общих принципов SQL]\n\n");
+        }
 
         return template.toString();
     }
 
     private LLMResponse parseLLMResponse(String response) {
+        if (response == null || response.trim().isEmpty()) {
+            throw new ApiException("Пустой ответ от LLM", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
         LLMResponse result = new LLMResponse();
         
         // Разбиваем ответ на секции
@@ -407,19 +529,61 @@ public class SqlOptimizationService {
             if (section.trim().isEmpty()) continue;
             
             if (section.contains("Оптимизированный SQL-запрос")) {
-                result.optimizedSQL = extractSQLFromSection(section);
+                String sql = extractSQLFromSection(section);
+                if (sql != null && !sql.trim().isEmpty()) {
+                    try {
+                        // Валидируем SQL-запрос
+                        validateSqlQuery(sql);
+                        result.setOptimizedSql(sql);
+                    } catch (Exception e) {
+                        log.warn("Невалидный SQL в ответе LLM: {}", e.getMessage());
+                    }
+                }
             } else if (section.contains("Обоснование оптимизации")) {
-                result.optimizationRationale = extractContentFromSection(section);
+                String rationale = extractContentFromSection(section);
+                if (rationale != null && !rationale.trim().isEmpty()) {
+                    result.setOptimizationRationale(rationale);
+                }
             } else if (section.contains("Оценка улучшения")) {
-                result.performanceImpact = extractContentFromSection(section);
+                String impact = extractContentFromSection(section);
+                if (impact != null && !impact.trim().isEmpty()) {
+                    result.setPerformanceImpact(impact);
+                }
             } else if (section.contains("Потенциальные риски")) {
-                result.potentialRisks = extractContentFromSection(section);
+                String risks = extractContentFromSection(section);
+                if (risks != null && !risks.trim().isEmpty()) {
+                    result.setPotentialRisks(risks);
+                }
             }
         }
         
-        // Если не нашли оптимизированный SQL, используем исходный запрос
-        if (result.optimizedSQL == null || result.optimizedSQL.trim().isEmpty()) {
-            result.optimizedSQL = response;
+        // Если не нашли оптимизированный SQL, ищем его в тексте
+        if (result.getOptimizedSql() == null || result.getOptimizedSql().trim().isEmpty()) {
+            String sql = extractSQLFromText(response);
+            if (sql != null && !sql.trim().isEmpty()) {
+                try {
+                    validateSqlQuery(sql);
+                    result.setOptimizedSql(sql);
+                } catch (Exception e) {
+                    log.warn("Невалидный SQL в тексте ответа: {}", e.getMessage());
+                    throw new ApiException("Не удалось извлечь валидный SQL-запрос из ответа LLM", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            } else {
+                throw new ApiException("Не удалось найти SQL-запрос в ответе LLM", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        
+        // Устанавливаем стандартные значения для отсутствующих секций
+        if (result.getOptimizationRationale() == null || result.getOptimizationRationale().trim().isEmpty()) {
+            result.setOptimizationRationale("Оптимизация выполнена на основе общих принципов SQL без анализа плана выполнения.");
+        }
+        
+        if (result.getPerformanceImpact() == null || result.getPerformanceImpact().trim().isEmpty()) {
+            result.setPerformanceImpact("Без анализа плана выполнения невозможно точно оценить улучшение производительности.");
+        }
+        
+        if (result.getPotentialRisks() == null || result.getPotentialRisks().trim().isEmpty()) {
+            result.setPotentialRisks("Без анализа плана выполнения невозможно точно оценить потенциальные риски.");
         }
         
         return result;
@@ -443,13 +607,38 @@ public class SqlOptimizationService {
         return section.substring(startIndex).trim();
     }
 
+    private String extractSQLFromText(String text) {
+        // Ищем SQL в тексте между ```sql и ```
+        int startIndex = text.indexOf("```sql");
+        if (startIndex == -1) {
+            // Если не нашли ```sql, ищем просто SQL-запрос
+            String[] lines = text.split("\n");
+            for (String line : lines) {
+                if (line.trim().toUpperCase().startsWith("SELECT")) {
+                    return line.trim();
+                }
+            }
+            return null;
+        }
+        
+        startIndex += 6; // длина ```sql
+        int endIndex = text.indexOf("```", startIndex);
+        if (endIndex == -1) return null;
+        
+        return text.substring(startIndex, endIndex).trim();
+    }
+
     private String formatOptimizationResponse(
             String optimizedQuery, 
-            QueryPlanResult planResult, 
+            com.example.sqlopt.ast.QueryPlanResult planResult, 
             Map<String, Map<String, Object>> tablesMetadata,
             String optimizationRationale,
             String performanceImpact,
             String potentialRisks) {
+        if (optimizedQuery == null || optimizedQuery.trim().isEmpty()) {
+            throw new ApiException("Отсутствует оптимизированный SQL-запрос", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
         StringBuilder response = new StringBuilder();
 
         // Добавляем оптимизированный запрос
@@ -460,25 +649,51 @@ public class SqlOptimizationService {
         if (optimizationRationale != null && !optimizationRationale.isEmpty()) {
             response.append("## Обоснование оптимизации\n\n");
             response.append(optimizationRationale).append("\n\n");
+        } else {
+            response.append("## Обоснование оптимизации\n\n");
+            response.append("Оптимизация выполнена на основе общих принципов SQL без анализа плана выполнения.\n\n");
         }
 
         // Добавляем оценку улучшения
         if (performanceImpact != null && !performanceImpact.isEmpty()) {
             response.append("## Оценка улучшения\n\n");
             response.append(performanceImpact).append("\n\n");
+        } else {
+            response.append("## Оценка улучшения\n\n");
+            response.append("Без анализа плана выполнения невозможно точно оценить улучшение производительности.\n\n");
         }
 
         // Добавляем потенциальные риски
         if (potentialRisks != null && !potentialRisks.isEmpty()) {
             response.append("## Потенциальные риски\n\n");
             response.append(potentialRisks).append("\n\n");
+        } else {
+            response.append("## Потенциальные риски\n\n");
+            response.append("Без анализа плана выполнения невозможно точно оценить потенциальные риски.\n\n");
         }
 
-        // Добавляем анализ плана выполнения только если есть подключение и план
+        // Добавляем анализ плана выполнения только если есть план
         if (planResult != null && !planResult.getOperations().isEmpty()) {
             response.append("## Метрики и анализ\n\n");
+            
+            // Добавляем общую статистику плана
+            response.append("### Общая статистика плана выполнения\n\n");
+            response.append("- Количество операций: ").append(planResult.getOperations().size()).append("\n");
+            if (planResult.getCost() != null) {
+                response.append("- Общая стоимость: ").append(planResult.getCost()).append("\n");
+            }
+            if (planResult.getPlanningTimeMs() != null) {
+                response.append("- Время планирования: ").append(planResult.getPlanningTimeMs()).append(" мс\n");
+            }
+            if (planResult.getExecutionTimeMs() != null) {
+                response.append("- Время выполнения: ").append(planResult.getExecutionTimeMs()).append(" мс\n");
+            }
+            response.append("\n");
+
+            // Добавляем детальный анализ операций
+            response.append("### Детальный анализ операций\n\n");
             for (com.example.sqlopt.ast.Operation operation : planResult.getOperations()) {
-                response.append("### Операция: ").append(operation.getType()).append("\n");
+                response.append("#### Операция: ").append(operation.getType()).append("\n");
                 if (operation.getTableName() != null) {
                     response.append("- Таблица: ").append(operation.getTableName()).append("\n");
                 }
@@ -507,7 +722,7 @@ public class SqlOptimizationService {
             }
         }
         
-        // Добавляем метаданные таблиц только если есть подключение
+        // Добавляем метаданные таблиц только если они есть
         if (tablesMetadata != null && !tablesMetadata.isEmpty()) {
             response.append("## Метаданные таблиц\n\n");
             for (Map.Entry<String, Map<String, Object>> entry : tablesMetadata.entrySet()) {

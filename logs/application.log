@@ -1555,3 +1555,1354 @@ java.lang.NullPointerException: Cannot invoke "java.security.Principal.getName()
 2025-06-09 21:34:49 [reactor-http-nio-2] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=5
 2025-06-09 21:34:49 [reactor-http-nio-2] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/3: id=12
 2025-06-09 21:34:49 [reactor-http-nio-2] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=5
+2025-06-11 16:03:24 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 2509 (/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/Новая папка с объектами/opt_back)
+2025-06-11 16:03:24 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-11 16:03:24 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-11 16:03:24 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 84 ms. Found 5 JPA repository interfaces.
+2025-06-11 16:03:25 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-11 16:03:25 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-11 16:03:25 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-11 16:03:25 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-11 16:03:25 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1114 ms
+2025-06-11 16:03:25 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-11 16:03:25 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@10fb4575
+2025-06-11 16:03:25 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-11 16:03:25 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-11 16:03:25 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-11 16:03:25 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-11 16:03:25 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-11 16:03:25 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-11 16:03:25 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 4 migrations (execution time 00:00.013s)
+2025-06-11 16:03:25 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 4
+2025-06-11 16:03:25 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-11 16:03:25 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-11 16:03:25 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-11 16:03:25 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-11 16:03:25 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-11 16:03:25 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-11 16:03:26 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 16:03:26 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-11 16:03:26 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-11 16:03:26 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-11 16:03:26 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-11 16:03:26 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-11 16:03:27 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-11 16:03:27 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-11 16:03:27 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@5c97c816]]
+2025-06-11 16:03:27 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-11 16:03:27 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 3.769 seconds (process running for 4.076)
+2025-06-11 16:03:43 [http-nio-8080-exec-3] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-11 16:03:43 [http-nio-8080-exec-3] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-11 16:03:43 [http-nio-8080-exec-3] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 5 ms
+2025-06-11 16:03:43 [http-nio-8080-exec-4] INFO  c.e.b.controller.AuthController - User logged in successfully: username=andrey
+2025-06-11 16:03:43 [http-nio-8080-exec-6] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-11 16:03:43 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:03:50 [http-nio-8080-exec-4] INFO  c.e.backend.service.ChatService - Created chat: id=10, title=Chat 8
+2025-06-11 16:03:50 [http-nio-8080-exec-1] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:03:50 [http-nio-8080-exec-1] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:03:50 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:04:13 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:04:13 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:04:13 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-11 16:04:13 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@5c97c816]]
+2025-06-11 16:04:13 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-11 16:04:13 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 16:04:13 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-11 16:04:13 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-11 16:08:18 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 3627 (/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/Новая папка с объектами/opt_back)
+2025-06-11 16:08:18 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-11 16:08:19 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-11 16:08:19 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 78 ms. Found 5 JPA repository interfaces.
+2025-06-11 16:08:19 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-11 16:08:19 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-11 16:08:19 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-11 16:08:19 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-11 16:08:19 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 907 ms
+2025-06-11 16:08:19 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-11 16:08:20 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@30036a18
+2025-06-11 16:08:20 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-11 16:08:20 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-11 16:08:20 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-11 16:08:20 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-11 16:08:20 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-11 16:08:20 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-11 16:08:20 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 4 migrations (execution time 00:00.014s)
+2025-06-11 16:08:20 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 4
+2025-06-11 16:08:20 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-11 16:08:20 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-11 16:08:20 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-11 16:08:20 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-11 16:08:20 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-11 16:08:20 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-11 16:08:21 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 16:08:21 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-11 16:08:21 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-11 16:08:21 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-11 16:08:21 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-11 16:08:21 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-11 16:08:22 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-11 16:08:22 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-11 16:08:22 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@6226a088]]
+2025-06-11 16:08:22 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-11 16:08:22 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 3.754 seconds (process running for 4.405)
+2025-06-11 16:08:23 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-11 16:08:23 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-11 16:08:23 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-06-11 16:08:23 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:08:32 [http-nio-8080-exec-7] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:08:32 [http-nio-8080-exec-7] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:08:41 [http-nio-8080-exec-8] INFO  c.e.b.controller.AuthController - User logged in successfully: username=andrey
+2025-06-11 16:08:41 [http-nio-8080-exec-9] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-11 16:08:41 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:08:45 [http-nio-8080-exec-10] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:08:45 [http-nio-8080-exec-10] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:08:45 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:08:47 [http-nio-8080-exec-10] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:08:47 [http-nio-8080-exec-10] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:08:47 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:08:49 [http-nio-8080-exec-2] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=10, query=select * from chats, llm=Local
+2025-06-11 16:08:49 [http-nio-8080-exec-2] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 16:08:49 [http-nio-8080-exec-2] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=10, query=select * from chats, llm=Local, isMPP=false
+2025-06-11 16:09:12 [http-nio-8080-exec-2] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=34
+2025-06-11 16:09:12 [http-nio-8080-exec-2] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/10: id=90
+2025-06-11 16:09:12 [http-nio-8080-exec-2] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=34
+2025-06-11 16:09:22 [MessageBroker-1] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[1 current WS(1)-HttpStream(0)-HttpPoll(0), 4 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(4)-CONNECTED(4)-DISCONNECT(2)], stompBrokerRelay[null], inboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 48], outboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 10], sockJsScheduler[pool size = 8, active threads = 1, queued tasks = 1, completed tasks = 2]
+2025-06-11 16:11:31 [http-nio-8080-exec-9] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:11:31 [http-nio-8080-exec-9] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:11:31 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:12:47 [http-nio-8080-exec-8] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:12:47 [http-nio-8080-exec-8] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:12:47 [http-nio-8080-exec-6] ERROR o.s.w.s.m.StompSubProtocolHandler - Error publishing SessionDisconnectEvent[sessionId=fzqcobsg, CloseStatus[code=1001, reason=WebSocket is closed before the connection is established.]]
+java.lang.NullPointerException: Cannot invoke "java.security.Principal.getName()" because the return value of "org.springframework.messaging.simp.stomp.StompHeaderAccessor.getUser()" is null
+	at com.example.backend.config.WebSocketMessageHandler.handleWebSocketDisconnectListener(WebSocketMessageHandler.java:93)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.context.event.ApplicationListenerMethodAdapter.doInvoke(ApplicationListenerMethodAdapter.java:365)
+	at org.springframework.context.event.ApplicationListenerMethodAdapter.processEvent(ApplicationListenerMethodAdapter.java:237)
+	at org.springframework.context.event.ApplicationListenerMethodAdapter.onApplicationEvent(ApplicationListenerMethodAdapter.java:168)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:185)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:178)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:156)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:451)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:384)
+	at org.springframework.web.socket.messaging.StompSubProtocolHandler.publishEvent(StompSubProtocolHandler.java:448)
+	at org.springframework.web.socket.messaging.StompSubProtocolHandler.afterSessionEnded(StompSubProtocolHandler.java:683)
+	at org.springframework.web.socket.messaging.SubProtocolWebSocketHandler.clearSession(SubProtocolWebSocketHandler.java:551)
+	at org.springframework.web.socket.messaging.SubProtocolWebSocketHandler.afterConnectionClosed(SubProtocolWebSocketHandler.java:419)
+	at org.springframework.web.socket.handler.WebSocketHandlerDecorator.afterConnectionClosed(WebSocketHandlerDecorator.java:85)
+	at org.springframework.web.socket.handler.LoggingWebSocketHandlerDecorator.afterConnectionClosed(LoggingWebSocketHandlerDecorator.java:72)
+	at org.springframework.web.socket.handler.ExceptionWebSocketHandlerDecorator.afterConnectionClosed(ExceptionWebSocketHandlerDecorator.java:78)
+	at org.springframework.web.socket.sockjs.transport.session.AbstractSockJsSession.delegateConnectionClosed(AbstractSockJsSession.java:395)
+	at org.springframework.web.socket.sockjs.transport.handler.SockJsWebSocketHandler.afterConnectionClosed(SockJsWebSocketHandler.java:98)
+	at org.springframework.web.socket.adapter.standard.StandardWebSocketHandlerAdapter.onClose(StandardWebSocketHandlerAdapter.java:144)
+	at org.apache.tomcat.websocket.WsSession.fireEndpointOnClose(WsSession.java:714)
+	at org.apache.tomcat.websocket.WsSession.onClose(WsSession.java:638)
+	at org.apache.tomcat.websocket.WsFrameBase.processDataControl(WsFrameBase.java:347)
+	at org.apache.tomcat.websocket.WsFrameBase.processData(WsFrameBase.java:279)
+	at org.apache.tomcat.websocket.WsFrameBase.processInputBuffer(WsFrameBase.java:130)
+	at org.apache.tomcat.websocket.server.WsFrameServer.onDataAvailable(WsFrameServer.java:85)
+	at org.apache.tomcat.websocket.server.WsFrameServer.doOnDataAvailable(WsFrameServer.java:184)
+	at org.apache.tomcat.websocket.server.WsFrameServer.notifyDataAvailable(WsFrameServer.java:164)
+	at org.apache.tomcat.websocket.server.WsHttpUpgradeHandler.upgradeDispatch(WsHttpUpgradeHandler.java:152)
+	at org.apache.coyote.http11.upgrade.UpgradeProcessorInternal.dispatch(UpgradeProcessorInternal.java:60)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:57)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1744)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2025-06-11 16:12:47 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:16:12 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:16:12 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:16:12 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-11 16:16:12 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@6226a088]]
+2025-06-11 16:16:12 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-11 16:16:12 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 16:16:12 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-11 16:16:12 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-11 16:16:14 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 5129 (/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/Новая папка с объектами/opt_back)
+2025-06-11 16:16:14 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-11 16:16:15 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-11 16:16:15 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 76 ms. Found 5 JPA repository interfaces.
+2025-06-11 16:16:15 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-11 16:16:15 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-11 16:16:15 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-11 16:16:15 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-11 16:16:15 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 906 ms
+2025-06-11 16:16:15 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-11 16:16:15 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@23648d2d
+2025-06-11 16:16:15 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-11 16:16:15 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-11 16:16:15 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-11 16:16:15 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-11 16:16:15 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-11 16:16:15 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-11 16:16:15 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 4 migrations (execution time 00:00.010s)
+2025-06-11 16:16:15 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 4
+2025-06-11 16:16:15 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-11 16:16:15 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-11 16:16:15 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-11 16:16:15 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-11 16:16:16 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-11 16:16:16 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-11 16:16:16 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 16:16:16 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-11 16:16:16 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-11 16:16:17 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-11 16:16:17 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-11 16:16:17 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-11 16:16:17 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-11 16:16:17 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-11 16:16:17 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@5ec5a449]]
+2025-06-11 16:16:17 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-11 16:16:17 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 3.328 seconds (process running for 3.833)
+2025-06-11 16:16:22 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-11 16:16:22 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-11 16:16:22 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-06-11 16:16:23 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:16:28 [http-nio-8080-exec-6] INFO  c.e.b.controller.AuthController - User logged in successfully: username=andrey
+2025-06-11 16:16:28 [http-nio-8080-exec-8] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-11 16:16:28 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:16:31 [http-nio-8080-exec-2] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:16:31 [http-nio-8080-exec-2] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:16:31 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:16:47 [http-nio-8080-exec-4] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:16:47 [http-nio-8080-exec-4] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:16:48 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:16:58 [http-nio-8080-exec-7] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=10, query=select * from my_db, llm=Local
+2025-06-11 16:16:58 [http-nio-8080-exec-7] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 16:16:58 [http-nio-8080-exec-7] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=10, query=select * from my_db, llm=Local, isMPP=false
+2025-06-11 16:17:17 [MessageBroker-1] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[2 current WS(2)-HttpStream(0)-HttpPoll(0), 4 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(4)-CONNECTED(4)-DISCONNECT(2)], stompBrokerRelay[null], inboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 51], outboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 9], sockJsScheduler[pool size = 8, active threads = 1, queued tasks = 1, completed tasks = 2]
+2025-06-11 16:17:18 [http-nio-8080-exec-7] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=35
+2025-06-11 16:17:18 [http-nio-8080-exec-7] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/10: id=92
+2025-06-11 16:17:18 [http-nio-8080-exec-7] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=35
+2025-06-11 16:17:27 [http-nio-8080-exec-3] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:17:27 [http-nio-8080-exec-3] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:17:27 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:17:32 [http-nio-8080-exec-3] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:17:32 [http-nio-8080-exec-3] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:17:32 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:17:34 [http-nio-8080-exec-5] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=10, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local
+2025-06-11 16:17:34 [http-nio-8080-exec-5] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 16:17:34 [http-nio-8080-exec-5] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=10, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local, isMPP=false
+2025-06-11 16:17:46 [http-nio-8080-exec-5] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=36
+2025-06-11 16:17:46 [http-nio-8080-exec-5] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/10: id=94
+2025-06-11 16:17:46 [http-nio-8080-exec-5] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=36
+2025-06-11 16:18:54 [http-nio-8080-exec-9] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=10, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local
+2025-06-11 16:18:54 [http-nio-8080-exec-9] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 16:18:54 [http-nio-8080-exec-9] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=10, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local, isMPP=false
+2025-06-11 16:19:05 [http-nio-8080-exec-9] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=37
+2025-06-11 16:19:05 [http-nio-8080-exec-9] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/10: id=96
+2025-06-11 16:19:05 [http-nio-8080-exec-9] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=37
+2025-06-11 16:21:17 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:21:17 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:21:23 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:25:27 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:25:27 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:25:33 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:27:07 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:27:07 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:27:13 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:29:37 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:29:37 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:29:43 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:31:11 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:31:11 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:31:11 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:31:11 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:31:11 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-11 16:31:11 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@5ec5a449]]
+2025-06-11 16:31:11 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-11 16:31:11 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 16:31:11 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-11 16:31:11 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-11 16:38:01 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 10027 (/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/Новая папка с объектами/opt_back)
+2025-06-11 16:38:01 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-11 16:38:01 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-11 16:38:01 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 101 ms. Found 5 JPA repository interfaces.
+2025-06-11 16:38:02 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-11 16:38:02 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-11 16:38:02 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-11 16:38:02 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-11 16:38:02 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1242 ms
+2025-06-11 16:38:02 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-11 16:38:02 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@773eca84
+2025-06-11 16:38:02 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-11 16:38:02 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-11 16:38:02 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-11 16:38:02 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-11 16:38:02 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-11 16:38:02 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-11 16:38:02 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 4 migrations (execution time 00:00.012s)
+2025-06-11 16:38:02 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 4
+2025-06-11 16:38:02 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-11 16:38:02 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-11 16:38:02 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-11 16:38:02 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-11 16:38:02 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-11 16:38:02 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-11 16:38:03 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 16:38:03 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-11 16:38:03 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-11 16:38:04 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-11 16:38:04 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-11 16:38:04 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-11 16:38:04 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-11 16:38:04 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-11 16:38:04 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@11a3ffe6]]
+2025-06-11 16:38:04 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-11 16:38:04 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 4.07 seconds (process running for 4.551)
+2025-06-11 16:38:04 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-11 16:38:04 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-11 16:38:04 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-06-11 16:38:05 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:38:22 [http-nio-8080-exec-6] INFO  c.e.b.controller.AuthController - User logged in successfully: username=andrey
+2025-06-11 16:38:22 [http-nio-8080-exec-8] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-11 16:38:22 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:38:26 [http-nio-8080-exec-10] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=10, query=select * from my_db, llm=Local
+2025-06-11 16:38:26 [http-nio-8080-exec-10] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 16:38:26 [http-nio-8080-exec-10] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=10, query=select * from my_db, llm=Local, isMPP=false
+2025-06-11 16:38:26 [http-nio-8080-exec-10] WARN  c.e.b.service.SqlOptimizationService - Не удалось получить размер таблицы my_db: ERROR: relation "my_db" does not exist
+  Позиция: 46
+2025-06-11 16:38:39 [http-nio-8080-exec-10] ERROR c.e.b.service.SqlOptimizationService - SQLException during execution time measurement: ERROR: relation "my_db" does not exist
+  Позиция: 31
+2025-06-11 16:38:39 [http-nio-8080-exec-10] WARN  c.e.b.service.SqlOptimizationService - Failed to measure execution time or analyze query plan: ERROR: relation "my_db" does not exist
+  Позиция: 31
+2025-06-11 16:38:39 [http-nio-8080-exec-10] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=38
+2025-06-11 16:38:39 [http-nio-8080-exec-10] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/10: id=98
+2025-06-11 16:38:39 [http-nio-8080-exec-10] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=38
+2025-06-11 16:39:04 [MessageBroker-3] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[2 current WS(2)-HttpStream(0)-HttpPoll(0), 2 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(2)-CONNECTED(2)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 21], outboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 4], sockJsScheduler[pool size = 6, active threads = 1, queued tasks = 1, completed tasks = 2]
+2025-06-11 16:39:17 [http-nio-8080-exec-1] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=10, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local
+2025-06-11 16:39:17 [http-nio-8080-exec-1] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 16:39:17 [http-nio-8080-exec-1] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=10, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local, isMPP=false
+2025-06-11 16:39:34 [http-nio-8080-exec-1] ERROR c.e.b.service.SqlOptimizationService - SQLException during execution time measurement: ERROR: missing FROM-clause entry for table "c"
+  Позиция: 58
+2025-06-11 16:39:34 [http-nio-8080-exec-1] WARN  c.e.b.service.SqlOptimizationService - Failed to measure execution time or analyze query plan: ERROR: missing FROM-clause entry for table "c"
+  Позиция: 58
+2025-06-11 16:39:34 [http-nio-8080-exec-1] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=39
+2025-06-11 16:39:34 [http-nio-8080-exec-1] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/10: id=100
+2025-06-11 16:39:34 [http-nio-8080-exec-1] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=39
+2025-06-11 16:42:39 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:42:39 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:42:44 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:42:49 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:42:49 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:42:49 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:42:49 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:42:49 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-11 16:42:49 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@11a3ffe6]]
+2025-06-11 16:42:49 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-11 16:42:49 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 16:42:49 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-11 16:42:49 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-11 16:42:53 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 11105 (/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/Новая папка с объектами/opt_back)
+2025-06-11 16:42:53 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-11 16:42:54 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-11 16:42:54 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 87 ms. Found 5 JPA repository interfaces.
+2025-06-11 16:42:55 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-11 16:42:55 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-11 16:42:55 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-11 16:42:55 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-11 16:42:55 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1180 ms
+2025-06-11 16:42:55 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-11 16:42:55 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2bcda694
+2025-06-11 16:42:55 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-11 16:42:55 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-11 16:42:55 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-11 16:42:55 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-11 16:42:55 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-11 16:42:55 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-11 16:42:55 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 4 migrations (execution time 00:00.014s)
+2025-06-11 16:42:55 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 4
+2025-06-11 16:42:55 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-11 16:42:55 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-11 16:42:55 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-11 16:42:55 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-11 16:42:55 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-11 16:42:55 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-11 16:42:56 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 16:42:56 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-11 16:42:56 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-11 16:42:56 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-11 16:42:56 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-11 16:42:57 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-11 16:42:57 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-11 16:42:57 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-11 16:42:57 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@1d546842]]
+2025-06-11 16:42:57 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-11 16:42:57 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 4.083 seconds (process running for 4.406)
+2025-06-11 16:43:11 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-11 16:43:11 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-11 16:43:11 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 4 ms
+2025-06-11 16:43:12 [http-nio-8080-exec-1] INFO  c.e.b.controller.AuthController - User logged in successfully: username=andrey
+2025-06-11 16:43:12 [http-nio-8080-exec-2] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-11 16:43:12 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:43:15 [http-nio-8080-exec-10] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=10, query=select * from my_db, llm=Local
+2025-06-11 16:43:15 [http-nio-8080-exec-10] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 16:43:15 [http-nio-8080-exec-10] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=10, query=select * from my_db, llm=Local, isMPP=false
+2025-06-11 16:43:15 [http-nio-8080-exec-10] WARN  c.e.b.service.SqlOptimizationService - Не удалось получить размер таблицы my_db: ERROR: relation "my_db" does not exist
+  Позиция: 46
+2025-06-11 16:43:29 [http-nio-8080-exec-10] ERROR c.e.b.service.SqlOptimizationService - SQLException during execution time measurement: ERROR: relation "my_db" does not exist
+  Позиция: 31
+2025-06-11 16:43:29 [http-nio-8080-exec-10] WARN  c.e.b.service.SqlOptimizationService - Failed to measure execution time or analyze query plan: ERROR: relation "my_db" does not exist
+  Позиция: 31
+2025-06-11 16:43:29 [http-nio-8080-exec-10] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=40
+2025-06-11 16:43:29 [http-nio-8080-exec-10] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/10: id=102
+2025-06-11 16:43:29 [http-nio-8080-exec-10] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=40
+2025-06-11 16:43:57 [MessageBroker-2] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[1 current WS(1)-HttpStream(0)-HttpPoll(0), 1 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(1)-CONNECTED(1)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 9], outboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 2], sockJsScheduler[pool size = 5, active threads = 1, queued tasks = 1, completed tasks = 2]
+2025-06-11 16:47:29 [http-nio-8080-exec-4] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:47:29 [http-nio-8080-exec-4] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:47:29 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:47:46 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:47:46 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:47:46 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-11 16:47:46 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@1d546842]]
+2025-06-11 16:47:46 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-11 16:47:46 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 16:47:47 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-11 16:47:47 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-11 16:47:50 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 12307 (/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/Новая папка с объектами/opt_back)
+2025-06-11 16:47:50 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-11 16:47:51 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-11 16:47:51 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 144 ms. Found 5 JPA repository interfaces.
+2025-06-11 16:47:52 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-11 16:47:52 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-11 16:47:52 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-11 16:47:52 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-11 16:47:52 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1151 ms
+2025-06-11 16:47:52 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-11 16:47:52 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@773eca84
+2025-06-11 16:47:52 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-11 16:47:52 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-11 16:47:52 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-11 16:47:52 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-11 16:47:52 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-11 16:47:52 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-11 16:47:52 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 4 migrations (execution time 00:00.014s)
+2025-06-11 16:47:52 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 4
+2025-06-11 16:47:52 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-11 16:47:52 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-11 16:47:52 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-11 16:47:52 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-11 16:47:52 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-11 16:47:52 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-11 16:47:53 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 16:47:53 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-11 16:47:53 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-11 16:47:53 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-11 16:47:53 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-11 16:47:54 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-11 16:47:54 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-11 16:47:54 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-11 16:47:54 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@66cdde2b]]
+2025-06-11 16:47:54 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-11 16:47:54 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 3.933 seconds (process running for 4.623)
+2025-06-11 16:48:54 [MessageBroker-1] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 1, active threads = 1, queued tasks = 0, completed tasks = 0]
+2025-06-11 16:49:02 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-11 16:49:02 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-11 16:49:02 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-06-11 16:49:02 [http-nio-8080-exec-2] INFO  c.e.b.controller.AuthController - User logged in successfully: username=andrey
+2025-06-11 16:49:02 [http-nio-8080-exec-4] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-11 16:49:02 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:49:09 [http-nio-8080-exec-6] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=10, query=select * from my_db, llm=Local
+2025-06-11 16:49:09 [http-nio-8080-exec-6] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 16:49:09 [http-nio-8080-exec-6] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=10, query=select * from my_db, llm=Local, isMPP=false
+2025-06-11 16:49:10 [http-nio-8080-exec-6] WARN  c.e.b.service.SqlOptimizationService - Не удалось получить размер таблицы my_db: ERROR: relation "my_db" does not exist
+  Позиция: 46
+2025-06-11 16:49:25 [http-nio-8080-exec-6] ERROR c.e.b.service.SqlOptimizationService - SQLException during execution time measurement: ERROR: relation "my_db" does not exist
+  Позиция: 31
+2025-06-11 16:49:25 [http-nio-8080-exec-6] WARN  c.e.b.service.SqlOptimizationService - Failed to measure execution time or analyze query plan: ERROR: relation "my_db" does not exist
+  Позиция: 31
+2025-06-11 16:49:25 [http-nio-8080-exec-6] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=41
+2025-06-11 16:49:25 [http-nio-8080-exec-6] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/10: id=104
+2025-06-11 16:49:25 [http-nio-8080-exec-6] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=41
+2025-06-11 16:50:40 [http-nio-8080-exec-6] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:50:40 [http-nio-8080-exec-6] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:50:40 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:51:15 [http-nio-8080-exec-3] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:51:15 [http-nio-8080-exec-3] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:51:15 [http-nio-8080-exec-4] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-11 16:51:15 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:51:49 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:51:49 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:51:49 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-11 16:51:49 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@66cdde2b]]
+2025-06-11 16:51:49 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-11 16:51:49 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 16:51:49 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-11 16:51:49 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-11 16:51:52 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 13204 (/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/Новая папка с объектами/opt_back)
+2025-06-11 16:51:52 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-11 16:51:53 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-11 16:51:53 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 86 ms. Found 5 JPA repository interfaces.
+2025-06-11 16:51:53 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-11 16:51:53 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-11 16:51:53 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-11 16:51:53 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-11 16:51:53 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1069 ms
+2025-06-11 16:51:53 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-11 16:51:54 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@119d4443
+2025-06-11 16:51:54 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-11 16:51:54 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-11 16:51:54 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-11 16:51:54 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-11 16:51:54 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-11 16:51:54 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-11 16:51:54 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 4 migrations (execution time 00:00.014s)
+2025-06-11 16:51:54 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 4
+2025-06-11 16:51:54 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-11 16:51:54 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-11 16:51:54 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-11 16:51:54 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-11 16:51:54 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-11 16:51:54 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-11 16:51:55 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 16:51:55 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-11 16:51:55 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-11 16:51:55 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-11 16:51:55 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-11 16:51:55 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-11 16:51:56 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-11 16:51:56 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-11 16:51:56 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@68321229]]
+2025-06-11 16:51:56 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-11 16:51:56 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 3.904 seconds (process running for 4.406)
+2025-06-11 16:52:05 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-11 16:52:05 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-11 16:52:05 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-06-11 16:52:07 [http-nio-8080-exec-2] INFO  c.e.b.controller.AuthController - User logged in successfully: username=andrey
+2025-06-11 16:52:07 [http-nio-8080-exec-3] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-11 16:52:07 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:52:12 [http-nio-8080-exec-1] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=10, query=select * from my_db, llm=Local
+2025-06-11 16:52:12 [http-nio-8080-exec-1] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 16:52:12 [http-nio-8080-exec-1] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=10, query=select * from my_db, llm=Local, isMPP=false
+2025-06-11 16:52:13 [http-nio-8080-exec-1] WARN  c.e.b.service.SqlOptimizationService - Не удалось получить размер таблицы my_db: ERROR: relation "my_db" does not exist
+  Позиция: 46
+2025-06-11 16:52:19 [http-nio-8080-exec-1] ERROR c.e.b.service.SqlOptimizationService - SQLException during execution time measurement: ERROR: relation "my_db" does not exist
+  Позиция: 31
+2025-06-11 16:52:19 [http-nio-8080-exec-1] WARN  c.e.b.service.SqlOptimizationService - Failed to measure execution time or analyze query plan: ERROR: relation "my_db" does not exist
+  Позиция: 31
+2025-06-11 16:52:19 [http-nio-8080-exec-1] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=42
+2025-06-11 16:52:19 [http-nio-8080-exec-1] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/10: id=106
+2025-06-11 16:52:19 [http-nio-8080-exec-1] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=42
+2025-06-11 16:52:54 [http-nio-8080-exec-5] INFO  c.e.backend.service.ChatService - Created chat: id=11, title=Chat 9
+2025-06-11 16:52:54 [http-nio-8080-exec-1] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:52:54 [http-nio-8080-exec-1] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:52:54 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:52:56 [MessageBroker-3] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[1 current WS(1)-HttpStream(0)-HttpPoll(0), 2 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(2)-CONNECTED(2)-DISCONNECT(1)], stompBrokerRelay[null], inboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 24], outboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 6], sockJsScheduler[pool size = 6, active threads = 1, queued tasks = 1, completed tasks = 2]
+2025-06-11 16:53:26 [http-nio-8080-exec-7] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=11, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local
+2025-06-11 16:53:26 [http-nio-8080-exec-7] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 16:53:26 [http-nio-8080-exec-7] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=11, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local, isMPP=false
+2025-06-11 16:54:26 [http-nio-8080-exec-7] ERROR c.example.backend.service.LLMService - Error calling local LLM: I/O error on POST request for "http://localhost:1234/v1/chat/completions": Read timed out
+org.springframework.web.client.ResourceAccessException: I/O error on POST request for "http://localhost:1234/v1/chat/completions": Read timed out
+	at org.springframework.web.client.RestTemplate.createResourceAccessException(RestTemplate.java:915)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:895)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:790)
+	at org.springframework.web.client.RestTemplate.postForObject(RestTemplate.java:507)
+	at com.example.backend.service.LLMService.lambda$optimizeWithLocalLLM$0(LLMService.java:60)
+	at reactor.core.publisher.MonoCallable$MonoCallableSubscription.request(MonoCallable.java:137)
+	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.set(Operators.java:2367)
+	at reactor.core.publisher.Operators$MultiSubscriptionSubscriber.onSubscribe(Operators.java:2241)
+	at reactor.core.publisher.MonoCallable.subscribe(MonoCallable.java:48)
+	at reactor.core.publisher.FluxRetryWhen.subscribe(FluxRetryWhen.java:81)
+	at reactor.core.publisher.MonoRetryWhen.subscribeOrReturn(MonoRetryWhen.java:46)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4547)
+	at reactor.core.publisher.FluxFlatMap.trySubscribeScalarMap(FluxFlatMap.java:202)
+	at reactor.core.publisher.MonoFlatMap.subscribeOrReturn(MonoFlatMap.java:53)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4547)
+	at org.springframework.web.servlet.mvc.method.annotation.ReactiveTypeHandler$DeferredResultSubscriber.connect(ReactiveTypeHandler.java:465)
+	at org.springframework.web.servlet.mvc.method.annotation.ReactiveTypeHandler.handleValue(ReactiveTypeHandler.java:163)
+	at org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitterReturnValueHandler.handleReturnValue(ResponseBodyEmitterReturnValueHandler.java:154)
+	at org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite.handleReturnValue(HandlerMethodReturnValueHandlerComposite.java:78)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:136)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:920)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:830)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:547)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:614)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at com.example.backend.security.JwtTokenFilter.doFilterInternal(JwtTokenFilter.java:32)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:195)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:230)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1744)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.net.SocketTimeoutException: Read timed out
+	at java.base/sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:278)
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:304)
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346)
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796)
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1099)
+	at java.base/java.io.BufferedInputStream.fill(BufferedInputStream.java:291)
+	at java.base/java.io.BufferedInputStream.read1(BufferedInputStream.java:347)
+	at java.base/java.io.BufferedInputStream.implRead(BufferedInputStream.java:420)
+	at java.base/java.io.BufferedInputStream.read(BufferedInputStream.java:399)
+	at java.base/sun.net.www.http.HttpClient.parseHTTPHeader(HttpClient.java:827)
+	at java.base/sun.net.www.http.HttpClient.parseHTTP(HttpClient.java:759)
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1705)
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1614)
+	at java.base/java.net.HttpURLConnection.getResponseCode(HttpURLConnection.java:531)
+	at org.springframework.http.client.SimpleClientHttpResponse.getStatusCode(SimpleClientHttpResponse.java:55)
+	at org.springframework.web.client.DefaultResponseErrorHandler.hasError(DefaultResponseErrorHandler.java:83)
+	at org.springframework.web.client.RestTemplate.handleResponse(RestTemplate.java:931)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:891)
+	... 114 common frames omitted
+2025-06-11 16:54:38 [parallel-1] INFO  c.e.b.service.SqlOptimizationService - SQL query saved: id=43
+2025-06-11 16:54:38 [parallel-1] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/11: id=108
+2025-06-11 16:54:38 [parallel-1] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=43
+2025-06-11 16:58:44 [http-nio-8080-exec-2] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:58:44 [http-nio-8080-exec-2] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:58:44 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 16:58:52 [http-nio-8080-exec-2] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 16:58:52 [http-nio-8080-exec-2] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 16:58:52 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:00:45 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 17:00:45 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 17:00:45 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-11 17:00:45 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@68321229]]
+2025-06-11 17:00:45 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-11 17:00:46 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 17:00:46 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-11 17:00:46 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-11 17:16:32 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 18917 (/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/Новая папка с объектами/opt_back)
+2025-06-11 17:16:32 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-11 17:16:32 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-11 17:16:32 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 81 ms. Found 5 JPA repository interfaces.
+2025-06-11 17:16:33 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-11 17:16:33 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-11 17:16:33 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-11 17:16:33 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-11 17:16:33 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 898 ms
+2025-06-11 17:16:33 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-11 17:16:33 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7cc2c551
+2025-06-11 17:16:33 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-11 17:16:33 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-11 17:16:33 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-11 17:16:33 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-11 17:16:33 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-11 17:16:33 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-11 17:16:33 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 4 migrations (execution time 00:00.047s)
+2025-06-11 17:16:33 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 4
+2025-06-11 17:16:33 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-11 17:16:33 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-11 17:16:33 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-11 17:16:33 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-11 17:16:33 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-11 17:16:34 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-11 17:16:34 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 17:16:34 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-11 17:16:34 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-11 17:16:35 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-11 17:16:35 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-11 17:16:35 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-11 17:16:35 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-11 17:16:35 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-11 17:16:35 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@7db373b2]]
+2025-06-11 17:16:35 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-11 17:16:35 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 3.606 seconds (process running for 4.249)
+2025-06-11 17:16:35 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-11 17:16:35 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@7db373b2]]
+2025-06-11 17:16:35 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-11 17:16:35 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 17:16:35 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-11 17:16:35 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-11 17:19:48 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 19951 (/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/Новая папка с объектами/opt_back)
+2025-06-11 17:19:48 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-11 17:19:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-11 17:19:50 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 513 ms. Found 5 JPA repository interfaces.
+2025-06-11 17:19:51 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-11 17:19:51 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-11 17:19:51 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-11 17:19:51 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-11 17:19:51 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2345 ms
+2025-06-11 17:19:51 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-11 17:19:51 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7d47dfed
+2025-06-11 17:19:51 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-11 17:19:51 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-11 17:19:51 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-11 17:19:51 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-11 17:19:51 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-11 17:19:51 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-11 17:19:51 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 4 migrations (execution time 00:00.012s)
+2025-06-11 17:19:51 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 4
+2025-06-11 17:19:51 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-11 17:19:51 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-11 17:19:51 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-11 17:19:51 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-11 17:19:51 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-11 17:19:51 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-11 17:19:52 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 17:19:52 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-11 17:19:52 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-11 17:19:53 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-11 17:19:53 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-11 17:19:53 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-11 17:19:53 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sqlOptimizationController' defined in file [/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main/com/example/backend/controller/SqlOptimizationController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'sqlOptimizationService' defined in file [/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main/com/example/backend/service/SqlOptimizationService.class]: Unsatisfied dependency expressed through constructor parameter 4: Error creating bean with name 'LLMService' defined in file [/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main/com/example/backend/service/LLMService.class]: Unexpected exception during bean creation
+2025-06-11 17:19:53 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 17:19:53 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-11 17:19:53 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-11 17:19:53 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-06-11 17:19:53 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-06-11 17:19:53 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sqlOptimizationController' defined in file [/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main/com/example/backend/controller/SqlOptimizationController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'sqlOptimizationService' defined in file [/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main/com/example/backend/service/SqlOptimizationService.class]: Unsatisfied dependency expressed through constructor parameter 4: Error creating bean with name 'LLMService' defined in file [/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main/com/example/backend/service/LLMService.class]: Unexpected exception during bean creation
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:798)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:237)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1355)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1192)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:562)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:325)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:323)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:975)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:959)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:624)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:334)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1343)
+	at com.example.backend.BackendApplication.main(BackendApplication.java:12)
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sqlOptimizationService' defined in file [/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main/com/example/backend/service/SqlOptimizationService.class]: Unsatisfied dependency expressed through constructor parameter 4: Error creating bean with name 'LLMService' defined in file [/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main/com/example/backend/service/LLMService.class]: Unexpected exception during bean creation
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:798)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:237)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1355)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1192)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:562)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:325)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:323)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1443)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1353)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:907)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:785)
+	... 19 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'LLMService' defined in file [/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main/com/example/backend/service/LLMService.class]: Unexpected exception during bean creation
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:535)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:325)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:323)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1443)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1353)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:907)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:785)
+	... 33 common frames omitted
+Caused by: java.lang.IllegalArgumentException: Could not resolve placeholder 'llm.local.url' in value "${llm.local.url}"
+	at org.springframework.util.PropertyPlaceholderHelper.parseStringValue(PropertyPlaceholderHelper.java:180)
+	at org.springframework.util.PropertyPlaceholderHelper.replacePlaceholders(PropertyPlaceholderHelper.java:126)
+	at org.springframework.core.env.AbstractPropertyResolver.doResolvePlaceholders(AbstractPropertyResolver.java:239)
+	at org.springframework.core.env.AbstractPropertyResolver.resolveRequiredPlaceholders(AbstractPropertyResolver.java:210)
+	at org.springframework.context.support.PropertySourcesPlaceholderConfigurer.lambda$processProperties$0(PropertySourcesPlaceholderConfigurer.java:200)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.resolveEmbeddedValue(AbstractBeanFactory.java:921)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1374)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1353)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:907)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:785)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:237)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1355)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1192)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:562)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522)
+	... 42 common frames omitted
+2025-06-11 17:20:58 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 20394 (/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/Новая папка с объектами/opt_back)
+2025-06-11 17:20:58 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-11 17:20:58 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-11 17:20:58 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 81 ms. Found 5 JPA repository interfaces.
+2025-06-11 17:20:59 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-11 17:20:59 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-11 17:20:59 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-11 17:20:59 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-11 17:20:59 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1011 ms
+2025-06-11 17:20:59 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-11 17:20:59 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@781dac73
+2025-06-11 17:20:59 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-11 17:20:59 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-11 17:20:59 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-11 17:20:59 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-11 17:20:59 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-11 17:20:59 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-11 17:20:59 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 4 migrations (execution time 00:00.012s)
+2025-06-11 17:20:59 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 4
+2025-06-11 17:20:59 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-11 17:20:59 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-11 17:20:59 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-11 17:20:59 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-11 17:20:59 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-11 17:20:59 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-11 17:21:00 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 17:21:00 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-11 17:21:00 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-11 17:21:01 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-11 17:21:01 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-11 17:21:01 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-11 17:21:01 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-11 17:21:01 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-11 17:21:01 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@477b8d7d]]
+2025-06-11 17:21:01 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-11 17:21:01 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 3.725 seconds (process running for 4.15)
+2025-06-11 17:21:05 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-11 17:21:05 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-11 17:21:05 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-06-11 17:21:05 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:21:09 [http-nio-8080-exec-5] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 17:21:09 [http-nio-8080-exec-5] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 17:21:21 [http-nio-8080-exec-7] INFO  c.e.b.controller.AuthController - User logged in successfully: username=andrey
+2025-06-11 17:21:21 [http-nio-8080-exec-9] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-11 17:21:21 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:21:30 [http-nio-8080-exec-1] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=11, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local
+2025-06-11 17:21:30 [http-nio-8080-exec-1] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 17:21:30 [http-nio-8080-exec-1] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=11, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local, isMPP=false
+2025-06-11 17:21:30 [http-nio-8080-exec-1] INFO  c.example.backend.service.LLMService - Calling local LLM service with prompt length: 1037
+2025-06-11 17:21:30 [boundedElastic-1] WARN  c.example.backend.service.LLMService - Retry 1 of 3 after timeout
+2025-06-11 17:21:31 [boundedElastic-1] WARN  c.example.backend.service.LLMService - Retry 2 of 3 after timeout
+2025-06-11 17:21:32 [boundedElastic-1] ERROR c.example.backend.service.LLMService - Failed to call LLM service after 3 retries: I/O error on POST request for "http://localhost:8000/v1/chat/completions": Connection refused
+2025-06-11 17:21:32 [boundedElastic-1] ERROR c.e.b.service.SqlOptimizationService - Error during LLM optimization: LLM service is not responding. Please try again later.
+2025-06-11 17:21:32 [boundedElastic-1] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/11: id=109
+2025-06-11 17:21:32 [boundedElastic-1] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=44
+2025-06-11 17:22:01 [MessageBroker-2] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[1 current WS(1)-HttpStream(0)-HttpPoll(0), 2 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(2)-CONNECTED(2)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 18], outboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 4], sockJsScheduler[pool size = 6, active threads = 1, queued tasks = 1, completed tasks = 2]
+2025-06-11 17:25:39 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 17:25:39 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 17:25:39 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-11 17:25:39 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@477b8d7d]]
+2025-06-11 17:25:39 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-11 17:25:39 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 17:25:39 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-11 17:25:39 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-11 17:25:41 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 21557 (/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/Новая папка с объектами/opt_back)
+2025-06-11 17:25:41 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-11 17:25:42 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-11 17:25:42 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 82 ms. Found 5 JPA repository interfaces.
+2025-06-11 17:25:42 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-11 17:25:42 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-11 17:25:42 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-11 17:25:42 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-11 17:25:42 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 983 ms
+2025-06-11 17:25:42 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-11 17:25:43 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@50f4b83d
+2025-06-11 17:25:43 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-11 17:25:43 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-11 17:25:43 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-11 17:25:43 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-11 17:25:43 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-11 17:25:43 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-11 17:25:43 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 4 migrations (execution time 00:00.012s)
+2025-06-11 17:25:43 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 4
+2025-06-11 17:25:43 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-11 17:25:43 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-11 17:25:43 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-11 17:25:43 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-11 17:25:43 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-11 17:25:43 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-11 17:25:43 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 17:25:44 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-11 17:25:44 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-11 17:25:44 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-11 17:25:44 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-11 17:25:44 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-11 17:25:45 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-11 17:25:45 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-11 17:25:45 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@6cb6a38c]]
+2025-06-11 17:25:45 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-11 17:25:45 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 3.933 seconds (process running for 4.399)
+2025-06-11 17:25:49 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-11 17:25:49 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-11 17:25:49 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-06-11 17:25:49 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:25:52 [http-nio-8080-exec-5] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 17:25:52 [http-nio-8080-exec-5] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 17:25:58 [http-nio-8080-exec-6] ERROR c.e.b.controller.AuthController - Login failed: User not found
+2025-06-11 17:26:02 [http-nio-8080-exec-7] INFO  c.e.b.controller.AuthController - User logged in successfully: username=andrey
+2025-06-11 17:26:02 [http-nio-8080-exec-8] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-11 17:26:03 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:26:10 [http-nio-8080-exec-6] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=11, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local
+2025-06-11 17:26:10 [http-nio-8080-exec-6] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 17:26:10 [http-nio-8080-exec-6] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=11, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local, isMPP=false
+2025-06-11 17:26:10 [http-nio-8080-exec-6] INFO  c.example.backend.service.LLMService - Calling local LLM service with prompt length: 1194
+2025-06-11 17:26:10 [boundedElastic-1] WARN  c.example.backend.service.LLMService - Retry 1 of 3 after timeout
+2025-06-11 17:26:11 [boundedElastic-1] WARN  c.example.backend.service.LLMService - Retry 2 of 3 after timeout
+2025-06-11 17:26:12 [boundedElastic-1] ERROR c.example.backend.service.LLMService - Failed to call LLM service after 3 retries: I/O error on POST request for "http://localhost:8000/v1/chat/completions": Connection refused
+2025-06-11 17:26:12 [boundedElastic-1] ERROR c.e.b.service.SqlOptimizationService - Error during LLM optimization: LLM service is not responding. Please try again later.
+2025-06-11 17:26:12 [boundedElastic-1] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/11: id=110
+2025-06-11 17:26:12 [boundedElastic-1] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=45
+2025-06-11 17:26:45 [MessageBroker-3] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[1 current WS(1)-HttpStream(0)-HttpPoll(0), 2 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(2)-CONNECTED(2)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 18], outboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 4], sockJsScheduler[pool size = 6, active threads = 1, queued tasks = 1, completed tasks = 2]
+2025-06-11 17:30:45 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 17:30:45 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 17:30:50 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:32:13 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 17:32:13 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 17:32:13 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-11 17:32:13 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@6cb6a38c]]
+2025-06-11 17:32:13 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-11 17:32:13 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 17:32:13 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-11 17:32:13 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-11 17:36:01 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 23942 (/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/Новая папка с объектами/opt_back)
+2025-06-11 17:36:02 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-11 17:36:02 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-11 17:36:02 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 160 ms. Found 5 JPA repository interfaces.
+2025-06-11 17:36:03 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-11 17:36:03 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-11 17:36:03 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-11 17:36:03 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-11 17:36:03 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1469 ms
+2025-06-11 17:36:03 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-11 17:36:03 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5d66ae3a
+2025-06-11 17:36:03 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-11 17:36:03 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-11 17:36:03 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-11 17:36:03 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-11 17:36:03 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-11 17:36:03 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-11 17:36:03 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 4 migrations (execution time 00:00.011s)
+2025-06-11 17:36:03 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 4
+2025-06-11 17:36:03 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-11 17:36:03 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-11 17:36:03 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-11 17:36:03 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-11 17:36:03 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-11 17:36:04 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-11 17:36:04 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 17:36:04 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-11 17:36:04 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-11 17:36:05 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-11 17:36:05 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-11 17:36:05 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-11 17:36:05 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-11 17:36:05 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-11 17:36:05 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@2c7178ed]]
+2025-06-11 17:36:05 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-11 17:36:05 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 4.002 seconds (process running for 4.322)
+2025-06-11 17:36:08 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-11 17:36:08 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-11 17:36:08 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-06-11 17:36:08 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:36:15 [http-nio-8080-exec-5] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 17:36:15 [http-nio-8080-exec-5] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 17:36:23 [http-nio-8080-exec-7] INFO  c.e.b.controller.AuthController - User logged in successfully: username=andrey
+2025-06-11 17:36:23 [http-nio-8080-exec-9] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-11 17:36:23 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:36:29 [http-nio-8080-exec-1] INFO  c.e.backend.service.ChatService - Created chat: id=12, title=Chat 10
+2025-06-11 17:36:29 [http-nio-8080-exec-3] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 17:36:29 [http-nio-8080-exec-3] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 17:36:29 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:36:30 [http-nio-8080-exec-5] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=12, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local
+2025-06-11 17:36:30 [http-nio-8080-exec-5] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 17:36:30 [http-nio-8080-exec-5] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=12, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local, isMPP=false
+2025-06-11 17:36:30 [http-nio-8080-exec-5] INFO  c.example.backend.service.LLMService - Calling local LLM service with prompt length: 1128
+2025-06-11 17:36:30 [boundedElastic-1] WARN  c.example.backend.service.LLMService - Retry 1 of 3 after timeout
+2025-06-11 17:36:31 [boundedElastic-1] WARN  c.example.backend.service.LLMService - Retry 2 of 3 after timeout
+2025-06-11 17:36:32 [boundedElastic-1] ERROR c.example.backend.service.LLMService - Failed to call LLM service after 3 retries: I/O error on POST request for "http://localhost:8000/v1/chat/completions": Connection refused
+2025-06-11 17:36:32 [boundedElastic-1] ERROR c.e.b.service.SqlOptimizationService - Error during LLM optimization: LLM service is not responding. Please try again later.
+2025-06-11 17:36:32 [boundedElastic-1] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/12: id=111
+2025-06-11 17:36:32 [boundedElastic-1] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=46
+2025-06-11 17:37:05 [MessageBroker-1] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[1 current WS(1)-HttpStream(0)-HttpPoll(0), 3 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(3)-CONNECTED(3)-DISCONNECT(1)], stompBrokerRelay[null], inboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 33], outboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 7], sockJsScheduler[pool size = 7, active threads = 1, queued tasks = 1, completed tasks = 2]
+2025-06-11 17:39:24 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 17:39:24 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 17:39:24 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-11 17:39:24 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@2c7178ed]]
+2025-06-11 17:39:24 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-11 17:39:24 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 17:39:24 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-11 17:39:24 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-11 17:39:26 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 24762 (/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/Новая папка с объектами/opt_back)
+2025-06-11 17:39:26 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-11 17:39:27 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-11 17:39:27 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 82 ms. Found 5 JPA repository interfaces.
+2025-06-11 17:39:27 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-11 17:39:27 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-11 17:39:27 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-11 17:39:27 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-11 17:39:27 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 917 ms
+2025-06-11 17:39:27 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-11 17:39:27 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@69feb4d9
+2025-06-11 17:39:27 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-11 17:39:27 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-11 17:39:27 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-11 17:39:27 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-11 17:39:27 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-11 17:39:28 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-11 17:39:28 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 4 migrations (execution time 00:00.011s)
+2025-06-11 17:39:28 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 4
+2025-06-11 17:39:28 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-11 17:39:28 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-11 17:39:28 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-11 17:39:28 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-11 17:39:28 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-11 17:39:28 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-11 17:39:28 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 17:39:29 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-11 17:39:29 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-11 17:39:29 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-11 17:39:29 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-11 17:39:29 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-11 17:39:30 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-11 17:39:30 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-11 17:39:30 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@4f60ac31]]
+2025-06-11 17:39:30 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-11 17:39:30 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 3.414 seconds (process running for 3.763)
+2025-06-11 17:39:35 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-11 17:39:35 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-11 17:39:35 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-06-11 17:39:35 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:39:40 [http-nio-8080-exec-5] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 17:39:40 [http-nio-8080-exec-5] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 17:39:49 [http-nio-8080-exec-6] INFO  c.e.b.controller.AuthController - User logged in successfully: username=andrey
+2025-06-11 17:39:49 [http-nio-8080-exec-7] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-11 17:39:49 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:39:57 [http-nio-8080-exec-5] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 17:39:57 [http-nio-8080-exec-5] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 17:39:57 [http-nio-8080-exec-6] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-11 17:39:57 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:39:59 [http-nio-8080-exec-4] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=12, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local
+2025-06-11 17:39:59 [http-nio-8080-exec-4] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 17:39:59 [http-nio-8080-exec-4] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=12, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local, isMPP=false
+2025-06-11 17:39:59 [http-nio-8080-exec-4] INFO  c.example.backend.service.LLMService - Calling local LLM service with prompt length: 1128
+2025-06-11 17:39:59 [boundedElastic-1] WARN  c.example.backend.service.LLMService - Retry 1 of 3 after timeout
+2025-06-11 17:40:00 [boundedElastic-1] WARN  c.example.backend.service.LLMService - Retry 2 of 3 after timeout
+2025-06-11 17:40:01 [boundedElastic-1] ERROR c.example.backend.service.LLMService - Failed to call LLM service after 3 retries: I/O error on POST request for "http://localhost:8000/v1/chat/completions": Connection refused
+2025-06-11 17:40:01 [boundedElastic-1] ERROR c.e.b.service.SqlOptimizationService - Error during LLM optimization: LLM service is not responding. Please try again later.
+2025-06-11 17:40:01 [boundedElastic-1] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/12: id=112
+2025-06-11 17:40:01 [boundedElastic-1] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=47
+2025-06-11 17:40:30 [MessageBroker-1] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[1 current WS(1)-HttpStream(0)-HttpPoll(0), 3 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(3)-CONNECTED(3)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 27], outboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 6], sockJsScheduler[pool size = 7, active threads = 1, queued tasks = 1, completed tasks = 2]
+2025-06-11 17:40:43 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 17:40:43 [SpringApplicationShutdownHook] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 17:40:43 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-06-11 17:40:43 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@4f60ac31]]
+2025-06-11 17:40:43 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-06-11 17:40:43 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 17:40:43 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-11 17:40:43 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-11 17:40:45 [main] INFO  c.example.backend.BackendApplication - Starting BackendApplication using Java 21.0.7 with PID 25036 (/Users/andreyshelyagin/Новая папка с объектами/opt_back/build/classes/java/main started by andreyshelyagin in /Users/andreyshelyagin/Новая папка с объектами/opt_back)
+2025-06-11 17:40:45 [main] INFO  c.example.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-11 17:40:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-11 17:40:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 94 ms. Found 5 JPA repository interfaces.
+2025-06-11 17:40:46 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-11 17:40:46 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-11 17:40:46 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-06-11 17:40:46 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-06-11 17:40:46 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1042 ms
+2025-06-11 17:40:46 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-11 17:40:46 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@37c1cfa
+2025-06-11 17:40:46 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-11 17:40:46 [main] INFO  o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+2025-06-11 17:40:46 [main] INFO  o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+2025-06-11 17:40:46 [main] INFO  o.f.c.i.license.VersionPrinter - 
+2025-06-11 17:40:46 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/sql_optimizer (PostgreSQL 17.4)
+2025-06-11 17:40:46 [main] WARN  o.f.c.i.database.base.Database - Flyway upgrade recommended: PostgreSQL 17.4 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
+2025-06-11 17:40:46 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 4 migrations (execution time 00:00.012s)
+2025-06-11 17:40:46 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "public": 4
+2025-06-11 17:40:46 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2025-06-11 17:40:46 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-11 17:40:47 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-06-11 17:40:47 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-11 17:40:47 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-11 17:40:47 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-11 17:40:47 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-11 17:40:48 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2025-06-11 17:40:48 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-11 17:40:48 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat auth client with URL: https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+2025-06-11 17:40:48 [main] INFO  c.e.b.service.GigaChatAuthService - Initializing GigaChat API client with URL: https://gigachat.devices.sberbank.ru/api/v1
+2025-06-11 17:40:48 [main] WARN  c.e.b.service.GigaChatAuthService - Using insecure SSL configuration - trustAllCertificates is enabled
+2025-06-11 17:40:48 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-06-11 17:40:48 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-06-11 17:40:48 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@52da1357]]
+2025-06-11 17:40:48 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-06-11 17:40:48 [main] INFO  c.example.backend.BackendApplication - Started BackendApplication in 3.431 seconds (process running for 3.709)
+2025-06-11 17:40:53 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-11 17:40:53 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-11 17:40:53 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-06-11 17:40:54 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:41:02 [http-nio-8080-exec-5] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 17:41:02 [http-nio-8080-exec-5] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 17:41:02 [http-nio-8080-exec-6] INFO  c.e.b.controller.AuthController - Retrieved current user: username=andrey, userId=1
+2025-06-11 17:41:02 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:41:06 [http-nio-8080-exec-4] INFO  c.e.backend.service.ChatService - Created chat: id=13, title=Chat 11
+2025-06-11 17:41:06 [http-nio-8080-exec-9] INFO  c.e.b.config.WebSocketMessageHandler - User Disconnected: andrey
+2025-06-11 17:41:06 [http-nio-8080-exec-9] INFO  c.e.b.config.WebSocketSessionManager - Removed session for user: andrey
+2025-06-11 17:41:06 [clientOutboundChannel-1] INFO  c.e.b.config.WebSocketMessageHandler - User Connected: andrey
+2025-06-11 17:41:07 [http-nio-8080-exec-6] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=13, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local
+2025-06-11 17:41:07 [http-nio-8080-exec-6] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 17:41:07 [http-nio-8080-exec-6] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=13, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local, isMPP=false
+2025-06-11 17:41:21 [http-nio-8080-exec-6] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/13: id=113
+2025-06-11 17:41:21 [http-nio-8080-exec-6] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=48
+2025-06-11 17:41:48 [MessageBroker-1] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[1 current WS(1)-HttpStream(0)-HttpPoll(0), 3 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(3)-CONNECTED(3)-DISCONNECT(1)], stompBrokerRelay[null], inboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 33], outboundChannel[pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 7], sockJsScheduler[pool size = 7, active threads = 1, queued tasks = 1, completed tasks = 2]
+2025-06-11 17:42:27 [http-nio-8080-exec-7] INFO  c.e.b.c.SqlOptimizationController - Received SQL optimization request: chatId=13, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local
+2025-06-11 17:42:27 [http-nio-8080-exec-7] INFO  c.e.b.c.SqlOptimizationController - User ID: 1
+2025-06-11 17:42:27 [http-nio-8080-exec-7] INFO  c.e.b.service.SqlOptimizationService - Starting query optimization for userId=1, chatId=13, query=SELECT 
+    u.username AS user_name,
+    c.title AS chat_title,
+    COUNT(m.id) AS message_count,
+    dc.name AS db_connection_name,
+    dc.db_type,
+    dc.host,
+    dc.port
+FROM 
+    users u, llm=Local, isMPP=false
+2025-06-11 17:42:41 [http-nio-8080-exec-7] INFO  c.e.b.service.SqlOptimizationService - Successfully sent message to /topic/chat/13: id=114
+2025-06-11 17:42:41 [http-nio-8080-exec-7] INFO  c.e.b.c.SqlOptimizationController - SQL optimization successful: responseId=49

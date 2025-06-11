@@ -8,6 +8,9 @@ import java.util.Map;
 public class QueryPlanResult {
     private List<Operation> operations;
     private Map<String, Object> additionalInfo;
+    private Double cost;
+    private Double planningTimeMs;
+    private Double executionTimeMs;
 
     public QueryPlanResult() {
         this.operations = new ArrayList<>();
@@ -38,11 +41,38 @@ public class QueryPlanResult {
         this.additionalInfo.put(key, value);
     }
 
+    public Double getCost() {
+        return cost;
+    }
+
+    public void setCost(Double cost) {
+        this.cost = cost;
+    }
+
+    public Double getPlanningTimeMs() {
+        return planningTimeMs;
+    }
+
+    public void setPlanningTimeMs(Double planningTimeMs) {
+        this.planningTimeMs = planningTimeMs;
+    }
+
+    public Double getExecutionTimeMs() {
+        return executionTimeMs;
+    }
+
+    public void setExecutionTimeMs(Double executionTimeMs) {
+        this.executionTimeMs = executionTimeMs;
+    }
+
     @Override
     public String toString() {
         return "QueryPlanResult{" +
                 "operations=" + operations +
                 ", additionalInfo=" + additionalInfo +
+                ", cost=" + cost +
+                ", planningTimeMs=" + planningTimeMs +
+                ", executionTimeMs=" + executionTimeMs +
                 '}';
     }
 } 
