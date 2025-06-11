@@ -21,7 +21,7 @@ repositories {
 ext {
     springdocVersion = '2.3.0'
     jjwtVersion = '0.12.3'
-    jsqlparserVersion = '4.6'
+    jsqlparserVersion = '4.5'
 }
 
 dependencies {
