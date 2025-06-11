@@ -63,7 +63,6 @@ public class SqlOptimizationService {
     private final DatabaseConnectionRepository databaseConnectionRepository;
     private final LLMService llmService;
     private final DatabaseConnectionService databaseConnectionService;
-    private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
     private final ASTService astService;
 
