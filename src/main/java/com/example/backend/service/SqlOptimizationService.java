@@ -336,9 +336,46 @@ public class SqlOptimizationService {
     private String formatOptimizationResponse(String optimizedQuery, QueryPlanResult planResult) {
         StringBuilder response = new StringBuilder();
 
+        // Извлекаем оптимизированный SQL-запрос из ответа LLM
+        String extractedQuery = optimizedQuery;
+        if (optimizedQuery.contains("```sql")) {
+            int start = optimizedQuery.indexOf("```sql") + 6;
+            int end = optimizedQuery.indexOf("```", start);
+            if (end > start) {
+                extractedQuery = optimizedQuery.substring(start, end).trim();
+            }
+        }
+
         // Добавляем оптимизированный запрос
         response.append("## Оптимизированный SQL-запрос\n\n");
-        response.append("```sql\n").append(optimizedQuery).append("\n```\n\n");
+        response.append("```sql\n").append(extractedQuery).append("\n```\n\n");
+
+        // Извлекаем обоснование изменений
+        String rationale = "";
+        if (optimizedQuery.contains("Обоснование изменений:")) {
+            int start = optimizedQuery.indexOf("Обоснование изменений:") + "Обоснование изменений:".length();
+            int end = optimizedQuery.indexOf("Оценка улучшения:", start);
+            if (end > start) {
+                rationale = optimizedQuery.substring(start, end).trim();
+            }
+        }
+
+        // Извлекаем оценку улучшения
+        String impact = "";
+        if (optimizedQuery.contains("Оценка улучшения:")) {
+            int start = optimizedQuery.indexOf("Оценка улучшения:") + "Оценка улучшения:".length();
+            int end = optimizedQuery.indexOf("Потенциальные риски:", start);
+            if (end > start) {
+                impact = optimizedQuery.substring(start, end).trim();
+            }
+        }
+
+        // Извлекаем потенциальные риски
+        String risks = "";
+        if (optimizedQuery.contains("Потенциальные риски:")) {
+            int start = optimizedQuery.indexOf("Потенциальные риски:") + "Потенциальные риски:".length();
+            risks = optimizedQuery.substring(start).trim();
+        }
 
         if (planResult != null && !planResult.getOperations().isEmpty()) {
             response.append("## Анализ плана запроса\n\n");
@@ -373,13 +410,15 @@ public class SqlOptimizationService {
 
         // Добавляем секции для обоснования изменений, оценки улучшения и рисков
         response.append("\n## Обоснование изменений\n\n");
-        response.append("Оптимизация запроса выполнена с учетом анализа плана выполнения и лучших практик SQL.\n\n");
+        response.append(rationale.isEmpty() ? "Оптимизация запроса выполнена с учетом анализа плана выполнения и лучших практик SQL." : rationale);
+        response.append("\n\n");
 
         response.append("## Оценка улучшения\n\n");
-        response.append("Ожидается улучшение производительности за счет оптимизации структуры запроса и использования более эффективных операций.\n\n");
+        response.append(impact.isEmpty() ? "Ожидается улучшение производительности за счет оптимизации структуры запроса и использования более эффективных операций." : impact);
+        response.append("\n\n");
 
         response.append("## Потенциальные риски\n\n");
-        response.append("Изменения не должны повлиять на логику работы запроса, так как оптимизация направлена только на улучшение производительности.");
+        response.append(risks.isEmpty() ? "Изменения не должны повлиять на логику работы запроса, так как оптимизация направлена только на улучшение производительности." : risks);
 
         return response.toString();
     }
