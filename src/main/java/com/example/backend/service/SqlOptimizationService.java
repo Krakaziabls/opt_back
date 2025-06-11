@@ -37,6 +37,7 @@ import com.example.backend.repository.MessageRepository;
 import com.example.backend.repository.SqlQueryRepository;
 import com.example.sqlopt.ast.QueryPlanResult;
 import com.example.sqlopt.service.ASTService;
+import com.google.gson.Gson;
 
 import lombok.RequiredArgsConstructor;
 import net.sf.jsqlparser.JSQLParserException;
@@ -242,14 +243,19 @@ public class SqlOptimizationService {
                             
                             // Анализируем план исходного запроса
                             originalPlanResultRef.set(astService.analyzeQueryPlan(request.getQuery()));
+                            log.info("Original query plan: {}", originalPlanResultRef.get());
                             
                             // Собираем метаданные таблиц
                             Connection connection = databaseConnectionService.getConnection(dbConnection.getId());
                             List<String> tables = extractTablesFromQuery(request.getQuery());
                             if (!tables.isEmpty()) {
                                 tablesMetadataRef.set(collectTableMetadata(connection, tables));
-                                log.debug("Collected metadata for {} tables", tablesMetadataRef.get().size());
+                                log.info("Collected metadata for tables: {}", tablesMetadataRef.get());
                             }
+                            
+                            // Получаем информацию о подключении к БД
+                            String dbInfo = getDatabaseInfo(dbConnection);
+                            log.info("Database connection info: {}", dbInfo);
                             
                             prompt = formatPrompt(promptTemplate, request.getQuery(), originalPlanResultRef.get(), tablesMetadataRef.get());
                         } catch (Exception e) {
@@ -660,159 +666,46 @@ public class SqlOptimizationService {
             String optimizationRationale,
             String performanceImpact,
             String potentialRisks) {
-        if (optimizedQuery == null || optimizedQuery.trim().isEmpty()) {
-            throw new ApiException("Отсутствует оптимизированный SQL-запрос", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+        
         StringBuilder response = new StringBuilder();
-
-        // Добавляем оптимизированный запрос
-        response.append("## Оптимизированный SQL-запрос\n\n");
-        response.append("```sql\n").append(optimizedQuery).append("\n```\n\n");
-
-        // Добавляем обоснование оптимизации
-        if (optimizationRationale != null && !optimizationRationale.isEmpty()) {
-            response.append("## Обоснование оптимизации\n\n");
-            response.append(optimizationRationale).append("\n\n");
-        } else {
-            response.append("## Обоснование оптимизации\n\n");
-            response.append("Оптимизация выполнена на основе общих принципов SQL без анализа плана выполнения.\n\n");
-        }
-
-        // Добавляем оценку улучшения
-        if (performanceImpact != null && !performanceImpact.isEmpty()) {
-            response.append("## Оценка улучшения\n\n");
-            response.append(performanceImpact).append("\n\n");
-        } else {
-            response.append("## Оценка улучшения\n\n");
-            response.append("Без анализа плана выполнения невозможно точно оценить улучшение производительности.\n\n");
-        }
-
-        // Добавляем потенциальные риски
-        if (potentialRisks != null && !potentialRisks.isEmpty()) {
-            response.append("## Потенциальные риски\n\n");
-            response.append(potentialRisks).append("\n\n");
-        } else {
-            response.append("## Потенциальные риски\n\n");
-            response.append("Без анализа плана выполнения невозможно точно оценить потенциальные риски.\n\n");
-        }
-
-        // Добавляем анализ плана выполнения только если есть план
-        if (planResult != null && !planResult.getOperations().isEmpty()) {
-            response.append("## Метрики и анализ\n\n");
+        
+        // Добавляем информацию о запросе и плане
+        if (planResult != null) {
+            response.append("## Информация о запросе\n\n");
+            response.append("### План выполнения\n");
+            response.append("```sql\n");
+            response.append(planResult.toString());
+            response.append("\n```\n\n");
             
-            // Добавляем общую статистику плана
-            response.append("### Общая статистика плана выполнения\n\n");
-            response.append("- Количество операций: ").append(planResult.getOperations().size()).append("\n");
-            if (planResult.getCost() != null) {
-                response.append("- Общая стоимость: ").append(planResult.getCost()).append("\n");
-            }
-            if (planResult.getPlanningTimeMs() != null) {
-                response.append("- Время планирования: ").append(planResult.getPlanningTimeMs()).append(" мс\n");
-            }
-            if (planResult.getExecutionTimeMs() != null) {
-                response.append("- Время выполнения: ").append(planResult.getExecutionTimeMs()).append(" мс\n");
-            }
-            response.append("\n");
-
-            // Добавляем детальный анализ операций
-            response.append("### Детальный анализ операций\n\n");
-            for (com.example.sqlopt.ast.Operation operation : planResult.getOperations()) {
-                response.append("#### Операция: ").append(operation.getType()).append("\n");
-                if (operation.getTableName() != null) {
-                    response.append("- Таблица: ").append(operation.getTableName()).append("\n");
+            if (tablesMetadata != null && !tablesMetadata.isEmpty()) {
+                response.append("### Метаданные таблиц\n");
+                for (Map.Entry<String, Map<String, Object>> entry : tablesMetadata.entrySet()) {
+                    response.append("#### Таблица: ").append(entry.getKey()).append("\n");
+                    response.append("```json\n");
+                    response.append(new Gson().toJson(entry.getValue()));
+                    response.append("\n```\n\n");
                 }
-                if (operation.getTableMetadata() != null) {
-                    response.append("- Метаданные таблицы: ").append(operation.getTableMetadata()).append("\n");
-                }
-                if (operation.getStatistics() != null && !operation.getStatistics().isEmpty()) {
-                    response.append("- Статистика:\n");
-                    for (Map.Entry<String, String> stat : operation.getStatistics().entrySet()) {
-                        response.append("  - ").append(stat.getKey()).append(": ").append(stat.getValue()).append("\n");
-                    }
-                }
-                if (!operation.getKeys().isEmpty()) {
-                    response.append("- Ключи: ").append(String.join(", ", operation.getKeys())).append("\n");
-                }
-                if (!operation.getConditions().isEmpty()) {
-                    response.append("- Условия: ").append(String.join(", ", operation.getConditions())).append("\n");
-                }
-                if (!operation.getAdditionalInfo().isEmpty()) {
-                    response.append("- Дополнительная информация:\n");
-                    for (Map.Entry<String, Object> info : operation.getAdditionalInfo().entrySet()) {
-                        response.append("  - ").append(info.getKey()).append(": ").append(info.getValue()).append("\n");
-                    }
-                }
-                response.append("\n");
             }
         }
         
-        // Добавляем метаданные таблиц только если они есть
-        if (tablesMetadata != null && !tablesMetadata.isEmpty()) {
-            response.append("## Метаданные таблиц\n\n");
-            for (Map.Entry<String, Map<String, Object>> entry : tablesMetadata.entrySet()) {
-                response.append("### Таблица: ").append(entry.getKey()).append("\n\n");
-                Map<String, Object> metadata = entry.getValue();
-                
-                // Колонки
-                @SuppressWarnings("unchecked")
-                List<Map<String, Object>> columns = (List<Map<String, Object>>) metadata.get("columns");
-                if (columns != null && !columns.isEmpty()) {
-                    response.append("#### Колонки\n\n");
-                    for (Map<String, Object> column : columns) {
-                        response.append("- ").append(column.get("name"))
-                              .append(" (").append(column.get("type")).append(")");
-                        if (column.get("nullable") != null) {
-                            response.append(column.get("nullable").equals(true) ? " NULL" : " NOT NULL");
-                        }
-                        if (column.get("default") != null) {
-                            response.append(" DEFAULT ").append(column.get("default"));
-                        }
-                        response.append("\n");
-                    }
-                    response.append("\n");
-                }
-                
-                // Индексы
-                @SuppressWarnings("unchecked")
-                List<Map<String, Object>> indexes = (List<Map<String, Object>>) metadata.get("indexes");
-                if (indexes != null && !indexes.isEmpty()) {
-                    response.append("#### Индексы\n\n");
-                    for (Map<String, Object> index : indexes) {
-                        response.append("- ").append(index.get("name"))
-                              .append(" (").append(index.get("columns")).append(")");
-                        if (index.get("unique") != null) {
-                            response.append(index.get("unique").equals(true) ? " UNIQUE" : "");
-                        }
-                        response.append("\n");
-                    }
-                    response.append("\n");
-                }
-                
-                // Статистика
-                @SuppressWarnings("unchecked")
-                Map<String, Object> stats = (Map<String, Object>) metadata.get("statistics");
-                if (stats != null && !stats.isEmpty()) {
-                    response.append("#### Статистика\n\n");
-                    for (Map.Entry<String, Object> stat : stats.entrySet()) {
-                        if (stat.getValue() instanceof Map) {
-                            response.append("- ").append(stat.getKey()).append(":\n");
-                            @SuppressWarnings("unchecked")
-                            Map<String, Object> subStats = (Map<String, Object>) stat.getValue();
-                            for (Map.Entry<String, Object> subStat : subStats.entrySet()) {
-                                response.append("  - ").append(subStat.getKey())
-                                      .append(": ").append(subStat.getValue()).append("\n");
-                            }
-                        } else {
-                            response.append("- ").append(stat.getKey())
-                                  .append(": ").append(stat.getValue()).append("\n");
-                        }
-                    }
-                    response.append("\n");
-                }
-            }
-        }
-
+        // Добавляем оптимизированный запрос
+        response.append("## Оптимизированный SQL-запрос\n\n");
+        response.append("```sql\n");
+        response.append(optimizedQuery);
+        response.append("\n```\n\n");
+        
+        // Добавляем обоснование оптимизации
+        response.append("## Обоснование оптимизации\n\n");
+        response.append(optimizationRationale).append("\n\n");
+        
+        // Добавляем оценку улучшения
+        response.append("## Оценка улучшения\n\n");
+        response.append(performanceImpact).append("\n\n");
+        
+        // Добавляем потенциальные риски
+        response.append("## Потенциальные риски\n\n");
+        response.append(potentialRisks);
+        
         return response.toString();
     }
 
@@ -951,5 +844,12 @@ public class SqlOptimizationService {
         }
         
         return tablesMetadata;
+    }
+
+    private String getDatabaseInfo(DatabaseConnection dbConnection) {
+        return String.format("Database: %s, Host: %s, Port: %d",
+            dbConnection.getDatabaseName(),
+            dbConnection.getHost(),
+            dbConnection.getPort());
     }
 }
