@@ -20,4 +20,8 @@ public class SqlQueryResponse {
     private MessageDto message;
     private QueryPlanResult originalPlan;
     private QueryPlanResult optimizedPlan;
+    private Long executionTimeMs;
+    private String optimizationRationale;
+    private String performanceImpact;
+    private String potentialRisks;
 }

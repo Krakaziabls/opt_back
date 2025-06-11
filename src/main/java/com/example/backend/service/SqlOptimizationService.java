@@ -240,6 +240,12 @@ public class SqlOptimizationService {
                 .optimizedQuery(sqlQuery.getOptimizedQuery())
                 .createdAt(sqlQuery.getCreatedAt().toString())
                 .message(mapToMessageDto(sqlQuery.getMessage()))
+                .executionTimeMs(sqlQuery.getExecutionTimeMs())
+                .originalPlan(sqlQuery.getOriginalPlan())
+                .optimizedPlan(sqlQuery.getOptimizedPlan())
+                .optimizationRationale(sqlQuery.getOptimizationRationale())
+                .performanceImpact(sqlQuery.getPerformanceImpact())
+                .potentialRisks(sqlQuery.getPotentialRisks())
                 .build();
     }
 
