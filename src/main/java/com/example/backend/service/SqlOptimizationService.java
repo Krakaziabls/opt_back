@@ -199,8 +199,8 @@ public class SqlOptimizationService {
                     Chat chat = chatRepository.findById(req.getChatId())
                             .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
 
-                    // Создаем сообщение
-                    Message message = Message.builder()
+                    // Создаем сообщение от пользователя
+                    Message userMessage = Message.builder()
                             .chat(chat)
                             .content(req.getQuery())
                             .fromUser(true)
@@ -209,7 +209,7 @@ public class SqlOptimizationService {
 
                     // Создаем запись SQL-запроса
                     SqlQuery sqlQuery = SqlQuery.builder()
-                            .message(message)
+                            .message(userMessage)
                             .originalQuery(req.getQuery())
                             .createdAt(LocalDateTime.now())
                             .build();
@@ -222,9 +222,9 @@ public class SqlOptimizationService {
                         sqlQuery.setDatabaseConnection(dbConnection);
                     }
 
-                    // Сохраняем сообщение и SQL-запрос в одной транзакции
-                    message = messageRepository.save(message);
-                    sqlQuery.setMessage(message);
+                    // Сохраняем сообщение пользователя и SQL-запрос в одной транзакции
+                    userMessage = messageRepository.save(userMessage);
+                    sqlQuery.setMessage(userMessage);
                     sqlQuery = sqlQueryRepository.save(sqlQuery);
 
                     return Mono.just(sqlQuery);
@@ -337,22 +337,26 @@ public class SqlOptimizationService {
                             sqlQuery.getPotentialRisks()
                         );
 
-                        // Обновляем сообщение
-                        Message message = sqlQuery.getMessage();
-                        message.setContent(formattedResponse);
-                        message = messageRepository.save(message);
+                        // Создаем новое сообщение от LLM
+                        Message llmMessage = Message.builder()
+                            .chat(sqlQuery.getMessage().getChat())
+                            .content(formattedResponse)
+                            .fromUser(false)
+                            .createdAt(LocalDateTime.now())
+                            .build();
+                        llmMessage = messageRepository.save(llmMessage);
 
                         // Отправляем сообщение через WebSocket
                         String destination = "/topic/chat/" + request.getChatId();
                         MessageDto messageDto = MessageDto.builder()
-                            .id(message.getId())
+                            .id(llmMessage.getId())
                             .content(formattedResponse)
                             .fromUser(false)
-                            .createdAt(message.getCreatedAt())
+                            .createdAt(llmMessage.getCreatedAt())
                             .chatId(request.getChatId())
                             .build();
                         messagingTemplate.convertAndSend(destination, messageDto);
-                        log.info("Successfully sent message to {}: id={}", destination, message.getId());
+                        log.info("Successfully sent message to {}: id={}", destination, llmMessage.getId());
 
                         return Mono.just(mapToResponse(savedQuery));
                     } catch (Exception e) {
