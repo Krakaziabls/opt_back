@@ -211,21 +211,30 @@ public class SqlOptimizationService {
             String performanceImpact,
             String potentialRisks,
             ExecutionResult originalExecution,
-            ExecutionResult optimizedExecution) {
+            ExecutionResult optimizedExecution,
+            String originalQuery) {
         
         StringBuilder response = new StringBuilder();
         
-        // Добавляем информацию о запросе
-        response.append("## Информация о запросе\n\n");
+        // Краткая шапка с основным выводом
+        response.append("# Оптимизация SQL-запроса\n\n");
+        if (optimizedExecution != null && originalExecution != null) {
+            double timeImprovement = ((double) (originalExecution.getExecutionTime() - optimizedExecution.getExecutionTime()) / originalExecution.getExecutionTime()) * 100;
+            response.append(String.format("**Улучшение производительности: %.2f%%**\n\n", timeImprovement));
+        }
         
+        // Информация о запросе
+        response.append("## Информация о запросе\n\n");
+        response.append("<details>\n<summary>Детали запроса</summary>\n\n");
+        
+        // Сравнение планов выполнения
         if (originalExecution != null && originalExecution.getExplainOutput() != null) {
-            // Добавляем визуальное сравнение планов выполнения
             response.append("### Сравнение планов выполнения\n\n");
             response.append("<div class='plan-comparison'>\n");
             response.append("<table class='plan-table'>\n");
             response.append("<tr><th>Метрика</th><th>Исходный запрос</th><th>Оптимизированный запрос</th><th>Изменение</th></tr>\n");
             
-            // Добавляем время выполнения
+            // Время выполнения
             response.append("<tr>\n");
             response.append("<td>Время выполнения</td>\n");
             response.append("<td>").append(originalExecution.getExecutionTime()).append(" мс</td>\n");
@@ -241,38 +250,117 @@ public class SqlOptimizationService {
             response.append("</tr>\n");
             response.append("</table>\n");
             response.append("</div>\n\n");
+            
+            // График сравнения
+            response.append("<div class='chart-container'>\n");
+            response.append("<canvas id='performanceChart'></canvas>\n");
+            response.append("</div>\n\n");
         }
         
-        // Добавляем сравнение запросов
-        response.append("### Сравнение запросов\n\n");
-        response.append("<div class='query-comparison'>\n");
+        // Детальные планы выполнения
+        response.append("### Детальные планы выполнения\n\n");
+        response.append("<details>\n<summary>Исходный план</summary>\n\n");
+        response.append("```sql\n");
+        response.append(originalExecution != null ? originalExecution.getExplainOutput() : "Нет данных");
+        response.append("\n```\n\n");
+        response.append("</details>\n\n");
         
-        // Исходный запрос
+        response.append("<details>\n<summary>Оптимизированный план</summary>\n\n");
+        response.append("```sql\n");
+        response.append(optimizedExecution != null ? optimizedExecution.getExplainOutput() : "Нет данных");
+        response.append("\n```\n\n");
+        response.append("</details>\n\n");
+        
+        // Сравнение SQL-запросов
+        response.append("### Сравнение SQL-запросов\n\n");
+        response.append("<details>\n<summary>Показать запросы</summary>\n\n");
         response.append("#### Исходный запрос\n");
         response.append("```sql\n");
-        response.append(optimizedQuery);
+        response.append(originalQuery);
         response.append("\n```\n\n");
         
-        // Оптимизированный запрос
         response.append("#### Оптимизированный запрос\n");
         response.append("```sql\n");
         response.append(optimizedQuery);
         response.append("\n```\n");
-        response.append("</div>\n\n");
+        response.append("</details>\n\n");
         
-        // Добавляем обоснование оптимизации
+        // Метаданные таблиц
+        if (tablesMetadata != null && !tablesMetadata.isEmpty()) {
+            response.append("### Метаданные таблиц\n\n");
+            response.append("<details>\n<summary>Показать метаданные</summary>\n\n");
+            for (Map.Entry<String, Map<String, Object>> entry : tablesMetadata.entrySet()) {
+                response.append("#### Таблица: ").append(entry.getKey()).append("\n\n");
+                Map<String, Object> metadata = entry.getValue();
+                
+                // Колонки
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> columns = (List<Map<String, Object>>) metadata.get("columns");
+                if (columns != null && !columns.isEmpty()) {
+                    response.append("**Колонки:**\n\n");
+                    response.append("| Имя | Тип | Nullable | Default |\n");
+                    response.append("|-----|-----|----------|--------|\n");
+                    for (Map<String, Object> column : columns) {
+                        response.append("| ").append(column.get("name"))
+                              .append(" | ").append(column.get("type"))
+                              .append(" | ").append(column.get("nullable"))
+                              .append(" | ").append(column.get("default"))
+                              .append(" |\n");
+                    }
+                    response.append("\n");
+                }
+                
+                // Индексы
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> indexes = (List<Map<String, Object>>) metadata.get("indexes");
+                if (indexes != null && !indexes.isEmpty()) {
+                    response.append("**Индексы:**\n\n");
+                    response.append("| Имя | Колонки | Уникальный |\n");
+                    response.append("|-----|---------|------------|\n");
+                    for (Map<String, Object> index : indexes) {
+                        response.append("| ").append(index.get("name"))
+                              .append(" | ").append(index.get("columns"))
+                              .append(" | ").append(index.get("unique"))
+                              .append(" |\n");
+                    }
+                    response.append("\n");
+                }
+                
+                // Статистика
+                @SuppressWarnings("unchecked")
+                Map<String, Object> statistics = (Map<String, Object>) metadata.get("statistics");
+                if (statistics != null && !statistics.isEmpty()) {
+                    response.append("**Статистика:**\n\n");
+                    response.append("- Оценочное количество строк: ").append(statistics.get("estimated_rows")).append("\n");
+                    response.append("- Размер таблицы: ").append(statistics.get("total_size")).append("\n");
+                    response.append("- Количество страниц: ").append(statistics.get("pages")).append("\n\n");
+                }
+            }
+            response.append("</details>\n\n");
+        }
+        
+        response.append("</details>\n\n");
+        
+        // Обоснование оптимизации
         response.append("## Обоснование оптимизации\n\n");
+        response.append("<details>\n<summary>Показать обоснование</summary>\n\n");
         response.append(optimizationRationale);
         response.append("\n\n");
+        response.append("</details>\n\n");
         
-        // Добавляем оценку улучшения
+        // Оценка улучшения
         response.append("## Оценка улучшения\n\n");
+        response.append("<details>\n<summary>Показать оценку</summary>\n\n");
         response.append(performanceImpact);
         response.append("\n\n");
+        response.append("</details>\n\n");
         
-        // Добавляем потенциальные риски
+        // Потенциальные риски
         response.append("## Потенциальные риски\n\n");
+        response.append("<details>\n<summary>Показать риски</summary>\n\n");
         response.append(potentialRisks);
+        response.append("\n\n");
+        response.append("</details>\n");
         
         return response.toString();
     }
@@ -438,7 +526,8 @@ public class SqlOptimizationService {
                             sqlQuery.getPerformanceImpact(),
                             sqlQuery.getPotentialRisks(),
                             originalExecutionRef.get(),
-                            optimizedExecutionRef.get()
+                            optimizedExecutionRef.get(),
+                            sqlQuery.getOriginalQuery()
                         );
 
                         Message llmMessage = Message.builder()
