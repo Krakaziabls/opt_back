@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Entity
 @Table(name = "sql_queries")
@@ -47,6 +48,10 @@ public class SqlQuery {
     @Type(JsonBinaryType.class)
     @Column(name = "optimized_plan", columnDefinition = "jsonb")
     private QueryPlanResult optimizedPlan;
+
+    @Type(JsonBinaryType.class)
+    @Column(name = "tables_metadata", columnDefinition = "jsonb")
+    private Map<String, Map<String, Object>> tablesMetadata;
 
     @Column(name = "optimization_rationale", columnDefinition = "TEXT")
     private String optimizationRationale;

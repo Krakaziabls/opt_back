@@ -80,11 +80,11 @@ public class SqlOptimizationControllerTest {
                 .build();
 
         SqlQueryResponse response = SqlQueryResponse.builder()
-                .id(1L)
+                .id(String.valueOf(1L))
                 .originalQuery("SELECT * FROM users")
                 .optimizedQuery("SELECT id, name, email FROM users")
                 .executionTimeMs(100L)
-                .createdAt(LocalDateTime.now())
+                .createdAt(String.valueOf(LocalDateTime.now()))
                 .message(messageDto)
                 .build();
 
@@ -128,18 +128,18 @@ public class SqlOptimizationControllerTest {
     public void getQueryHistory_ValidChatId_ReturnsOk() throws Exception {
         List<SqlQueryResponse> history = Arrays.asList(
                 SqlQueryResponse.builder()
-                        .id(1L)
+                        .id(String.valueOf(1L))
                         .originalQuery("SELECT * FROM users")
                         .optimizedQuery("SELECT id, name, email FROM users")
                         .executionTimeMs(100L)
-                        .createdAt(LocalDateTime.now())
+                        .createdAt(String.valueOf(LocalDateTime.now()))
                         .build(),
                 SqlQueryResponse.builder()
-                        .id(2L)
+                        .id(String.valueOf(2L))
                         .originalQuery("SELECT * FROM orders")
                         .optimizedQuery("SELECT id, user_id, total FROM orders")
                         .executionTimeMs(150L)
-                        .createdAt(LocalDateTime.now())
+                        .createdAt(String.valueOf(LocalDateTime.now()))
                         .build()
         );
 

@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -24,4 +26,5 @@ public class SqlQueryResponse {
     private String optimizationRationale;
     private String performanceImpact;
     private String potentialRisks;
+    private Map<String, Map<String, Object>> tablesMetadata;
 }

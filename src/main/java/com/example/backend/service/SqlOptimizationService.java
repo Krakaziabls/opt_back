@@ -194,28 +194,37 @@ public class SqlOptimizationService {
 
         return Mono.just(request)
                 .flatMap(req -> {
+                    // Проверяем существование чата
+                    Chat chat = chatRepository.findById(req.getChatId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Chat not found"));
+
                     // Создаем сообщение
-                    Message message = new Message();
-                    message.setChat(chatRepository.findById(req.getChatId())
-                            .orElseThrow(() -> new RuntimeException("Chat not found")));
-                    message.setContent(req.getQuery());
-                    message.setFromUser(true);
-                    message.setCreatedAt(LocalDateTime.now());
-                    messageRepository.save(message);
+                    Message message = Message.builder()
+                            .chat(chat)
+                            .content(req.getQuery())
+                            .fromUser(true)
+                            .createdAt(LocalDateTime.now())
+                            .build();
 
                     // Создаем запись SQL-запроса
-                    SqlQuery sqlQuery = new SqlQuery();
-                    sqlQuery.setMessage(message);
-                    sqlQuery.setOriginalQuery(req.getQuery());
-                    sqlQuery.setCreatedAt(LocalDateTime.now());
+                    SqlQuery sqlQuery = SqlQuery.builder()
+                            .message(message)
+                            .originalQuery(req.getQuery())
+                            .createdAt(LocalDateTime.now())
+                            .build();
 
                     // Если есть подключение к БД, сохраняем его
                     if (req.getDatabaseConnectionId() != null) {
                         DatabaseConnection dbConnection = databaseConnectionRepository
                                 .findById(req.getDatabaseConnectionId())
-                                .orElseThrow(() -> new RuntimeException("Database connection not found"));
+                                .orElseThrow(() -> new ResourceNotFoundException("Database connection not found"));
                         sqlQuery.setDatabaseConnection(dbConnection);
                     }
+
+                    // Сохраняем сообщение и SQL-запрос в одной транзакции
+                    message = messageRepository.save(message);
+                    sqlQuery.setMessage(message);
+                    sqlQuery = sqlQueryRepository.save(sqlQuery);
 
                     return Mono.just(sqlQuery);
                 })
@@ -267,10 +276,20 @@ public class SqlOptimizationService {
                                     // Если есть подключение к БД, анализируем план оптимизированного запроса
                                     if (request.getDatabaseConnectionId() != null) {
                                         try {
+                                            // Анализируем план оптимизированного запроса
                                             com.example.sqlopt.ast.QueryPlanResult optimizedPlanResult = 
                                                 astService.analyzeQueryPlan(parsedResponse.getOptimizedSql());
+                                            
+                                            // Сохраняем оба плана
                                             sqlQuery.setOriginalPlan(originalPlanResultRef.get());
                                             sqlQuery.setOptimizedPlan(optimizedPlanResult);
+                                            
+                                            // Обновляем метаданные таблиц
+                                            if (tablesMetadataRef.get() != null) {
+                                                sqlQuery.setTablesMetadata(tablesMetadataRef.get());
+                                            }
+                                            
+                                            log.debug("Successfully analyzed and saved query plans and metadata");
                                         } catch (Exception e) {
                                             log.warn("Failed to analyze optimized query plan: {}", e.getMessage());
                                         }
@@ -298,37 +317,42 @@ public class SqlOptimizationService {
                             });
                 })
                 .flatMap(sqlQuery -> {
-                    // Сохраняем запрос
-                    SqlQuery savedQuery = sqlQueryRepository.save(sqlQuery);
+                    try {
+                        // Сохраняем запрос
+                        SqlQuery savedQuery = sqlQueryRepository.save(sqlQuery);
 
-                    // Форматируем ответ
-                    String formattedResponse = formatOptimizationResponse(
-                        sqlQuery.getOptimizedQuery(),
-                        sqlQuery.getOptimizedPlan(),
-                        tablesMetadataRef.get(),
-                        sqlQuery.getOptimizationRationale(),
-                        sqlQuery.getPerformanceImpact(),
-                        sqlQuery.getPotentialRisks()
-                    );
+                        // Форматируем ответ
+                        String formattedResponse = formatOptimizationResponse(
+                            sqlQuery.getOptimizedQuery(),
+                            sqlQuery.getOptimizedPlan(),
+                            tablesMetadataRef.get(),
+                            sqlQuery.getOptimizationRationale(),
+                            sqlQuery.getPerformanceImpact(),
+                            sqlQuery.getPotentialRisks()
+                        );
 
-                    // Обновляем сообщение
-                    Message message = sqlQuery.getMessage();
-                    message.setContent(formattedResponse);
-                    messageRepository.save(message);
+                        // Обновляем сообщение
+                        Message message = sqlQuery.getMessage();
+                        message.setContent(formattedResponse);
+                        message = messageRepository.save(message);
 
-                    // Отправляем сообщение через WebSocket
-                    String destination = "/topic/chat/" + request.getChatId();
-                    MessageDto messageDto = MessageDto.builder()
-                        .id(message.getId())
-                        .content(formattedResponse)
-                        .fromUser(false)
-                        .createdAt(message.getCreatedAt())
-                        .chatId(request.getChatId())
-                        .build();
-                    messagingTemplate.convertAndSend(destination, messageDto);
-                    log.info("Successfully sent message to {}: id={}", destination, message.getId());
+                        // Отправляем сообщение через WebSocket
+                        String destination = "/topic/chat/" + request.getChatId();
+                        MessageDto messageDto = MessageDto.builder()
+                            .id(message.getId())
+                            .content(formattedResponse)
+                            .fromUser(false)
+                            .createdAt(message.getCreatedAt())
+                            .chatId(request.getChatId())
+                            .build();
+                        messagingTemplate.convertAndSend(destination, messageDto);
+                        log.info("Successfully sent message to {}: id={}", destination, message.getId());
 
-                    return Mono.just(mapToResponse(savedQuery));
+                        return Mono.just(mapToResponse(savedQuery));
+                    } catch (Exception e) {
+                        log.error("Error saving optimization results: {}", e.getMessage());
+                        throw new RuntimeException("Failed to save optimization results", e);
+                    }
                 });
     }
 
@@ -445,6 +469,7 @@ public class SqlOptimizationService {
                 .optimizationRationale(sqlQuery.getOptimizationRationale())
                 .performanceImpact(sqlQuery.getPerformanceImpact())
                 .potentialRisks(sqlQuery.getPotentialRisks())
+                .tablesMetadata(sqlQuery.getTablesMetadata())
                 .build();
     }
 
@@ -539,7 +564,7 @@ public class SqlOptimizationService {
                         log.warn("Невалидный SQL в ответе LLM: {}", e.getMessage());
                     }
                 }
-            } else if (section.contains("Обоснование оптимизации")) {
+            } else if (section.contains("Обоснование оптимизации") || section.contains("Обоснование изменений")) {
                 String rationale = extractContentFromSection(section);
                 if (rationale != null && !rationale.trim().isEmpty()) {
                     result.setOptimizationRationale(rationale);
