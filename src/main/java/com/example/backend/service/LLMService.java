@@ -99,10 +99,10 @@ public class LLMService {
 
     private String formatLLMResponse(String content) {
         // Если ответ уже содержит нужный формат, возвращаем его как есть
-        if (content.contains("Оптимизированный SQL-запрос:") &&
-                content.contains("Обоснование изменений:") &&
-                content.contains("Оценка улучшения:") &&
-                content.contains("Потенциальные риски:")) {
+        if (content.contains("Оптимизированный SQL-запрос") &&
+                content.contains("Обоснование изменений") &&
+                content.contains("Оценка улучшения") &&
+                content.contains("Потенциальные риски")) {
             return content;
         }
 
@@ -127,13 +127,13 @@ public class LLMService {
 
         // Добавляем остальные секции
         formattedResponse.append("## Обоснование изменений\n\n");
-        formattedResponse.append("Оптимизация запроса выполнена с учетом лучших практик SQL.\n\n");
+        formattedResponse.append("Оптимизация запроса выполнена с учетом анализа плана выполнения и лучших практик SQL.\n\n");
 
         formattedResponse.append("## Оценка улучшения\n\n");
-        formattedResponse.append("Ожидается улучшение производительности за счет оптимизации структуры запроса.\n\n");
+        formattedResponse.append("Ожидается улучшение производительности за счет оптимизации структуры запроса и использования более эффективных операций.\n\n");
 
         formattedResponse.append("## Потенциальные риски\n\n");
-        formattedResponse.append("Изменения не должны повлиять на логику работы запроса.");
+        formattedResponse.append("Изменения не должны повлиять на логику работы запроса, так как оптимизация направлена только на улучшение производительности.");
 
         return formattedResponse.toString();
     }
