@@ -216,7 +216,7 @@ public class SqlOptimizationService {
         
         StringBuilder response = new StringBuilder();
         
-        // Добавляем информацию о запросе и плане
+        // Добавляем информацию о запросе
         response.append("## Информация о запросе\n\n");
         
         if (originalExecution != null && originalExecution.getExplainOutput() != null) {
@@ -235,145 +235,40 @@ public class SqlOptimizationService {
             response.append("<td class='").append(timeImprovement > 0 ? "improvement" : "degradation").append("'>")
                    .append(String.format("%.2f", timeImprovement)).append("%</td>\n");
             response.append("</tr>\n");
-            
-            // Добавляем график производительности
             response.append("</table>\n");
-            response.append("<div class='performance-chart'>\n");
-            response.append("```chart\n");
-            response.append("type: bar\n");
-            response.append("data:\n");
-            response.append("  - label: Исходный запрос\n");
-            response.append("    value: ").append(originalExecution.getExecutionTime()).append("\n");
-            response.append("  - label: Оптимизированный запрос\n");
-            response.append("    value: ").append(optimizedExecution.getExecutionTime()).append("\n");
-            response.append("```\n");
-            response.append("</div>\n");
-            response.append("</div>\n\n");
-            
-            // Добавляем детальные планы выполнения
-            response.append("### Детальные планы выполнения\n\n");
-            response.append("<div class='plan-details'>\n");
-            response.append("<div class='original-plan'>\n");
-            response.append("#### Исходный запрос\n");
-            response.append("```sql\n");
-            response.append(originalExecution.getExplainOutput());
-            response.append("\n```\n");
-            response.append("</div>\n");
-            
-            response.append("<div class='optimized-plan'>\n");
-            response.append("#### Оптимизированный запрос\n");
-            response.append("```sql\n");
-            response.append(optimizedExecution.getExplainOutput());
-            response.append("\n```\n");
-            response.append("</div>\n");
             response.append("</div>\n\n");
         }
         
-        // Добавляем сравнение запросов с подсветкой различий
+        // Добавляем сравнение запросов
         response.append("### Сравнение запросов\n\n");
         response.append("<div class='query-comparison'>\n");
-        response.append("<div class='original-query'>\n");
+        
+        // Исходный запрос
         response.append("#### Исходный запрос\n");
         response.append("```sql\n");
         response.append(optimizedQuery);
-        response.append("\n```\n");
-        response.append("</div>\n");
+        response.append("\n```\n\n");
         
-        response.append("<div class='optimized-query'>\n");
+        // Оптимизированный запрос
         response.append("#### Оптимизированный запрос\n");
         response.append("```sql\n");
         response.append(optimizedQuery);
         response.append("\n```\n");
-        response.append("</div>\n");
         response.append("</div>\n\n");
-        
-        // Добавляем интерактивные метаданные таблиц
-        if (tablesMetadata != null && !tablesMetadata.isEmpty()) {
-            response.append("### Метаданные таблиц\n\n");
-            response.append("<div class='table-metadata'>\n");
-            for (Map.Entry<String, Map<String, Object>> entry : tablesMetadata.entrySet()) {
-                response.append("<details class='metadata-details'>\n");
-                response.append("<summary>Таблица: ").append(entry.getKey()).append("</summary>\n");
-                response.append("<div class='metadata-content'>\n");
-                
-                // Колонки
-                @SuppressWarnings("unchecked")
-                List<Map<String, Object>> columns = (List<Map<String, Object>>) entry.getValue().get("columns");
-                if (columns != null && !columns.isEmpty()) {
-                    response.append("<h4>Колонки</h4>\n");
-                    response.append("<table class='columns-table'>\n");
-                    response.append("<tr><th>Имя</th><th>Тип</th><th>Размер</th><th>Nullable</th><th>Default</th></tr>\n");
-                    for (Map<String, Object> column : columns) {
-                        response.append("<tr>\n");
-                        response.append("<td>").append(column.get("name")).append("</td>\n");
-                        response.append("<td>").append(column.get("type")).append("</td>\n");
-                        response.append("<td>").append(column.get("size")).append("</td>\n");
-                        response.append("<td>").append(column.get("nullable")).append("</td>\n");
-                        response.append("<td>").append(column.get("default")).append("</td>\n");
-                        response.append("</tr>\n");
-                    }
-                    response.append("</table>\n");
-                }
-                
-                // Индексы
-                @SuppressWarnings("unchecked")
-                List<Map<String, Object>> indexes = (List<Map<String, Object>>) entry.getValue().get("indexes");
-                if (indexes != null && !indexes.isEmpty()) {
-                    response.append("<h4>Индексы</h4>\n");
-                    response.append("<table class='indexes-table'>\n");
-                    response.append("<tr><th>Имя</th><th>Колонки</th><th>Уникальный</th><th>Тип</th></tr>\n");
-                    for (Map<String, Object> index : indexes) {
-                        response.append("<tr>\n");
-                        response.append("<td>").append(index.get("name")).append("</td>\n");
-                        response.append("<td>").append(index.get("columns")).append("</td>\n");
-                        response.append("<td>").append(index.get("unique")).append("</td>\n");
-                        response.append("<td>").append(index.get("type")).append("</td>\n");
-                        response.append("</tr>\n");
-                    }
-                    response.append("</table>\n");
-                }
-                
-                // Статистика
-                @SuppressWarnings("unchecked")
-                Map<String, Object> statistics = (Map<String, Object>) entry.getValue().get("statistics");
-                if (statistics != null && !statistics.isEmpty()) {
-                    response.append("<h4>Статистика</h4>\n");
-                    response.append("<table class='statistics-table'>\n");
-                    response.append("<tr><th>Метрика</th><th>Значение</th></tr>\n");
-                    for (Map.Entry<String, Object> stat : statistics.entrySet()) {
-                        if (!stat.getKey().equals("column_stats")) {
-                            response.append("<tr>\n");
-                            response.append("<td>").append(stat.getKey()).append("</td>\n");
-                            response.append("<td>").append(stat.getValue()).append("</td>\n");
-                            response.append("</tr>\n");
-                        }
-                    }
-                    response.append("</table>\n");
-                }
-                
-                response.append("</div>\n");
-                response.append("</details>\n");
-            }
-            response.append("</div>\n\n");
-        }
         
         // Добавляем обоснование оптимизации
         response.append("## Обоснование оптимизации\n\n");
-        response.append("<div class='optimization-rationale'>\n");
         response.append(optimizationRationale);
-        response.append("\n</div>\n\n");
+        response.append("\n\n");
         
         // Добавляем оценку улучшения
         response.append("## Оценка улучшения\n\n");
-        response.append("<div class='performance-impact'>\n");
         response.append(performanceImpact);
-        response.append("\n</div>\n\n");
+        response.append("\n\n");
         
         // Добавляем потенциальные риски
         response.append("## Потенциальные риски\n\n");
-        response.append("<div class='potential-risks'>\n");
         response.append(potentialRisks);
-        response.append("\n</div>");
         
         return response.toString();
     }
