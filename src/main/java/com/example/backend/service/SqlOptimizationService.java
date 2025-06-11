@@ -229,10 +229,15 @@ public class SqlOptimizationService {
             response.append("<tr>\n");
             response.append("<td>Время выполнения</td>\n");
             response.append("<td>").append(originalExecution.getExecutionTime()).append(" мс</td>\n");
-            response.append("<td>").append(optimizedExecution.getExecutionTime()).append(" мс</td>\n");
-            double timeImprovement = ((double) (originalExecution.getExecutionTime() - optimizedExecution.getExecutionTime()) / originalExecution.getExecutionTime()) * 100;
-            response.append("<td class='").append(timeImprovement > 0 ? "improvement" : "degradation").append("'>")
-                   .append(String.format("%.2f", timeImprovement)).append("%</td>\n");
+            if (optimizedExecution != null) {
+                response.append("<td>").append(optimizedExecution.getExecutionTime()).append(" мс</td>\n");
+                double timeImprovement = ((double) (originalExecution.getExecutionTime() - optimizedExecution.getExecutionTime()) / originalExecution.getExecutionTime()) * 100;
+                response.append("<td class='").append(timeImprovement > 0 ? "improvement" : "degradation").append("'>")
+                       .append(String.format("%.2f", timeImprovement)).append("%</td>\n");
+            } else {
+                response.append("<td>Нет данных</td>\n");
+                response.append("<td>Нет данных</td>\n");
+            }
             response.append("</tr>\n");
             response.append("</table>\n");
             response.append("</div>\n\n");
@@ -372,15 +377,25 @@ public class SqlOptimizationService {
                                             Connection connection = databaseConnectionService.getConnection(dbConnection.getId());
                                             
                                             // Получаем EXPLAIN ANALYZE для оптимизированного запроса
-                                            optimizedExecutionRef.set(executeExplainAnalyze(connection, parsedResponse.getOptimizedSql()));
-                                            log.info("Optimized query execution: {}", optimizedExecutionRef.get().getExplainOutput());
+                                            try {
+                                                optimizedExecutionRef.set(executeExplainAnalyze(connection, parsedResponse.getOptimizedSql()));
+                                                log.info("Optimized query execution: {}", optimizedExecutionRef.get().getExplainOutput());
+                                            } catch (SQLException e) {
+                                                log.warn("Failed to execute optimized query: {}", e.getMessage());
+                                                // Продолжаем выполнение, даже если оптимизированный запрос не удалось выполнить
+                                            }
                                             
                                             // Анализируем план оптимизированного запроса
-                                            com.example.sqlopt.ast.QueryPlanResult optimizedPlanResult = 
-                                                astService.analyzeQueryPlan(parsedResponse.getOptimizedSql());
-                                            
-                                            sqlQuery.setOriginalPlan(originalPlanResultRef.get());
-                                            sqlQuery.setOptimizedPlan(optimizedPlanResult);
+                                            try {
+                                                com.example.sqlopt.ast.QueryPlanResult optimizedPlanResult = 
+                                                    astService.analyzeQueryPlan(parsedResponse.getOptimizedSql());
+                                                
+                                                sqlQuery.setOriginalPlan(originalPlanResultRef.get());
+                                                sqlQuery.setOptimizedPlan(optimizedPlanResult);
+                                            } catch (Exception e) {
+                                                log.warn("Failed to analyze optimized query plan: {}", e.getMessage());
+                                                // Продолжаем выполнение, даже если не удалось проанализировать план
+                                            }
                                             
                                             if (tablesMetadataRef.get() != null) {
                                                 sqlQuery.setTablesMetadata(tablesMetadataRef.get());
