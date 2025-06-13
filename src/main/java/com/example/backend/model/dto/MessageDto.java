@@ -1,13 +1,14 @@
 package com.example.backend.model.dto;
 
-import java.time.LocalDateTime;
-
+import com.example.backend.model.entity.Message;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -25,7 +26,17 @@ public class MessageDto {
 
     private LocalDateTime createdAt;
 
+    private Long chatId;
+
     private String llmProvider;
 
-    private Long chatId;
+    public static MessageDto fromEntity(Message message) {
+        return MessageDto.builder()
+                .id(message.getId())
+                .content(message.getContent())
+                .fromUser(message.isFromUser())
+                .createdAt(message.getCreatedAt())
+                .chatId(message.getChat().getId())
+                .build();
+    }
 }

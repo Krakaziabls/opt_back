@@ -1,11 +1,13 @@
 package com.example.backend.model.dto;
 
+import com.example.sqlopt.ast.QueryPlanResult;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.util.Map;
 
 @Data
 @Builder
@@ -13,10 +15,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SqlQueryResponse {
 
-    private Long id;
+    private String id;
     private String originalQuery;
     private String optimizedQuery;
-    private Long executionTimeMs;
-    private LocalDateTime createdAt;
+    private String createdAt;
     private MessageDto message;
+    private QueryPlanResult originalPlan;
+    private QueryPlanResult optimizedPlan;
+    private Long executionTimeMs;
+    private String optimizationRationale;
+    private String performanceImpact;
+    private String potentialRisks;
+    private Map<String, Map<String, Object>> tablesMetadata;
 }

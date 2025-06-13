@@ -1,29 +1,27 @@
 package com.example.backend.service;
 
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.Base64;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 import reactor.util.retry.Retry;
+
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Base64;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -86,7 +84,7 @@ public class GigaChatAuthService {
         log.info("Initializing GigaChat API client with URL: {}", apiUrl);
 
         HttpClient httpClient = createHttpClient();
-        
+
         this.authWebClient = WebClient.builder()
                 .baseUrl(authUrl)
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
@@ -102,7 +100,7 @@ public class GigaChatAuthService {
 
     private HttpClient createHttpClient() throws Exception {
         HttpClient httpClient = HttpClient.create().keepAlive(true);
-        
+
         if (trustAllCertificates) {
             log.warn("Using insecure SSL configuration - trustAllCertificates is enabled");
             SslContext sslContext = SslContextBuilder.forClient()
@@ -110,7 +108,7 @@ public class GigaChatAuthService {
                     .build();
             httpClient = httpClient.secure(t -> t.sslContext(sslContext));
         }
-        
+
         return httpClient;
     }
 
@@ -121,7 +119,7 @@ public class GigaChatAuthService {
                     .doOnNext(token -> tokenRef.set(token))
                     .retryWhen(Retry.backoff(MAX_RETRY_ATTEMPTS, java.time.Duration.ofMillis(RETRY_DELAY_MS))
                             .doBeforeRetry(signal -> log.warn("Retrying token refresh, attempt: {}", signal.totalRetries() + 1))
-                            .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> 
+                            .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) ->
                                 new RuntimeException("Failed to refresh token after " + MAX_RETRY_ATTEMPTS + " attempts")));
         }
         return Mono.just(currentToken);
@@ -164,20 +162,20 @@ public class GigaChatAuthService {
                     .bodyToMono(JsonNode.class)
                     .flatMap(response -> {
                         log.debug("Received response from GigaChat auth: {}", response);
-                        
+
                         if (!response.has("access_token")) {
                             log.error("No access_token in response: {}", response);
                             return Mono.error(new RuntimeException("No access_token in response from GigaChat auth service"));
                         }
 
                         String token = response.get("access_token").asText();
-                        
+
                         // Устанавливаем время истечения токена (по умолчанию 1 час, если не указано в ответе)
                         int expiresIn = 3600; // 1 час по умолчанию
                         if (response.has("expires_in") && !response.get("expires_in").isNull()) {
                             expiresIn = response.get("expires_in").asInt();
                         }
-                        
+
                         Instant expiry = Instant.now().plusSeconds(expiresIn);
                         tokenExpiryRef.set(expiry);
                         log.info("Successfully refreshed GigaChat token, expires in {} seconds", expiresIn);

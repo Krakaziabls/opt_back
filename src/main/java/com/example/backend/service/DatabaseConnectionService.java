@@ -9,15 +9,15 @@ import com.example.backend.model.entity.User;
 import com.example.backend.repository.ChatRepository;
 import com.example.backend.repository.DatabaseConnectionRepository;
 import com.example.backend.repository.UserRepository;
+import com.example.sqlopt.service.ASTService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +31,7 @@ public class DatabaseConnectionService {
     private final DatabaseConnectionRepository databaseConnectionRepository;
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
+    private final ASTService astService;
 
     // Cache for active connections
     private final Map<Long, Connection> activeConnections = new HashMap<>();
@@ -117,6 +118,9 @@ public class DatabaseConnectionService {
             // Cache the connection
             activeConnections.put(connectionId, connection);
 
+            // Собираем метаинформацию о таблицах
+            collectTableMetadata(connection);
+
             return connection;
         } catch (SQLException e) {
             log.error("Failed to connect to database: {}", e.getMessage());
@@ -165,6 +169,56 @@ public class DatabaseConnectionService {
         }
 
         throw new DatabaseConnectionException("Unsupported database type: " + connection.getDbType());
+    }
+
+    private void collectTableMetadata(Connection connection) {
+        try {
+            DatabaseMetaData metaData = connection.getMetaData();
+            ResultSet tables = metaData.getTables(null, null, "%", new String[]{"TABLE"});
+
+            while (tables.next()) {
+                String tableName = tables.getString("TABLE_NAME");
+                Map<String, Object> tableMetadata = new HashMap<>();
+
+                // Получаем информацию о колонках
+                ResultSet columns = metaData.getColumns(null, null, tableName, "%");
+                List<Map<String, Object>> columnsInfo = new ArrayList<>();
+                while (columns.next()) {
+                    Map<String, Object> columnInfo = new HashMap<>();
+                    columnInfo.put("name", columns.getString("COLUMN_NAME"));
+                    columnInfo.put("type", columns.getString("TYPE_NAME"));
+                    columnInfo.put("size", columns.getInt("COLUMN_SIZE"));
+                    columnInfo.put("nullable", columns.getBoolean("IS_NULLABLE"));
+                    columnsInfo.add(columnInfo);
+                }
+                tableMetadata.put("columns", columnsInfo);
+
+                // Получаем информацию о первичных ключах
+                ResultSet primaryKeys = metaData.getPrimaryKeys(null, null, tableName);
+                List<String> primaryKeyColumns = new ArrayList<>();
+                while (primaryKeys.next()) {
+                    primaryKeyColumns.add(primaryKeys.getString("COLUMN_NAME"));
+                }
+                tableMetadata.put("primaryKeys", primaryKeyColumns);
+
+                // Получаем информацию о статистике таблицы
+                try (Statement stmt = connection.createStatement()) {
+                    ResultSet stats = stmt.executeQuery(
+                            "SELECT reltuples::bigint AS row_count, " +
+                            "pg_size_pretty(pg_total_relation_size('" + tableName + "')) AS total_size " +
+                            "FROM pg_class WHERE relname = '" + tableName + "'");
+                    if (stats.next()) {
+                        tableMetadata.put("rowCount", stats.getLong("row_count"));
+                        tableMetadata.put("totalSize", stats.getString("total_size"));
+                    }
+                }
+
+                // Сохраняем метаинформацию в ASTService
+                astService.updateTableMetadata(tableName, tableMetadata);
+            }
+        } catch (SQLException e) {
+            log.warn("Failed to collect table metadata: {}", e.getMessage());
+        }
     }
 
     private DatabaseConnectionDto mapToDto(DatabaseConnection connection) {

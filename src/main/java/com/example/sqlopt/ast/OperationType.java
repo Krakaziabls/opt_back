@@ -1,0 +1,26 @@
+package com.example.sqlopt.ast;
+
+public enum OperationType {
+    SEQUENTIAL_SCAN,
+    INDEX_SCAN,
+    BITMAP_HEAP_SCAN,
+    BITMAP_INDEX_SCAN,
+    NESTED_LOOP,
+    MERGE_JOIN,
+    HASH_JOIN,
+    SORT,
+    HASH,
+    AGGREGATE,
+    LIMIT,
+    SUBQUERY,
+    CTE_SCAN,
+    MATERIALIZE,
+    APPEND,
+    UNION,
+    INTERSECT,
+    EXCEPT,
+    GATHER_MOTION,
+    REDISTRIBUTE_MOTION,
+    BROADCAST_MOTION,
+    UNKNOWN
+}

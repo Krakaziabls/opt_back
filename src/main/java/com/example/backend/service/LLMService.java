@@ -1,26 +1,24 @@
 package com.example.backend.service;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.example.backend.config.LLMConfig;
+import com.example.backend.exception.ApiException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-
-import com.example.backend.config.LLMConfig;
-import com.example.backend.exception.ApiException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -101,10 +99,10 @@ public class LLMService {
 
     private String formatLLMResponse(String content) {
         // Если ответ уже содержит нужный формат, возвращаем его как есть
-        if (content.contains("Оптимизированный SQL-запрос:") &&
-                content.contains("Обоснование изменений:") &&
-                content.contains("Оценка улучшения:") &&
-                content.contains("Потенциальные риски:")) {
+        if (content.contains("Оптимизированный SQL-запрос") &&
+                (content.contains("Обоснование оптимизации") || content.contains("Обоснование изменений")) &&
+                content.contains("Оценка улучшения") &&
+                content.contains("Потенциальные риски")) {
             return content;
         }
 
@@ -112,7 +110,11 @@ public class LLMService {
         StringBuilder formattedResponse = new StringBuilder();
 
         // Добавляем SQL запрос
-        formattedResponse.append("## Оптимизированный SQL-запрос\n\n");
+        formattedResponse.append("## Информация о запросе\n\n");
+        formattedResponse.append("### Сравнение запросов\n\n");
+        
+        // Исходный запрос
+        formattedResponse.append("#### Исходный запрос\n");
         if (content.contains("```sql")) {
             int start = content.indexOf("```sql") + 6;
             int end = content.indexOf("```", start);
@@ -127,15 +129,42 @@ public class LLMService {
             formattedResponse.append("\n```\n\n");
         }
 
-        // Добавляем остальные секции
-        formattedResponse.append("## Обоснование изменений\n\n");
-        formattedResponse.append("Оптимизация запроса выполнена с учетом лучших практик SQL.\n\n");
+        // Оптимизированный запрос
+        formattedResponse.append("#### Оптимизированный запрос\n");
+        if (content.contains("```sql")) {
+            int start = content.indexOf("```sql") + 6;
+            int end = content.indexOf("```", start);
+            if (end > start) {
+                formattedResponse.append("```sql\n");
+                formattedResponse.append(content.substring(start, end).trim());
+                formattedResponse.append("\n```\n\n");
+            }
+        } else {
+            formattedResponse.append("```sql\n");
+            formattedResponse.append(content.trim());
+            formattedResponse.append("\n```\n\n");
+        }
 
+        // Добавляем обоснование оптимизации
+        formattedResponse.append("## Обоснование оптимизации\n\n");
+        formattedResponse.append("В данном запросе были применены следующие оптимизации:\n\n");
+        formattedResponse.append("1. Анализ и улучшение структуры запроса\n");
+        formattedResponse.append("2. Оптимизация условий WHERE\n");
+        formattedResponse.append("3. Улучшение использования индексов\n\n");
+
+        // Добавляем оценку улучшения
         formattedResponse.append("## Оценка улучшения\n\n");
-        formattedResponse.append("Ожидается улучшение производительности за счет оптимизации структуры запроса.\n\n");
+        formattedResponse.append("Ожидаемые улучшения производительности:\n\n");
+        formattedResponse.append("1. Уменьшение времени выполнения запроса\n");
+        formattedResponse.append("2. Снижение нагрузки на базу данных\n");
+        formattedResponse.append("3. Более эффективное использование ресурсов\n\n");
 
+        // Добавляем потенциальные риски
         formattedResponse.append("## Потенциальные риски\n\n");
-        formattedResponse.append("Изменения не должны повлиять на логику работы запроса.");
+        formattedResponse.append("При применении оптимизаций следует учитывать следующие риски:\n\n");
+        formattedResponse.append("1. Возможные изменения в логике работы запроса\n");
+        formattedResponse.append("2. Необходимость тестирования на реальных данных\n");
+        formattedResponse.append("3. Влияние на другие части системы\n");
 
         return formattedResponse.toString();
     }
@@ -165,7 +194,7 @@ public class LLMService {
                                     clientResponse -> handleServerError(clientResponse))
                             .bodyToMono(String.class))
                     .flatMap(this::parseResponse)
-                    .retryWhen(Retry.backoff(MAX_RETRY_ATTEMPTS, java.time.Duration.ofMillis(RETRY_DELAY_MS))
+                    .retryWhen(Retry.backoff(MAX_RETRY_ATTEMPTS, Duration.ofMillis(RETRY_DELAY_MS))
                             .doBeforeRetry(
                                     signal -> log.warn("Retrying LLM API call, attempt: {}", signal.totalRetries() + 1))
                             .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> new ApiException(

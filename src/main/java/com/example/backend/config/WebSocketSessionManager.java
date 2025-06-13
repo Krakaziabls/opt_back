@@ -1,19 +1,18 @@
 package com.example.backend.config;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
 public class WebSocketSessionManager {
-    
+
     private final Map<String, WebSocketSession> userSessions = new ConcurrentHashMap<>();
-    
+
     public void addSession(String username, WebSocketSession session) {
         WebSocketSession existingSession = userSessions.get(username);
         if (existingSession != null && existingSession.isOpen()) {
@@ -27,7 +26,7 @@ public class WebSocketSessionManager {
         userSessions.put(username, session);
         log.info("Added new session for user: {}", username);
     }
-    
+
     public void removeSession(String username) {
         WebSocketSession session = userSessions.remove(username);
         if (session != null && session.isOpen()) {
@@ -39,13 +38,13 @@ public class WebSocketSessionManager {
         }
         log.info("Removed session for user: {}", username);
     }
-    
+
     public WebSocketSession getSession(String username) {
         return userSessions.get(username);
     }
-    
+
     public boolean hasActiveSession(String username) {
         WebSocketSession session = userSessions.get(username);
         return session != null && session.isOpen();
     }
-} 
+}

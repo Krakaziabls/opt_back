@@ -1,26 +1,25 @@
 package com.example.backend.service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.model.dto.ChatDto;
 import com.example.backend.model.dto.MessageDto;
+import com.example.backend.model.dto.SqlQueryRequest;
 import com.example.backend.model.entity.Chat;
 import com.example.backend.model.entity.Message;
 import com.example.backend.model.entity.User;
 import com.example.backend.repository.ChatRepository;
 import com.example.backend.repository.MessageRepository;
 import com.example.backend.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +31,7 @@ public class ChatService {
     private final UserRepository userRepository;
     private final DatabaseConnectionService databaseConnectionService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final SqlOptimizationService sqlOptimizationService;
 
     public List<ChatDto> getUserChats(Long userId) {
         log.debug("Fetching chats for userId={}", userId);
@@ -107,8 +107,41 @@ public class ChatService {
         message = messageRepository.save(message);
         log.info("Message saved successfully: id={}", message.getId());
 
-        // Отправляем сообщение через WebSocket только если это не SQL-запрос
-        if (!isSQLQuery(messageDto.getContent())) {
+        // Если это SQL-запрос, отправляем его на оптимизацию
+        if (isSQLQuery(messageDto.getContent())) {
+            try {
+                SqlQueryRequest request = new SqlQueryRequest();
+                request.setChatId(chatId);
+                request.setQuery(messageDto.getContent());
+                request.setLlm("gpt-4");
+                request.setMPP(false);
+
+                sqlOptimizationService.optimizeQuery(userId, request)
+                    .subscribe(response -> {
+                        Message optimizedMessage = new Message();
+                        optimizedMessage.setChat(chat);
+                        optimizedMessage.setContent(response.getOptimizedQuery());
+                        optimizedMessage.setFromUser(false);
+                        optimizedMessage.setCreatedAt(LocalDateTime.now());
+                        messageRepository.save(optimizedMessage);
+
+                        String destination = "/topic/chat/" + chatId;
+                        messagingTemplate.convertAndSend(destination, mapToMessageDto(optimizedMessage));
+                    });
+            } catch (Exception e) {
+                log.error("Error optimizing SQL query: {}", e.getMessage());
+                Message errorMessage = new Message();
+                errorMessage.setChat(chat);
+                errorMessage.setContent("Произошла ошибка при оптимизации SQL-запроса: " + e.getMessage());
+                errorMessage.setFromUser(false);
+                errorMessage.setCreatedAt(LocalDateTime.now());
+                messageRepository.save(errorMessage);
+
+                String destination = "/topic/chat/" + chatId;
+                messagingTemplate.convertAndSend(destination, mapToMessageDto(errorMessage));
+            }
+        } else {
+            // Отправляем сообщение через WebSocket только если это не SQL-запрос
             String destination = "/topic/chat/" + chatId;
             log.debug("Sending message to destination: {}", destination);
             messagingTemplate.convertAndSend(destination, mapToMessageDto(message));

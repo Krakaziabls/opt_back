@@ -1,10 +1,9 @@
 package com.example.backend.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 @Getter
 @Setter
@@ -21,4 +20,4 @@ public class GigaChatConfig {
     public static class Ssl {
         private boolean trustAll = false;
     }
-} 
+}

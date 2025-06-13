@@ -53,6 +53,12 @@ CREATE TABLE sql_queries (
                              optimized_query TEXT,
                              database_connection_id BIGINT REFERENCES database_connections(id),
                              execution_time_ms BIGINT,
+                             original_plan JSONB,
+                             optimized_plan JSONB,
+                             tables_metadata JSONB,
+                             optimization_rationale TEXT,
+                             performance_impact TEXT,
+                             potential_risks TEXT,
                              created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

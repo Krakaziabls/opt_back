@@ -1,15 +1,13 @@
 package com.example.backend.security;
 
+import com.example.backend.model.entity.User;
+import com.example.backend.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import com.example.backend.model.entity.User;
-import com.example.backend.repository.UserRepository;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

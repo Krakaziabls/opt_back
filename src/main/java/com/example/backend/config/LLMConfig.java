@@ -1,12 +1,11 @@
 package com.example.backend.config;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
-
-import lombok.Data;
 
 @Configuration
 @ConfigurationProperties(prefix = "llm")
@@ -21,7 +20,7 @@ public class LLMConfig {
     private String systemPrompt;
     private int connectTimeout = 5000;
     private int readTimeout = 30000;
-    
+
     // LM Studio configuration
     private String localApiUrl = "http://localhost:1234";
     private boolean localEnabled = false;

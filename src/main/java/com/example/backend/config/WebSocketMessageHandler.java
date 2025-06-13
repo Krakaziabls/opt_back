@@ -1,9 +1,8 @@
 package com.example.backend.config;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
+import com.example.backend.security.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -17,10 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import com.example.backend.security.JwtTokenProvider;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -52,7 +50,7 @@ public class WebSocketMessageHandler implements ChannelInterceptor {
         if (StompCommand.CONNECT.equals(command)) {
             String token = accessor.getFirstNativeHeader("Authorization");
             log.debug("Received WebSocket connection request with token: {}", token);
-            
+
             if (token != null && token.startsWith("Bearer ")) {
                 token = token.substring(7);
                 if (jwtTokenProvider.validateToken(token)) {
