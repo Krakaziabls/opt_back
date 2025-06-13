@@ -1,5 +1,6 @@
 package com.example.backend.model.dto;
 
+import com.example.backend.model.entity.Message;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -25,7 +26,17 @@ public class MessageDto {
 
     private LocalDateTime createdAt;
 
+    private Long chatId;
+
     private String llmProvider;
 
-    private Long chatId;
+    public static MessageDto fromEntity(Message message) {
+        return MessageDto.builder()
+                .id(message.getId())
+                .content(message.getContent())
+                .fromUser(message.isFromUser())
+                .createdAt(message.getCreatedAt())
+                .chatId(message.getChat().getId())
+                .build();
+    }
 }
